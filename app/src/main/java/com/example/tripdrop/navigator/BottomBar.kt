@@ -1,97 +1,79 @@
 package com.example.tripdrop.navigator
 
-
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AssistChipDefaults.IconSize
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.tripdrop.R
-import com.example.tripdrop.ui.theme.TripDropTheme
-
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.tripdrop.navigation.Route
+import com.example.tripdrop.presentation.HomeScreen
+import com.example.tripdrop.presentation.PostScreen
+import com.example.tripdrop.presentation.ProfileScreen
 
 @Composable
-fun BottomNavigation(
-    items: List<BottomNavigationItem>,
-    selected: Int,
-    onItemClick: (Int) -> Unit
-) {
+fun BottomBar() {
+    var selectedItem by rememberSaveable { mutableStateOf(0) }
+    val navController = rememberNavController()
+    val items = listOf(
+        NavigationItem("Home", Icons.Filled.Home, Route.HomeScreen.route),
+        NavigationItem("Post", Icons.Filled.AddCircle, Route.PostScreen.route),
+        NavigationItem("Profile", Icons.Filled.AccountCircle, Route.ProfileScreen.route)
+    )
 
-    NavigationBar(
-        modifier = Modifier
-            .fillMaxWidth(),
-        containerColor = Color.White,
-        tonalElevation = 10.dp
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                items.forEachIndexed { index, item ->
+                    NavigationBarItem(
+                        icon = { Icon(item.icon, contentDescription = item.label) },
+                        label = { Text(item.label) },
+                        selected = selectedItem == index,
+                        onClick = {
+                            selectedItem = index
+                            navController.navigate(item.route) {
+                                // Pop up to the start destination of the graph to
+                                // avoid building up a large stack of destinations
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                // Avoid multiple copies of the same destination
+                                launchSingleTop = true
+                                // Restore state when reselecting a previously selected item
+                                restoreState = true
+                            }
+                        },
+                        alwaysShowLabel = false
+                    )
+                }
+            }
+        }
     ) {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                selected = index == selected,
-                onClick = { onItemClick(index) },
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            painter = painterResource(id = item.icon),
-                            contentDescription = null,
-                            modifier = Modifier.size(IconSize)
-                        )
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Text(text = item.text, style = MaterialTheme.typography.labelSmall)
-
-                    }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = colorResource(id = R.color.black),
-                    unselectedTextColor = colorResource(id = R.color.white),
-                    indicatorColor = MaterialTheme.colorScheme.background
-                )
-            )
-
+        val bottomPadding = it.calculateBottomPadding()
+        NavHost(
+            navController = navController,
+            startDestination = Route.HomeScreen.route,
+            modifier = Modifier.padding(bottom = bottomPadding)
+        ) {
+            composable(route = Route.HomeScreen.route) {
+                HomeScreen(navController = navController)
+            }
+            composable(route = Route.PostScreen.route) {
+                PostScreen(navController = navController)
+            }
+            composable(route = Route.ProfileScreen.route) {
+                ProfileScreen(navController = navController)
+            }
         }
     }
-
 }
 
-
-data class BottomNavigationItem(
-    @DrawableRes val icon: Int,
-    val text: String
-)
-
-
-@Preview
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun BottomNavigationPreview() {
-    TripDropTheme {
-        BottomNavigation(
-            items = listOf(
-                BottomNavigationItem(icon = R.drawable.home, text = "HOME"),
-                BottomNavigationItem(icon = R.drawable.add, text = "POST"),
-                BottomNavigationItem(icon = R.drawable.account, text = "PROFILE")
-            ),
-            selected = 0,
-            onItemClick = {}
-        )
-    }
-}
+data class NavigationItem(val label: String, val icon: ImageVector, val route: String)

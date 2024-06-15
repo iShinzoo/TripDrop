@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
+    <style name="Theme.TripDropSplash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.TripDrop</item>
