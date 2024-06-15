@@ -21,7 +21,7 @@ import com.example.tripdrop.presentation.ProfileScreen
 
 @Composable
 fun BottomBar() {
-    var selectedItem by rememberSaveable { mutableStateOf(0) }
+    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
     val navController = rememberNavController()
     val items = listOf(
         NavigationItem("Home", Icons.Filled.Home, Route.HomeScreen.route),
