@@ -13,5 +13,7 @@ sealed class Route(
     data object PostScreen : Route(route = "postScreen")
     data object ProfileScreen : Route(route = "profileScreen")
 
+    data object NotificationScreen : Route(route = "NotificationScreen")
+
     data object TripDropNavigatorScreen : Route(route = "tripDropNavigatorScreen")
 }

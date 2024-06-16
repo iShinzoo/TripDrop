@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.navigation.Route
 import com.example.tripdrop.presentation.HomeScreen
+import com.example.tripdrop.presentation.NotificationScreen
 import com.example.tripdrop.presentation.PostScreen
 import com.example.tripdrop.presentation.ProfileScreen
 
@@ -71,6 +72,9 @@ fun BottomBar() {
             }
             composable(route = Route.ProfileScreen.route) {
                 ProfileScreen(navController = navController)
+            }
+            composable(route = Route.NotificationScreen.route) {
+                NotificationScreen(navController = navController)
             }
         }
     }

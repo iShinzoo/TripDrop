@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.navigator.BottomBar
-import com.example.tripdrop.presentation.HomeScreen
+import com.example.tripdrop.presentation.NotificationScreen
 
 
 @Composable
@@ -14,10 +14,11 @@ fun NavGraph() {
 
     NavHost(navController = navController, startDestination = Route.TripDropNavigatorScreen.route) {
 
+
         composable(
-            route = Route.HomeScreen.route
+            route = Route.NotificationScreen.route
         ) {
-            HomeScreen(navController = navController)
+            NotificationScreen(navController = navController)
         }
 
         composable(
