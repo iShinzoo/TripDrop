@@ -12,12 +12,5 @@ import androidx.navigation.NavController
 
 @Composable
 fun NotificationScreen(navController: NavController){
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ){
-        Text("Notification Screen",
-            fontSize = 72.sp)
-    }
+
 }
