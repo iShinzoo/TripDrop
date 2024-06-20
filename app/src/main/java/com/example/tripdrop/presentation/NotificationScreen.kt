@@ -13,6 +13,6 @@ import androidx.navigation.NavController
 @Composable
 fun NotificationScreen(navController: NavController){
 Column {
-    Text(text = "Notification")
+    Text(text = "Notification Screen")
 }
 }
