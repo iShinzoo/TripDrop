@@ -12,20 +12,4 @@ import com.example.tripdrop.presentation.NotificationScreen
 fun NavGraph() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Route.TripDropNavigatorScreen.route) {
-
-
-        composable(
-            route = Route.NotificationScreen.route
-        ) {
-            NotificationScreen(navController = navController)
-        }
-
-        composable(
-            route = Route.TripDropNavigatorScreen.route
-        ) {
-            BottomBar()
-        }
-
-    }
 }
