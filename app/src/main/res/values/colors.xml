@@ -13,6 +13,9 @@
     <color name="orange">#FD7E14</color>
     <color name="yellow">#FFC107</color>
 
-    <color name="MainBackground">#69E2F3</color>
+    <color name="MainBackground">#2596be</color>
+    <color name="ButtonsBackground">#509c9c</color>
+    <color name="HighlightText">#5f6caf</color>
+    <color name="SubText">#9ea8b6</color>
 
 </resources>
