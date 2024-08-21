@@ -15,5 +15,6 @@ sealed class Route(
 
     data object NotificationScreen : Route(route = "NotificationScreen")
 
-    data object TripDropNavigatorScreen : Route(route = "tripDropNavigatorScreen")
+    data object BottomNav : Route(route = "BottomNav")
+    data object Home : Route(route = "Home")
 }

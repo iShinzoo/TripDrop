@@ -22,10 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.R
+import com.example.tripdrop.navigation.Route
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(navController: NavController) {
 
     Box(
         modifier = Modifier
@@ -75,7 +78,7 @@ fun WelcomeScreen() {
 
             Button(
                 onClick = {
-//                    navController.navigate(route = Route.LoginScreen.route)
+                    navController.navigate(route = Route.LoginScreen.route)
                 },
                 modifier = Modifier
                     .width(320.dp)
@@ -96,7 +99,7 @@ fun WelcomeScreen() {
 
             Button(
                 onClick = {
-//                    navController.navigate(route = Route.SignupScreen.route)
+                    navController.navigate(route = Route.SignUpScreen.route)
                 },
                 modifier = Modifier
                     .width(320.dp)
@@ -123,5 +126,5 @@ fun WelcomeScreen() {
 @Preview
 @Composable
 fun WelcomeScreenPreview() {
-    WelcomeScreen()
+    WelcomeScreen(navController = rememberNavController())
 }

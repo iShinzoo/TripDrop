@@ -41,11 +41,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.R
+import com.example.tripdrop.navigation.Route
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
 
     // remember keyword is used to store/remember the value in case recompose is called
     // mutableStateOf() is used to state that the value can be changed
@@ -164,7 +167,7 @@ fun LoginScreen() {
 
             Button(
                 onClick = {
-//                    navController.navigate(route = Route.SignupScreen.route)
+                    navController.navigate(route = Route.BottomNav.route)
                 },
                 modifier = Modifier
                     .width(320.dp)
@@ -184,7 +187,7 @@ fun LoginScreen() {
 
             Button(
                 onClick = {
-//                    navController.navigate(route = Route.SignupScreen.route)
+                    navController.navigate(route = Route.SignUpScreen.route)
                 },
                 modifier = Modifier
                     .width(320.dp)
@@ -276,5 +279,5 @@ fun LoginScreen() {
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(navController = rememberNavController())
 }
