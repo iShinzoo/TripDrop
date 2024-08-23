@@ -70,19 +70,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // coil library for image
-    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     // Dagger Hilt
-    implementation ("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-compiler:2.51.1")
+    implementation ("com.google.dagger:hilt-android:2.52")
+    ksp("com.google.dagger:hilt-compiler:2.52")
 
     // For instrumentation tests
-    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.51.1")
-    kspAndroidTest("com.google.dagger:hilt-compiler:2.51.1")
+    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.52")
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.52")
 
     // For local unit tests
-    testImplementation ("com.google.dagger:hilt-android-testing:2.51.1")
-    kspTest("com.google.dagger:hilt-compiler:2.51.1")
+    testImplementation ("com.google.dagger:hilt-android-testing:2.52")
+    kspTest("com.google.dagger:hilt-compiler:2.52")
 
     // system ui controller
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
@@ -92,25 +92,25 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
 
     // paging 3 library
-    implementation("androidx.paging:paging-runtime:3.3.0")
+    implementation("androidx.paging:paging-runtime:3.3.2")
 
     // alternatively - without Android dependencies for tests
-    testImplementation("androidx.paging:paging-common:3.3.0")
+    testImplementation("androidx.paging:paging-common:3.3.2")
 
     // optional - RxJava2 support
-    implementation("androidx.paging:paging-rxjava2:3.3.0")
+    implementation("androidx.paging:paging-rxjava2:3.3.2")
 
     // optional - RxJava3 support
-    implementation("androidx.paging:paging-rxjava3:3.3.0")
+    implementation("androidx.paging:paging-rxjava3:3.3.2")
 
     // optional - Guava ListenableFuture support
-    implementation("androidx.paging:paging-guava:3.3.0")
+    implementation("androidx.paging:paging-guava:3.3.2")
 
     // optional - Jetpack Compose integration
-    implementation("androidx.paging:paging-compose:3.3.0")
+    implementation("androidx.paging:paging-compose:3.3.2")
 
     // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.8.0-beta03")
+    implementation("androidx.navigation:navigation-compose:2.8.0-rc01")
 
     //Compose Foundation
     implementation("androidx.compose.foundation:foundation:1.6.8")
@@ -119,13 +119,13 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
 
     //material icon extended library
-    implementation ("androidx.compose.material:material-icons-extended:1.7.0-beta03")
+    implementation ("androidx.compose.material:material-icons-extended:1.7.0-rc01")
 
     // Compose Navigation
-    implementation ("androidx.navigation:navigation-compose:2.8.0-beta03")
+    implementation ("androidx.navigation:navigation-compose:2.8.0-rc01")
 
-    implementation ("androidx.compose.runtime:runtime-livedata:1.7.0-beta03")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.7.0-rc01")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 

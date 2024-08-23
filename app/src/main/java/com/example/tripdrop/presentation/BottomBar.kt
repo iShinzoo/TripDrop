@@ -55,7 +55,7 @@ fun BottomBar() {
                 HomeScreen()
             }
             composable(Route.PostScreen.route) {
-                PostScreen()
+                PostScreen(navController1)
             }
             composable(Route.NotificationScreen.route) {
                 NotificationScreenScreen()
