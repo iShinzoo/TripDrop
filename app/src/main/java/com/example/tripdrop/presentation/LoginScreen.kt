@@ -1,27 +1,31 @@
 package com.example.tripdrop.presentation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,58 +54,68 @@ import com.example.tripdrop.navigation.Route
 @Composable
 fun LoginScreen(navController: NavController) {
 
-    // remember keyword is used to store/remember the value in case recompose is called
-    // mutableStateOf() is used to state that the value can be changed
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordHidden by remember { mutableStateOf(true) }
 
     Box(
-        modifier = Modifier.background(colorResource(id = R.color.white))
+        modifier = Modifier
+            .background(colorResource(id = R.color.white))
+            .fillMaxSize() // Fill the screen
+            .padding(16.dp) // Add padding for better spacing on different screens
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            Column {
+            Column(
+                modifier = Modifier.fillMaxWidth() // Make column responsive to screen width
+            ) {
                 Text(
-                    text = "Welcome Back",
-                    modifier = Modifier
-                        .width(320.dp)
-                        .align(Alignment.Start),
-                    color = colorResource(id = R.color.HighlightText),
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "Let's Sign you in",
+                    color = colorResource(id = R.color.black),
+                    fontSize = 42.sp, // Adjust font size for better readability on smaller screens
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Text(
+                    text = "Welcome Back, ",
+                    modifier = Modifier.align(Alignment.Start),
+                    color = colorResource(id = R.color.black),
+                    fontSize = 24.sp
                 )
                 Text(
-                    text = "Enter your email and password to log in",
+                    text = "You have been missed",
                     modifier = Modifier
                         .padding(top = 4.dp)
-                        .width(320.dp)
                         .align(Alignment.Start),
-                    color = colorResource(id = R.color.HighlightText),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    color = colorResource(id = R.color.black),
+                    fontSize = 24.sp
                 )
             }
-            Spacer(modifier = Modifier.height(50.dp))
+
+            Spacer(modifier = Modifier.height(32.dp))
+
 
             OutlinedTextField(
                 modifier = Modifier
-                    .width(320.dp)
+                    .fillMaxWidth()
                     .background(colorResource(id = R.color.white)),
 
                 value = email,
-
                 onValueChange = { email = it },
 
                 leadingIcon = {
                     Icon(
                         Icons.Default.Email,
                         contentDescription = null,
-                        tint = colorResource(id = R.color.HighlightText)
+                        tint = colorResource(id = R.color.Gray)
                     )
                 },
 
@@ -111,27 +125,32 @@ fun LoginScreen(navController: NavController) {
 
                 placeholder = {
                     Text(
-                        text = "Email", color = colorResource(id = R.color.HighlightText)
+                        text = "Email", color = colorResource(id = R.color.Gray)
                     )
                 },
 
-                singleLine = true
+                singleLine = true,
+
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                )
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 modifier = Modifier
-                    .width(320.dp)
+                    .fillMaxWidth() // Make text field responsive to screen width
                     .background(colorResource(id = R.color.white)),
 
                 value = password,
-
                 onValueChange = { password = it },
 
                 placeholder = {
                     Text(
-                        text = "Password", color = colorResource(id = R.color.HighlightText)
+                        text = "Password", color = colorResource(id = R.color.Gray)
                     )
                 },
                 singleLine = true,
@@ -140,7 +159,7 @@ fun LoginScreen(navController: NavController) {
                     Icon(
                         Icons.Default.Lock,
                         contentDescription = null,
-                        tint = colorResource(id = R.color.HighlightText)
+                        tint = colorResource(id = R.color.Gray)
                     )
                 },
                 trailingIcon = {
@@ -153,126 +172,113 @@ fun LoginScreen(navController: NavController) {
                         Icon(
                             imageVector = visibilityIcon,
                             contentDescription = description,
-                            tint = colorResource(id = R.color.HighlightText)
+                            tint = colorResource(id = R.color.Gray)
                         )
                     }
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Password
                 ),
-                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None
-                // visual Transformation is used for formatting and transforming Text field input
+                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                )
             )
-            Spacer(modifier = Modifier.height(18.dp))
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Forgot Password ?",
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 8.dp), // Adjusted padding for smaller screens
+                color = colorResource(id = R.color.black),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
                     navController.navigate(route = Route.BottomNav.route)
                 },
                 modifier = Modifier
-                    .width(320.dp)
+                    .fillMaxWidth() // Button width adjusts to screen size
                     .height(50.dp)
                     .clip(RoundedCornerShape(12.dp)),
-                colors = androidx.compose.material.ButtonDefaults.buttonColors(colorResource(id = R.color.HighlightText))
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.black))
             ) {
                 Text(
-                    text = "Login",
+                    text = "Sign In",
                     modifier = Modifier,
                     color = colorResource(id = R.color.white),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = {
-                    navController.navigate(route = Route.SignUpScreen.route)
-                },
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                colors = androidx.compose.material.ButtonDefaults.buttonColors(colorResource(id = R.color.ButtonsBackground))
-            ) {
-                Text(
-                    text = "Don't have an Account? SignUP",
-                    modifier = Modifier,
-                    color = colorResource(id = R.color.white),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "-------------------OR---------------------",
+                text = "------------------ OR --------------------",
                 modifier = Modifier,
-                color = colorResource(id = R.color.HighlightText),
+                color = colorResource(id = R.color.Gray),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = {
-//                    navController.navigate(route = Route.SignupScreen.route)
-                },
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                colors = androidx.compose.material.ButtonDefaults.buttonColors(colorResource(id = R.color.HighlightText))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            ) {
-                Image(
+            Row {
+                Icon(
                     painter = painterResource(id = R.drawable.google),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .padding(end = 6.dp),
-                    contentScale = ContentScale.Fit
+                    contentDescription = "",
+                    modifier = Modifier.size(32.dp),
+                    tint = Color.Unspecified // Prevent tinting
                 )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Icon(
+                    painter = painterResource(id = R.drawable.facebook),
+                    contentDescription = "",
+                    modifier = Modifier.size(32.dp),
+                    tint = Color.Unspecified // Prevent tinting
+                )
+
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
                 Text(
-                    text = "LogIn with Google",
+                    text = "Don't have an Account ?",
                     modifier = Modifier,
-                    color = colorResource(id = R.color.white),
-                    fontSize = 16.sp,
+                    color = colorResource(id = R.color.Gray),
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.width(8.dp))
 
-            Button(
-                onClick = {
-//                    navController.navigate(route = Route.SignupScreen.route)
-                },
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                colors = androidx.compose.material.ButtonDefaults.buttonColors(colorResource(id = R.color.ButtonsBackground))
-
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .padding(end = 6.dp),
-                    contentScale = ContentScale.Fit
-                )
                 Text(
-                    text = "LogIn with Facebook",
-                    modifier = Modifier,
-                    color = colorResource(id = R.color.white),
-                    fontSize = 16.sp,
+                    text = "Sign Up",
+                    modifier = Modifier.clickable {
+                        navController.navigate(route = Route.SignUpScreen.route)
+                    },
+                    color = colorResource(id = R.color.black),
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
     }
-
 }
 
 
