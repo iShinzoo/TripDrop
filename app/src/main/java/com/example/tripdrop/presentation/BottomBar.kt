@@ -149,7 +149,7 @@ fun MyBottomBar(navController1: NavHostController) {
                         Icon(
                             modifier = Modifier.size(27.dp),
                             imageVector = it.icon,
-                            tint = if (selected) colorResource(id = R.color.ButtonsBackground) else Color.Gray,
+                            tint = if (selected) colorResource(id = R.color.white) else Color.Gray,
                             contentDescription = it.title
                         )
                     }
