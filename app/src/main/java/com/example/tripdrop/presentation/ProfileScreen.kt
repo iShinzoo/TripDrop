@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.DeliveryDining
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Policy
@@ -63,7 +64,7 @@ fun ProfileScreen(){
                 text = "Profile",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .padding(top = 24.dp, start = 8.dp),
                 color = colorResource(id = R.color.black),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
@@ -88,6 +89,10 @@ fun ProfileScreen(){
             verticalArrangement = Arrangement.Top
         ) {
             UserDetailsCard()
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomButton(text = "Your Orders", leadingIcon = Icons.Default.DeliveryDining) {
+
+            }
             Spacer(modifier = Modifier.height(16.dp))
             CustomButton(text = "Payments", leadingIcon = Icons.Default.Payment) {
 

@@ -71,7 +71,7 @@ fun SignUpScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 80.dp),
+                .padding(top = 80.dp, start = 8.dp, end = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {

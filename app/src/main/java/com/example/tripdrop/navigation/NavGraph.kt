@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.MainActivity
 import com.example.tripdrop.presentation.BottomBar
 import com.example.tripdrop.presentation.LoginScreen
+import com.example.tripdrop.presentation.ProductDetailsScreen
 import com.example.tripdrop.presentation.SignUpScreen
 import com.example.tripdrop.presentation.WelcomeScreen
 
@@ -27,6 +28,10 @@ fun NavGraph() {
 
         composable(Route.SignUpScreen.route){
             SignUpScreen(navController)
+        }
+
+        composable(Route.ProductDetailsScreen.route){
+            ProductDetailsScreen(navController)
         }
 
         composable(Route.Home.route){

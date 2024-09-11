@@ -124,7 +124,7 @@ fun PostScreen(navController: NavController) {
                 text = "Product Details",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .padding(top = 24.dp, start = 8.dp),
                 color = colorResource(id = R.color.black),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
@@ -138,7 +138,7 @@ fun PostScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 88.dp) // Adjust this to fit the space occupied by the header
+                .padding(top = 88.dp, start = 8.dp, end = 8.dp) // Adjust this to fit the space occupied by the header
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -172,6 +172,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 
@@ -206,6 +207,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 
@@ -288,6 +290,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 
@@ -321,6 +324,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 
@@ -359,6 +363,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 
@@ -397,6 +402,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 
@@ -431,6 +437,7 @@ fun PostScreen(navController: NavController) {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
+                    cursorColor = Color.Black
                 )
             )
 

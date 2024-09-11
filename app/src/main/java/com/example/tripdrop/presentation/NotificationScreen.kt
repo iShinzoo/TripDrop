@@ -33,6 +33,7 @@ fun NotificationScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding()
             .background(colorResource(id = R.color.white))
     ) {
         Column(
@@ -46,7 +47,7 @@ fun NotificationScreen() {
                 text = "Notifications",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .padding(top = 24.dp, start = 8.dp),
                 color = colorResource(id = R.color.black),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold

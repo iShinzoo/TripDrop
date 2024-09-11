@@ -1,9 +1,7 @@
 package com.example.tripdrop.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,6 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -36,26 +36,40 @@ import com.example.tripdrop.R
 import com.example.tripdrop.navigation.Route
 import com.example.tripdrop.ui.theme.bgwhite
 
-
 @Preview(showSystemUi = true)
 @Composable
 fun BottomBar() {
+    val navController = rememberNavController()
 
-    val navController1 = rememberNavController()
+    Scaffold(
+        containerColor = bgwhite,
+        bottomBar = {
+            // Get the current back stack entry
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            // Get the current route
+            val currentRoute = navBackStackEntry?.destination?.route
 
-    Scaffold(containerColor = bgwhite,
-        bottomBar = { MyBottomBar(navController1) }
+            // Conditionally show the bottom bar
+            if (currentRoute in listOf(
+                    Route.HomeScreen.route,
+                    Route.PostScreen.route,
+                    Route.NotificationScreen.route,
+                    Route.ProfileScreen.route
+                )) {
+                MyBottomBar(navController)
+            }
+        }
     ) { innerPadding ->
-
         NavHost(
-            navController = navController1, startDestination = Route.HomeScreen.route,
+            navController = navController,
+            startDestination = Route.HomeScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(route = Route.HomeScreen.route) {
-                HomeScreen()
+            composable(Route.HomeScreen.route) {
+                HomeScreen(navController)
             }
             composable(Route.PostScreen.route) {
-                PostScreen(navController1)
+                PostScreen(navController)
             }
             composable(Route.NotificationScreen.route) {
                 NotificationScreen()
@@ -63,16 +77,16 @@ fun BottomBar() {
             composable(Route.ProfileScreen.route) {
                 ProfileScreen()
             }
-
+            composable(Route.ProductDetailsScreen.route) {
+                ProductDetailsScreen(navController)
+            }
         }
     }
 }
 
-
 @Composable
-fun MyBottomBar(navController1: NavHostController) {
-
-    val backStackEntry = navController1.currentBackStackEntryAsState()
+fun MyBottomBar(navController: NavHostController) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
 
     data class BottomNavItem(
         val title: String,
@@ -80,28 +94,15 @@ fun MyBottomBar(navController1: NavHostController) {
         val icon: ImageVector
     )
 
-    val list = listOf(
-        BottomNavItem(
-            "Home",
-            Route.HomeScreen.route,
-            Icons.Rounded.Home
-        ),
-        BottomNavItem(
-            "Post",
-            Route.PostScreen.route, // Corrected route for Search destination
-            Icons.Rounded.AddBox
-        ),
-        BottomNavItem(
-            "Notification",
-            Route.NotificationScreen.route, // Corrected route for AddThread destination
-            Icons.Rounded.Notifications
-        ),
-        BottomNavItem(
-            "Profile",
-            Route.ProfileScreen.route, // Corrected route for Notification destination
-            Icons.Rounded.AccountCircle
+    val list = remember {
+        listOf(
+            BottomNavItem("Home", Route.HomeScreen.route, Icons.Rounded.Home),
+            BottomNavItem("Post", Route.PostScreen.route, Icons.Rounded.AddBox),
+            BottomNavItem("Notification", Route.NotificationScreen.route, Icons.Rounded.Notifications),
+            BottomNavItem("Profile", Route.ProfileScreen.route, Icons.Rounded.AccountCircle)
         )
-    )
+    }
+
     ElevatedCard(
         modifier = Modifier
             .shadow(
@@ -119,38 +120,30 @@ fun MyBottomBar(navController1: NavHostController) {
         BottomAppBar(
             containerColor = Color.White,
             tonalElevation = 10.dp
-//            modifier = Modifier.padding(10.dp)
         ) {
-            list.forEach {
-                // val selected = it.route == backStackEntry?.value?.destination?.route
-
-                val selected = it.route == backStackEntry.value?.destination?.route
-
-//                val selectedColor = if (selected) Color.Green else Color.Red
-//                val unselectedColor = if (!selected) Color.Red else Color.Green
+            list.forEach { item ->
+                val selected = item.route == backStackEntry?.destination?.route
                 NavigationBarItem(
                     modifier = Modifier
                         .background(color = Color.Transparent)
                         .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
                     selected = selected,
                     enabled = true,
-
                     onClick = {
-                        navController1.navigate(it.route) {
-                            popUpTo(navController1.graph.findStartDestination().id) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
                             launchSingleTop = true
                         }
                     },
                     alwaysShowLabel = false,
-//                    label ={false},
                     icon = {
                         Icon(
                             modifier = Modifier.size(27.dp),
-                            imageVector = it.icon,
+                            imageVector = item.icon,
                             tint = if (selected) colorResource(id = R.color.white) else Color.Gray,
-                            contentDescription = it.title
+                            contentDescription = item.title
                         )
                     }
                 )

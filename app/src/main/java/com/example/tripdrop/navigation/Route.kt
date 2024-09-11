@@ -9,7 +9,7 @@ sealed class Route(
 
 
     data object HomeScreen : Route(route = "homeScreen")
-    data object DetailsScreen : Route(route = "detailsScreen")
+    data object ProductDetailsScreen : Route(route = "productDetailsScreen")
     data object PostScreen : Route(route = "postScreen")
     data object ProfileScreen : Route(route = "profileScreen")
 
@@ -17,4 +17,6 @@ sealed class Route(
 
     data object BottomNav : Route(route = "BottomNav")
     data object Home : Route(route = "Home")
+
+    data object DetailsCard : Route(route = "detailsCard")
 }

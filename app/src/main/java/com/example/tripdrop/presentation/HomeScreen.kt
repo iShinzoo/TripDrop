@@ -47,11 +47,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.tripdrop.R
+import com.example.tripdrop.navigation.Route
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
 
     Box(
         modifier = Modifier
@@ -70,16 +73,21 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(90.dp))
             SearchBar()
             Spacer(modifier = Modifier.height(12.dp))
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
-            DetailsCard()
+            DetailsCard {
+                navController.navigate(route = Route.ProductDetailsScreen.route)
+            }
+            DetailsCard {
+                navController.navigate(route = Route.ProductDetailsScreen.route)
+            }
+            DetailsCard {
+                navController.navigate(route = Route.ProductDetailsScreen.route)
+            }
+            DetailsCard {
+                navController.navigate(route = Route.ProductDetailsScreen.route)
+            }
+            DetailsCard {
+                navController.navigate(route = Route.ProductDetailsScreen.route)
+            }
         }
         // TopAppBar fixed at the top
         TopAppBar(
@@ -125,6 +133,7 @@ fun SearchBar() {
         onValueChange = { query = it },
         modifier = Modifier
             .fillMaxWidth()
+            .padding(start = 8.dp, end = 8.dp)
             .background(Color.LightGray, shape = RoundedCornerShape(32.dp)),
         placeholder = {
             Text(
@@ -143,12 +152,15 @@ fun SearchBar() {
             disabledBorderColor = Color.Transparent,  // Ensures the border is transparent when disabled
             errorBorderColor = Color.Transparent,     // Ensures the border is transparent when there's an error
             focusedTextColor = Color.Black,
+            cursorColor = Color.Black
         )
     )
 }
 
 @Composable
-fun DetailsCard() {
+fun DetailsCard(
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -234,7 +246,7 @@ fun DetailsCard() {
                     Spacer(modifier = Modifier.width(16.dp)) // Space between icon and button
 
                     Button(
-                        onClick = { /* Handle Details Click */ },
+                        onClick = onClick,
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black,
@@ -253,5 +265,5 @@ fun DetailsCard() {
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(navController = rememberNavController())
 }
