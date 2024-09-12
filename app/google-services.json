@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986030739293",
+    "project_id": "dropit-cdbed",
+    "storage_bucket": "dropit-cdbed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986030739293:android:f1242dfa0db7f53a67a2b4",
+        "android_client_info": {
+          "package_name": "com.example.tripdrop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYPEq-0R7RmGTtlZ9ptncWZCLAm50-HQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

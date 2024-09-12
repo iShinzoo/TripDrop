@@ -1,4 +1,4 @@
-package com.example.tripdrop.presentation
+package com.example.tripdrop.ui.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

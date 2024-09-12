@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
     id ("com.google.dagger.hilt.android")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -61,6 +62,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.androidx.media3.effect)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,19 +78,20 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
 
     // Dagger Hilt
-    implementation ("com.google.dagger:hilt-android:2.52")
-    ksp("com.google.dagger:hilt-compiler:2.52")
+    implementation ("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51.1")
 
     // For instrumentation tests
-    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.52")
-    kspAndroidTest("com.google.dagger:hilt-compiler:2.52")
+    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.51.1")
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.51.1")
 
     // For local unit tests
-    testImplementation ("com.google.dagger:hilt-android-testing:2.52")
-    kspTest("com.google.dagger:hilt-compiler:2.52")
+    testImplementation ("com.google.dagger:hilt-android-testing:2.51.1")
+    kspTest("com.google.dagger:hilt-compiler:2.51.1")
+
 
     // system ui controller
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
 
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
@@ -110,22 +116,22 @@ dependencies {
     implementation("androidx.paging:paging-compose:3.3.2")
 
     // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.8.0-rc01")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
 
     //Compose Foundation
-    implementation("androidx.compose.foundation:foundation:1.6.8")
+    implementation("androidx.compose.foundation:foundation:1.7.1")
 
     // System Ui Controller
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
 
     //material icon extended library
-    implementation ("androidx.compose.material:material-icons-extended:1.7.0-rc01")
+    implementation ("androidx.compose.material:material-icons-extended:1.7.1")
 
     // Compose Navigation
-    implementation ("androidx.navigation:navigation-compose:2.8.0-rc01")
+    implementation ("androidx.navigation:navigation-compose:2.8.0")
 
-    implementation ("androidx.compose.runtime:runtime-livedata:1.7.0-rc01")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.7.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
@@ -133,7 +139,7 @@ dependencies {
     implementation ("androidx.core:core-splashscreen:1.1.0-alpha02")
 
     // modal bottom sheet
-    implementation ("androidx.compose.material:material:1.6.8")
-    implementation ("androidx.compose.ui:ui:1.6.8")
+    implementation ("androidx.compose.material:material:1.7.1")
+    implementation ("androidx.compose.ui:ui:1.7.1")
 
 }

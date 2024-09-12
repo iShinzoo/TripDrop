@@ -1,4 +1,4 @@
-package com.example.tripdrop.navigation
+package com.example.tripdrop.ui.navigation
 
 sealed class Route(
     val route: String
@@ -19,4 +19,7 @@ sealed class Route(
     data object Home : Route(route = "Home")
 
     data object DetailsCard : Route(route = "detailsCard")
+
+    data object SingleChatScreen : Route(route = "singleChatScreen")
+    data object ProfileDetailsScreen : Route(route = "profileDetailsScreen")
 }

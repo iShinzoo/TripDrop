@@ -1,4 +1,4 @@
-package com.example.tripdrop.presentation
+package com.example.tripdrop.ui.presentation.authentication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.R
-import com.example.tripdrop.navigation.Route
+import com.example.tripdrop.ui.navigation.Route
+
+// ui to be changed
+
 
 @Composable
 fun WelcomeScreen(navController: NavController) {

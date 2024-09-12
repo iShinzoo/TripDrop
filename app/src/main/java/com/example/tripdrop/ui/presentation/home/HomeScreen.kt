@@ -1,4 +1,4 @@
-package com.example.tripdrop.presentation
+package com.example.tripdrop.ui.presentation.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,7 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.tripdrop.R
-import com.example.tripdrop.navigation.Route
+import com.example.tripdrop.ui.navigation.Route
 
 @Composable
 fun HomeScreen(navController: NavController) {

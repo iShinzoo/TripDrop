@@ -1,4 +1,4 @@
-package com.example.tripdrop.presentation
+package com.example.tripdrop.ui.presentation.home.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.R
-import com.example.tripdrop.navigation.Route
+import com.example.tripdrop.ui.navigation.Route
 
 @Composable
 fun ProductDetailsScreen(navController: NavController) {
@@ -212,7 +212,9 @@ fun ProductDetailsScreen(navController: NavController) {
 
             // Buttons
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate(route = Route.SingleChatScreen.route)
+                },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()

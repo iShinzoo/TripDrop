@@ -1,4 +1,4 @@
-package com.example.tripdrop.presentation
+package com.example.tripdrop.ui.presentation
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -44,7 +44,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -55,18 +54,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.tripdrop.R
-import com.example.tripdrop.navigation.Route
 import java.util.Calendar
 
 @Composable
-fun PostScreen(navController: NavController) {
+fun PostScreen() {
 
     val context = LocalContext.current
 
+    // State variables for form fields
     var productName by remember { mutableStateOf("") }
     var productDesc by remember { mutableStateOf("") }
     var pickupPoint by remember { mutableStateOf("") }
@@ -78,34 +75,23 @@ fun PostScreen(navController: NavController) {
 
     // Date Picker
     val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-
     val datePickerDialog = DatePickerDialog(
-        context, { _, selectedYear, selectedMonth, selectedDay ->
-            date = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-        }, year, month, day
+        context, { _, year, month, day ->
+            date = "$day/${month + 1}/$year"
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
     )
 
     // Time Picker
-    val hour = calendar.get(Calendar.HOUR_OF_DAY)
-    val minute = calendar.get(Calendar.MINUTE)
-
     val timePickerDialog = TimePickerDialog(
-        context, { _, selectedHour, selectedMinute ->
-            time = String.format("%02d:%02d", selectedHour, selectedMinute)
-        }, hour, minute, false
+        context, { _, hour, minute ->
+            time = String.format("%02d:%02d", hour, minute)
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false
     )
 
     // Image Picker Intent
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { uri: Uri? ->
-            if (uri != null) {
-                productImageUri = uri
-            }
-        }
+        onResult = { uri -> productImageUri = uri }
     )
 
     Box(
@@ -119,12 +105,12 @@ fun PostScreen(navController: NavController) {
                 .padding(16.dp)
                 .align(Alignment.TopStart)
         ) {
-            // Product Details Header
+            // Header for the Product Details Section
             Text(
                 text = "Product Details",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp, start = 8.dp),
+                    .padding(top = 24.dp),
                 color = colorResource(id = R.color.black),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
@@ -133,12 +119,11 @@ fun PostScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        // Scrollable Content
+        // Main Content with Scroll
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 88.dp, start = 8.dp, end = 8.dp) // Adjust this to fit the space occupied by the header
+                .padding(top = 88.dp, start = 8.dp, end = 8.dp) // Padding to fit header space
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -147,8 +132,7 @@ fun PostScreen(navController: NavController) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(colorResource(id = R.color.white)),
+                    .padding(horizontal = 16.dp),
                 value = productName,
                 onValueChange = { productName = it },
                 leadingIcon = {
@@ -168,11 +152,11 @@ fun PostScreen(navController: NavController) {
                     )
                 },
                 singleLine = true,
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
@@ -182,8 +166,7 @@ fun PostScreen(navController: NavController) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(colorResource(id = R.color.white)),
+                    .padding(horizontal = 16.dp),
                 value = productDesc,
                 onValueChange = { productDesc = it },
                 leadingIcon = {
@@ -203,11 +186,11 @@ fun PostScreen(navController: NavController) {
                     )
                 },
                 singleLine = false,
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
@@ -219,19 +202,15 @@ fun PostScreen(navController: NavController) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(horizontal = 16.dp)
-                    .background(colorResource(id = R.color.white))
-                    .clickable {
-                        imagePickerLauncher.launch("image/*")
-                    },
+                    .clickable { imagePickerLauncher.launch("image/*") },
                 shape = RoundedCornerShape(12.dp),
                 border = BorderStroke(1.dp, Color.Gray)
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(colorResource(id = R.color.white))
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    // Display selected image or default image
                     productImageUri?.let { uri ->
                         Image(
                             painter = rememberImagePainter(uri),
@@ -250,8 +229,8 @@ fun PostScreen(navController: NavController) {
                     Text(
                         text = "Add Image",
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 164.dp, start = 120.dp),
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 16.dp),
                         color = colorResource(id = R.color.Gray),
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
@@ -265,8 +244,7 @@ fun PostScreen(navController: NavController) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(colorResource(id = R.color.white)),
+                    .padding(horizontal = 16.dp),
                 value = pickupPoint,
                 onValueChange = { pickupPoint = it },
                 placeholder = {
@@ -277,7 +255,7 @@ fun PostScreen(navController: NavController) {
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.Default.AddLocation,
+                        Icons.Default.AddLocation,
                         contentDescription = null,
                         tint = colorResource(id = R.color.Gray)
                     )
@@ -286,11 +264,11 @@ fun PostScreen(navController: NavController) {
                     keyboardType = KeyboardType.Text
                 ),
                 singleLine = true,
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
@@ -300,18 +278,18 @@ fun PostScreen(navController: NavController) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(colorResource(id = R.color.white)),
+                    .padding(horizontal = 16.dp),
                 value = destinationPoint,
                 onValueChange = { destinationPoint = it },
                 placeholder = {
                     Text(
-                        text = "Add Destination", color = colorResource(id = R.color.Gray)
+                        text = "Add Destination",
+                        color = colorResource(id = R.color.Gray)
                     )
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.Default.AddLocation,
+                        Icons.Default.AddLocation,
                         contentDescription = null,
                         tint = colorResource(id = R.color.Gray)
                     )
@@ -320,11 +298,11 @@ fun PostScreen(navController: NavController) {
                     keyboardType = KeyboardType.Text
                 ),
                 singleLine = true,
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
@@ -333,14 +311,14 @@ fun PostScreen(navController: NavController) {
             // Date Picker Field
             OutlinedTextField(
                 value = date,
-                onValueChange = {},
+                onValueChange = {date = it},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .clickable { datePickerDialog.show() },
                 placeholder = {
                     Text(
-                        "Select Date",
+                        text = "Select Date",
                         color = colorResource(id = R.color.Gray),
                         modifier = Modifier.clickable {
                             datePickerDialog.show()
@@ -359,11 +337,11 @@ fun PostScreen(navController: NavController) {
                         }
                     )
                 },
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
@@ -379,7 +357,7 @@ fun PostScreen(navController: NavController) {
                     .clickable { timePickerDialog.show() },
                 placeholder = {
                     Text(
-                        "Select Time",
+                        text = "Select Time",
                         color = colorResource(id = R.color.Gray),
                         modifier = Modifier.clickable {
                             timePickerDialog.show()
@@ -398,11 +376,11 @@ fun PostScreen(navController: NavController) {
                         }
                     )
                 },
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
@@ -412,8 +390,7 @@ fun PostScreen(navController: NavController) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(colorResource(id = R.color.white)),
+                    .padding(horizontal = 16.dp),
                 value = productPrice,
                 onValueChange = { productPrice = it },
                 leadingIcon = {
@@ -428,46 +405,47 @@ fun PostScreen(navController: NavController) {
                 ),
                 placeholder = {
                     Text(
-                        text = "Enter Charges For Delivery",
+                        text = "Enter Product Price",
                         color = colorResource(id = R.color.Gray)
                     )
                 },
                 singleLine = true,
-
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
-                    cursorColor = Color.Black
+                    unfocusedTextColor = Color.Black,
+                    cursorColor = Color.Black,
                 )
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Confirm Button
+            // Post Button
             Button(
-                onClick = {
-                    navController.navigate(route = Route.HomeScreen.route)
-                },
+                onClick = { /* Handle post action */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.black))
+                    .height(56.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.black)
+                )
             ) {
                 Text(
-                    text = "Confirm",
-                    color = colorResource(id = R.color.white),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "Post",
+                    fontSize = 20.sp,
+                    color = Color.White
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PostScreenPreview() {
-    PostScreen(navController = rememberNavController())
+    PostScreen()
 }
