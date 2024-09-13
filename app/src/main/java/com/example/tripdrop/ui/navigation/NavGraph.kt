@@ -10,7 +10,6 @@ import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
-import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 
 
@@ -19,7 +18,6 @@ fun NavGraph(vm: DropViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Route.WelcomeScreen.route) {
-
         composable(Route.WelcomeScreen.route) {
             WelcomeScreen(navController)
         }
@@ -34,10 +32,6 @@ fun NavGraph(vm: DropViewModel) {
 
         composable(Route.ProductDetailsScreen.route) {
             ProductDetailsScreen(navController)
-        }
-
-        composable(Route.Home.route) {
-            MainActivity()
         }
 
         composable(Route.BottomNav.route) {

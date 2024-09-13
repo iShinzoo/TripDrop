@@ -1,5 +1,6 @@
 package com.example.tripdrop.ui.presentation.authentication
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import androidx.navigation.NavController
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.ui.presentation.CheckUserSignedIn
 
 @Composable
 fun SignUpScreen(navController: NavController, vm: DropViewModel) {
@@ -57,6 +59,12 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordHidden by remember { mutableStateOf(true) }
+
+    BackHandler {
+        navController.navigate(Route.WelcomeScreen.route)
+    }
+
+    CheckUserSignedIn(vm = vm, navController = navController)
 
     // Main container
     Box(
@@ -182,6 +190,7 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
                     vm.signUp(
                         email = email,
                         password = password,
+                        context = context,
                         navController = navController
                     )
                 },

@@ -21,6 +21,7 @@ import androidx.navigation.compose.*
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
@@ -30,18 +31,14 @@ import com.example.tripdrop.ui.theme.bgwhite
 
 @Composable
 fun BottomBar(vm: DropViewModel) {
-    // Initialize NavController
     val navController = rememberNavController()
 
     Scaffold(
         containerColor = bgwhite,
         bottomBar = {
-            // Get the current back stack entry
             val navBackStackEntry by navController.currentBackStackEntryAsState()
-            // Get the current route from back stack entry
             val currentRoute = navBackStackEntry?.destination?.route
 
-            // Conditionally display the bottom bar based on the current route
             if (currentRoute in listOf(
                     Route.HomeScreen.route,
                     Route.PostScreen.route,
@@ -53,13 +50,11 @@ fun BottomBar(vm: DropViewModel) {
             }
         }
     ) { innerPadding ->
-        // Setup the navigation host with padding
         NavHost(
             navController = navController,
             startDestination = Route.HomeScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            // Define navigation routes and corresponding screens
             composable(Route.HomeScreen.route) {
                 HomeScreen(navController)
             }
@@ -69,8 +64,11 @@ fun BottomBar(vm: DropViewModel) {
             composable(Route.NotificationScreen.route) {
                 NotificationScreen()
             }
+            composable(Route.LoginScreen.route) {
+                LoginScreen(navController, vm)
+            }
             composable(Route.ProfileScreen.route) {
-                ProfileScreen(navController,vm)
+                ProfileScreen(navController, vm)
             }
             composable(Route.ProductDetailsScreen.route) {
                 ProductDetailsScreen(navController)
@@ -81,9 +79,13 @@ fun BottomBar(vm: DropViewModel) {
             composable(Route.ProfileDetailsScreen.route) {
                 ProfileDetailsScreen(navController, vm = vm)
             }
+            composable(Route.BottomNav.route) {
+                BottomBar(vm)
+            }
         }
     }
 }
+
 
 @Composable
 fun MyBottomBar(navController: NavHostController) {

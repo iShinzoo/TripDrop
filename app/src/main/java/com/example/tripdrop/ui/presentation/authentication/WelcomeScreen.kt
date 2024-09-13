@@ -1,5 +1,7 @@
 package com.example.tripdrop.ui.presentation.authentication
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,12 +28,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 // ui to be changed
 
 
 @Composable
 fun WelcomeScreen(navController: NavController) {
+
+    val auth = Firebase.auth
+    if (auth.currentUser != null) {
+        navController.navigate(Route.BottomNav.route)
+    }
+
+    BackHandler(true) {
+        (navController.context as ComponentActivity).finish()
+    }
 
     Box(
         modifier = Modifier

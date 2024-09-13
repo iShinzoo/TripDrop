@@ -1,6 +1,7 @@
 package com.example.tripdrop.ui.presentation.authentication
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +59,15 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
     var password by remember { mutableStateOf("") }
     var passwordHidden by remember { mutableStateOf(true) }
     val context = LocalContext.current
+
+    val signIn by remember(vm.signIn) { vm.signIn }
+    if (signIn) {
+        navController.navigate(Route.BottomNav.route)
+    }
+
+    BackHandler {
+        navController.navigate(Route.WelcomeScreen.route)
+    }
 
     // Root container
     Box(
@@ -212,7 +222,7 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
             Button(
                 onClick = {
                     // Move to Home Screen
-                    vm.login(email = email, password = password, navController = navController)
+                    vm.login(email = email, password = password, context, navController = navController)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

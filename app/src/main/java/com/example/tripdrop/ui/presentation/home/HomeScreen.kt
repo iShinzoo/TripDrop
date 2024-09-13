@@ -1,5 +1,7 @@
 package com.example.tripdrop.ui.presentation.home
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +57,10 @@ import com.example.tripdrop.ui.navigation.Route
 
 @Composable
 fun HomeScreen(navController: NavController) {
+
+    BackHandler(true) {
+        (navController.context as ComponentActivity).finish()
+    }
 
     Box(
         modifier = Modifier
