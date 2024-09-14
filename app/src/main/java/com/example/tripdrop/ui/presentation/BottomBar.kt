@@ -61,7 +61,7 @@ fun BottomBar(vm: DropViewModel) {
                 HomeScreen(navController)
             }
             composable(Route.PostScreen.route) {
-                PostScreen()
+                PostScreen(vm)
             }
             composable(Route.NotificationScreen.route) {
                 NotificationScreen()

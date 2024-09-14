@@ -3,6 +3,7 @@ package com.example.tripdrop.ui.presentation
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -51,15 +52,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import java.util.Calendar
 
 @Composable
-fun PostScreen() {
+fun PostScreen(vm : DropViewModel) {
 
     val context = LocalContext.current
 
@@ -422,7 +423,21 @@ fun PostScreen() {
 
             // Post Button
             Button(
-                onClick = { /* Handle post action */ },
+                onClick = {
+                    vm.uploadProductDetails(
+                        title = productName,
+                        description = productDesc,
+                        imageUri = productImageUri.toString(),
+                        pickupPoint = pickupPoint,
+                        deliveryPoint = destinationPoint,
+                        time = time,
+                        date = date,
+                        rewards = productPrice,
+                        context = context
+                    )
+                    Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT)
+                        .show()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -442,10 +457,4 @@ fun PostScreen() {
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PostScreenPreview() {
-    PostScreen()
 }

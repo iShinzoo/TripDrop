@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.tripdrop.data.Event
+import com.example.tripdrop.data.Product
 import com.example.tripdrop.data.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.google.firebase.auth.FirebaseAuth
@@ -204,5 +205,68 @@ class DropViewModel @Inject constructor(
         }
     }
 
+
+    fun uploadProductDetails(
+        title: String,
+        description: String,
+        imageUri: String? = null,
+        pickupPoint: String,
+        deliveryPoint: String,
+        time: String,
+        date: String,
+        rewards: String,
+        context: Context
+    ) {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid ?: run {
+                handleException(Exception("User ID is null"), "Failed to get user ID")
+                return@launch
+            }
+
+            try {
+                // Upload image if provided
+                val imageUrl = imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
+                Log.d("UploadProductDetails", "Image URL: $imageUrl")
+
+                // Create a Product object
+                val product = Product(
+                    title = title,
+                    description = description,
+                    imageUrl = imageUrl,
+                    pickupPoint = pickupPoint,
+                    deliveryPoint = deliveryPoint,
+                    time = time,
+                    date = date,
+                    rewards = rewards,
+                    userId = userId
+                )
+                Log.d("UploadProductDetails", "Product: $product")
+
+                // Save product to Fire store
+                db.collection("products").document(product.productId).set(product).await()
+                Log.d("UploadProductDetails", "Product uploaded successfully")
+
+                showToast(context, "Product uploaded successfully")
+
+            } catch (e: Exception) {
+                handleException(e, "Failed to upload product")
+            }
+        }
+    }
+
+    suspend fun uploadProductImage(uri: Uri): String? {
+        val userId = auth.currentUser?.uid ?: return null
+        val imageRef = storage.reference.child("product_images/$userId/${UUID.randomUUID()}")
+        return try {
+            Log.d("UploadImage", "Uploading image: $uri")
+            imageRef.putFile(uri).await()
+            val downloadUrl = imageRef.downloadUrl.await().toString()
+            Log.d("UploadImage", "Upload successful, download URL: $downloadUrl")
+            downloadUrl
+        } catch (e: Exception) {
+            handleException(e, "Failed to upload product image")
+            null
+        }
+    }
 
 }
