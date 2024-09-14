@@ -6,15 +6,19 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.tripdrop.data.Event
 import com.example.tripdrop.data.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
@@ -26,15 +30,56 @@ class DropViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Mutable state variables for UI updates
-    val inProcess = mutableStateOf(false)
-    val eventMutableState = mutableStateOf<Event<String>?>(null)
+    private val inProcess = mutableStateOf(false)
+    private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
 
-    init {
-        // Check if the user is already signed in and fetch user data
-        auth.currentUser?.uid?.let {
-            getUserData(it)
+    // StateFlow for profile update status
+    private val _profileUpdateStatus = MutableStateFlow(ProfileUpdateStatus.IDLE)
+    val profileUpdateStatus: StateFlow<ProfileUpdateStatus> = _profileUpdateStatus
+
+    // Profile update status enum
+    enum class ProfileUpdateStatus {
+        IDLE, SUCCESS, FAILURE
+    }
+
+//    init {
+//        // Check if the user is already signed in and fetch user data
+//        auth.currentUser?.uid?.let {
+//            getUserData(it)
+//        }
+//    }
+
+    private fun checkUserData(navController: NavController) {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid
+            if (userId == null) {
+                // Handle null userId
+                Log.e("CheckUserData", "User ID is null. User might not be signed in.")
+                // Optionally, navigate to login screen or show an error message
+                navController.navigate(Route.LoginScreen.route) {
+                    popUpTo(Route.LoginScreen.route) { inclusive = true }
+                }
+                return@launch
+            }
+
+            try {
+                val userDoc = db.collection("users").document(userId).get().await()
+                if (userDoc.exists()) {
+                    // User data exists, navigate to HomeScreen
+                    navController.navigate(Route.BottomNav.route) {
+                        popUpTo(Route.BottomNav.route) { inclusive = true }
+                    }
+                } else {
+                    // User data does not exist, navigate to UserDataCollectionScreen
+                    navController.navigate(Route.UserDataCollectionScreen.route) {
+                        popUpTo(Route.UserDataCollectionScreen.route) { inclusive = true }
+                    }
+                }
+            } catch (e: Exception) {
+                handleException(e, "Error checking user data")
+            }
         }
     }
 
@@ -52,7 +97,7 @@ class DropViewModel @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     showToast(context, "Sign-Up Successful")
-                    navController.navigate(Route.LoginScreen.route) // Navigate to Login Screen
+                    navController.navigate(Route.UserDataCollectionScreen.route) // Navigate to UserDataCollection Screen
                 } else {
                     showToast(context, "Sign-Up Failed: ${task.exception?.message}")
                 }
@@ -72,7 +117,7 @@ class DropViewModel @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("Login Success", "Successfully logged in")
-                    navController.navigate(Route.BottomNav.route)
+                    checkUserData(navController) // Check user data and navigate accordingly
                     showToast(context, "Login Successful")
                 } else {
                     showToast(context, "Login Failed: ${task.exception?.message}")
@@ -80,85 +125,6 @@ class DropViewModel @Inject constructor(
             }
     }
 
-    /**
-     * Create or update the user's profile in Firestore.
-     */
-    fun createOrUpdateProfile(
-        name: String? = null,
-        number: String? = null,
-        imageUrl: String? = null
-    ) {
-        val uid = auth.currentUser?.uid ?: return
-        val updatedUserData = UserData(
-            userId = uid,
-            name = name ?: userData.value?.name,
-            number = number ?: userData.value?.number,
-            imageUrl = imageUrl
-        )
-
-        inProcess.value = true
-        db.collection(USER_NODE).document(uid).get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                // Update existing user data
-                db.collection(USER_NODE).document(uid).update(
-                    mapOf(
-                        "name" to updatedUserData.name,
-                        "number" to updatedUserData.number,
-                        "imageUrl" to updatedUserData.imageUrl
-                    )
-                )
-            } else {
-                // Create new user data
-                db.collection(USER_NODE).document(uid).set(updatedUserData)
-            }
-            inProcess.value = false
-            getUserData(uid) // Refresh user data
-        }.addOnFailureListener {
-            handleException(it, "Cannot Retrieve User")
-        }
-    }
-
-    /**
-     * Retrieve the user's data from Firestore in real-time.
-     */
-    private fun getUserData(uid: String) {
-        db.collection(USER_NODE).document(uid).addSnapshotListener { snapshot, exception ->
-            if (exception != null) {
-                handleException(exception, "Cannot Retrieve User")
-                return@addSnapshotListener
-            }
-
-            snapshot?.toObject<UserData>()?.let {
-                userData.value = it
-                inProcess.value = false
-            }
-        }
-    }
-
-    /**
-     * Upload a profile image to Firebase Storage and update the user's profile with the image URL.
-     */
-    fun uploadProfileImage(uri: Uri) {
-        uploadImage(uri) { imageUrl ->
-            userData.value?.userId?.let { userId ->
-                createOrUpdateProfile(imageUrl = imageUrl.toString())
-            }
-        }
-    }
-
-    /**
-     * Upload an image to Firebase Storage.
-     */
-    private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit) {
-        inProcess.value = true
-        val storageRef = storage.reference.child("images/${UUID.randomUUID()}")
-        storageRef.putFile(uri).addOnSuccessListener {
-            it.metadata?.reference?.downloadUrl?.addOnSuccessListener(onSuccess)
-            inProcess.value = false
-        }.addOnFailureListener {
-            handleException(it)
-        }
-    }
 
     /**
      * Log out the current user and reset state.
@@ -173,7 +139,7 @@ class DropViewModel @Inject constructor(
     /**
      * Handle and log exceptions.
      */
-    fun handleException(exception: Exception? = null, customMessage: String = "") {
+    private fun handleException(exception: Exception? = null, customMessage: String = "") {
         val errorMessage = exception?.localizedMessage ?: customMessage
         Log.e("Tag", errorMessage, exception)
         eventMutableState.value = Event(errorMessage)
@@ -186,4 +152,57 @@ class DropViewModel @Inject constructor(
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
+
+    /**
+     * Create or update user profile in Fire store and upload profile image to Storage
+     */
+    fun createOrUpdateProfile(name: String, number: String, imageUri: String? = null) {
+        viewModelScope.launch {
+            _profileUpdateStatus.value = ProfileUpdateStatus.IDLE
+            val userId = auth.currentUser?.uid ?: run {
+                handleException(Exception("User ID is null"), "Failed to get user ID")
+                _profileUpdateStatus.value = ProfileUpdateStatus.FAILURE
+                return@launch
+            }
+
+            try {
+
+                val uid = auth.currentUser?.uid
+
+                val userProfile =
+                    UserData(userId = uid, name = name, number = number, imageUrl = null)
+
+                // Upload profile image if exists
+                val imageUrl = imageUri?.let { Uri.parse(it)?.let { uri -> uploadProfileImage(uri) } }
+
+                // Update Fire store user profile
+                userProfile.copy(imageUrl = imageUrl).let { updatedProfile ->
+                    db.collection("users").document(userId).set(updatedProfile)
+                }
+
+                _profileUpdateStatus.value = ProfileUpdateStatus.SUCCESS
+            } catch (e: Exception) {
+                handleException(e, "Failed to update profile")
+                _profileUpdateStatus.value = ProfileUpdateStatus.FAILURE
+            }
+        }
+    }
+
+
+    suspend fun uploadProfileImage(uri: Uri): String? {
+        val userId = auth.currentUser?.uid ?: return null
+        val imageRef = storage.reference.child("profile_images/$userId/${UUID.randomUUID()}")
+        return try {
+            Log.d("Upload", "Uploading image: $uri")
+            imageRef.putFile(uri).await()
+            val downloadUrl = imageRef.downloadUrl.await().toString()
+            Log.d("Upload", "Upload successful, download URL: $downloadUrl")
+            downloadUrl
+        } catch (e: Exception) {
+            handleException(e, "Failed to upload profile image")
+            null
+        }
+    }
+
+
 }

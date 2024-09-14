@@ -2,9 +2,9 @@ package com.example.tripdrop.data
 
 data class UserData(
     val userId : String?= "",
-    val name : String?= "",
-    val number : String?= "",
-    val imageUrl : String?= ""
+    var name : String?= "",
+    var number : String?= "",
+    var imageUrl : String?= ""
 ){
     fun toMap() = mapOf(
         "userId" to userId,

@@ -133,6 +133,11 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.7.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
 
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
+
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // new Splash Screen API

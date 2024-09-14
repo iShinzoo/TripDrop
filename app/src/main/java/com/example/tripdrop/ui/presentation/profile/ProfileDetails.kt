@@ -1,8 +1,6 @@
 package com.example.tripdrop.ui.presentation.profile
 
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,7 +60,7 @@ fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
     // State to manage user input
     var name by rememberSaveable { mutableStateOf(userData?.name ?: "") }
     var number by rememberSaveable { mutableStateOf(userData?.number ?: "") }
-    val imageUrl = userData?.imageUrl
+    val imageUrl = vm.userData.value?.imageUrl
 
     val context = LocalContext.current
 
@@ -71,7 +69,7 @@ fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
         imageUrl = imageUrl,
         vm = vm,
         onSave = {
-            vm.createOrUpdateProfile(name = name, number = number, imageUrl = imageUrl)
+            vm.createOrUpdateProfile(name = name, number = number, imageUri = imageUrl)
             Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT).show()
         },
         onLogout = {
@@ -105,9 +103,16 @@ fun ProfileContent(
     var isNumberFieldEnabled by remember { mutableStateOf(false) }
 
     // Launcher for picking a profile image
-    val chooseProfileImage = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { vm.uploadProfileImage(uri) }
-    }
+//    val chooseProfileImage =
+//        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+//            uri?.let {
+//                // Launch a coroutine to call the suspend function
+//                viewModelScope.launch {
+//                    vm.uploadProfileImage(uri)
+//                }
+//            }
+//        }
+
 
     Column(
         modifier = Modifier.fillMaxSize().background(Color.White)
@@ -174,7 +179,9 @@ fun ProfileContent(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(100.dp)
-                    .clickable { chooseProfileImage.launch("image/*") }
+                    .clickable {
+//                        chooseProfileImage.launch("image/*")
+                    }
                     .clip(CircleShape)
             )
             Spacer(modifier = Modifier.height(16.dp))

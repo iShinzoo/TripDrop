@@ -1,5 +1,7 @@
 package com.example.tripdrop.ui.presentation
 
+import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -27,34 +29,52 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
+import com.example.tripdrop.ui.navigation.Route
 
 
 @Composable
-fun UserDataCollection(vm : DropViewModel) {
+fun UserDataCollectionScreen(
+    navController: NavController,
+    vm: DropViewModel
+) {
+    val context = LocalContext.current
 
-    var name by remember { mutableStateOf("") }
-    var number by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var number by rememberSaveable { mutableStateOf("") }
+    var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
-    // Launcher for picking a profile image
-    val chooseProfileImage = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { vm.uploadProfileImage(uri) }
+    val chooseProfileImage =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let { imageUri = it }
+        }
+
+    val profileUpdateStatus by vm.profileUpdateStatus.collectAsState()
+
+    LaunchedEffect(profileUpdateStatus) {
+        if (profileUpdateStatus == DropViewModel.ProfileUpdateStatus.SUCCESS) {
+            navController.navigate(Route.BottomNav.route) {
+                popUpTo(Route.BottomNav.route) { inclusive = true }
+            }
+        }
     }
 
     Box(
@@ -63,11 +83,12 @@ fun UserDataCollection(vm : DropViewModel) {
             .background(colorResource(id = R.color.white))
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(start = 16.dp, top = 80.dp, end = 16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, top = 80.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Title Text
             Text(
                 text = "Basic Info",
                 fontSize = 24.sp,
@@ -75,30 +96,33 @@ fun UserDataCollection(vm : DropViewModel) {
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
-
+            CommonImage(
+                data = imageUri?.toString(),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        chooseProfileImage.launch("image/*")
+                    }
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Upload Profile Picture Text
             Text(
                 text = "Upload a Profile Picture",
                 fontSize = 16.sp,
-                color = Color.Gray
+                color = Color.Black
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(38.dp))
 
-            // Name TextField
-            Spacer(modifier = Modifier.height(18.dp))
-
-            // User Information Updating Section
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Name TextField
                 OutlinedTextField(
                     modifier = Modifier.width(380.dp),
                     value = name,
@@ -120,9 +144,8 @@ fun UserDataCollection(vm : DropViewModel) {
                     }
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-                // Phone Number TextField
                 OutlinedTextField(
                     modifier = Modifier.width(380.dp),
                     value = number,
@@ -146,14 +169,14 @@ fun UserDataCollection(vm : DropViewModel) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Forward Button
                 Button(
                     onClick = {
-                        // Navigate to the next screen
-//                navController.navigate("nextScreen")
+                        vm.createOrUpdateProfile(name = name, number = number, imageUri = imageUri.toString())
+                        Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT)
+                            .show()
                     },
                     modifier = Modifier
-                        .size(60.dp) // Size of the circular button
+                        .size(60.dp)
                         .clip(CircleShape)
                         .background(Color.Blue),
                     contentPadding = PaddingValues(0.dp),
@@ -162,7 +185,7 @@ fun UserDataCollection(vm : DropViewModel) {
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowForwardIos, // Forward icon resource
+                        imageVector = Icons.Default.ArrowForwardIos,
                         contentDescription = "Forward",
                         tint = Color.White
                     )

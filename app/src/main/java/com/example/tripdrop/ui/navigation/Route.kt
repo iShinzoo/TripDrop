@@ -12,4 +12,5 @@ sealed class Route(val route: String) {
     data object BottomNav : Route("bottomNav") // corrected name to match usage
     data object SingleChatScreen : Route("singleChatScreen")
     data object ProfileDetailsScreen : Route("profileDetailsScreen")
+    data object UserDataCollectionScreen : Route("userDataCollectionScreen")
 }

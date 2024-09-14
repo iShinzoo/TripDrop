@@ -22,6 +22,8 @@ import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
+import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
+import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
@@ -64,11 +66,20 @@ fun BottomBar(vm: DropViewModel) {
             composable(Route.NotificationScreen.route) {
                 NotificationScreen()
             }
+            composable(Route.WelcomeScreen.route) {
+                WelcomeScreen(navController)
+            }
             composable(Route.LoginScreen.route) {
                 LoginScreen(navController, vm)
             }
+            composable(Route.SignUpScreen.route) {
+                SignUpScreen(navController, vm)
+            }
             composable(Route.ProfileScreen.route) {
                 ProfileScreen(navController, vm)
+            }
+            composable(Route.UserDataCollectionScreen.route) {
+                UserDataCollectionScreen(navController, vm)
             }
             composable(Route.ProductDetailsScreen.route) {
                 ProductDetailsScreen(navController)
