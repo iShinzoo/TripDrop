@@ -58,7 +58,7 @@ fun BottomBar(vm: DropViewModel) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Route.HomeScreen.route) {
-                HomeScreen(navController)
+                HomeScreen(navController,vm)
             }
             composable(Route.PostScreen.route) {
                 PostScreen(vm)
@@ -81,8 +81,11 @@ fun BottomBar(vm: DropViewModel) {
             composable(Route.UserDataCollectionScreen.route) {
                 UserDataCollectionScreen(navController, vm)
             }
-            composable(Route.ProductDetailsScreen.route) {
-                ProductDetailsScreen(navController)
+            composable("productDetailsScreen/{productId}") { backStackEntry ->
+                val productId = backStackEntry.arguments?.getString("productId")
+                productId?.let {
+                    ProductDetailsScreen(vm = vm, productId = it, navController = navController)
+                }
             }
             composable(Route.SingleChatScreen.route) {
                 SingleChatScreen()

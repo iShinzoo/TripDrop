@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,17 +47,25 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
+import com.example.tripdrop.data.Product
 import com.example.tripdrop.ui.navigation.Route
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController,vm : DropViewModel) {
+    var productList by remember { mutableStateOf(listOf<Product>()) }
+
+    // Fetch the product data from Fire store
+    LaunchedEffect(Unit) {
+         vm.fetchProductsFromFirestore{ products ->
+            productList = products
+        }
+    }
 
     BackHandler(true) {
         (navController.context as ComponentActivity).finish()
@@ -65,10 +74,9 @@ fun HomeScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .background(colorResource(id = R.color.white))
-            .fillMaxSize() // Fill the screen
-            .padding(12.dp) // Add padding for better spacing on different screens
+            .fillMaxSize()
+            .padding(12.dp)
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,23 +87,15 @@ fun HomeScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(90.dp))
             SearchBar()
             Spacer(modifier = Modifier.height(12.dp))
-            DetailsCard {
-                navController.navigate(route = Route.ProductDetailsScreen.route)
-            }
-            DetailsCard {
-                navController.navigate(route = Route.ProductDetailsScreen.route)
-            }
-            DetailsCard {
-                navController.navigate(route = Route.ProductDetailsScreen.route)
-            }
-            DetailsCard {
-                navController.navigate(route = Route.ProductDetailsScreen.route)
-            }
-            DetailsCard {
-                navController.navigate(route = Route.ProductDetailsScreen.route)
+
+            // Dynamically load product cards
+            productList.forEach { product ->
+                DetailsCard(product) {
+                    navController.navigate("productDetailsScreen/${product.productId}")
+                }
             }
         }
-        // TopAppBar fixed at the top
+
         TopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -163,14 +163,16 @@ fun SearchBar() {
     )
 }
 
+
 @Composable
 fun DetailsCard(
+    product: Product,
     onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(235.dp) // Adjusted to your requirement of 400dp height
+            .height(235.dp)
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -183,61 +185,61 @@ fun DetailsCard(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Product Info (Product Name, Description, and Image)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.weight(1f), // Adjusted to use available space
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "Product Name",
-                        color = colorResource(id = R.color.black),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    product.title?.let {
+                        Text(
+                            text = it,
+                            color = colorResource(id = R.color.black),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Product Description",
-                        color = colorResource(id = R.color.black),
-                        fontSize = 18.sp
-                    )
+                    product.description?.let {
+                        Text(
+                            text = it,
+                            color = colorResource(id = R.color.black),
+                            fontSize = 18.sp
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp)) // Space between text and image
+                Spacer(modifier = Modifier.width(16.dp))
 
                 Image(
-                    painter = rememberImagePainter(data = "https://via.placeholder.com/100"),
+                    painter = rememberImagePainter(data = product.imageUrl),
                     contentDescription = "Product Image",
                     modifier = Modifier
                         .size(100.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.LightGray)
-                        .align(Alignment.Bottom)
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Product Price, Share Icon, and Details Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "₹999",
+                    text = "₹${product.rewards}",
                     color = colorResource(id = R.color.black),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.width(16.dp)) // Ensure consistent spacing
+                Spacer(modifier = Modifier.width(16.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -249,7 +251,7 @@ fun DetailsCard(
                         modifier = Modifier.size(24.dp)
                     )
 
-                    Spacer(modifier = Modifier.width(16.dp)) // Space between icon and button
+                    Spacer(modifier = Modifier.width(16.dp))
 
                     Button(
                         onClick = onClick,
@@ -267,9 +269,3 @@ fun DetailsCard(
     }
 }
 
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
-}

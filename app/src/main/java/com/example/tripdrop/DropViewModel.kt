@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -35,6 +36,12 @@ class DropViewModel @Inject constructor(
     private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+
+    // LiveData to observe product details
+    private val _productDetails = MutableLiveData<Product?>()
+    val productDetails: MutableLiveData<Product?> = _productDetails
+
+    private val firestore = FirebaseFirestore.getInstance()
 
     // StateFlow for profile update status
     private val _profileUpdateStatus = MutableStateFlow(ProfileUpdateStatus.IDLE)
@@ -269,4 +276,36 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    // Function to fetch product details from Firestore
+    fun fetchProductDetails(productId: String) {
+        firestore.collection("products")
+            .document(productId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val product = document.toObject(Product::class.java)
+                    _productDetails.value = product
+                } else {
+                    Log.e("Firestore", "Product not found")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error fetching product details", exception)
+            }
+    }
+
+    // Function to fetch products from Firestore
+    fun fetchProductsFromFirestore(onProductsFetched: (List<Product>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("products").get()
+            .addOnSuccessListener { result ->
+                val productList = result.mapNotNull { document ->
+                    document.toObject(Product::class.java).copy(productId = document.id)
+                }
+                onProductsFetched(productList)
+            }
+            .addOnFailureListener {
+                // Handle failure
+            }
+    }
 }
