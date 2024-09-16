@@ -100,51 +100,32 @@ fun BottomBar(vm: DropViewModel) {
     }
 }
 
-
 @Composable
 fun MyBottomBar(navController: NavHostController) {
-    // Get the current back stack entry
-    val backStackEntry by navController.currentBackStackEntryAsState()
-
     // Data class to define bottom navigation items
-    data class BottomNavItem(
-        val title: String,
-        val route: String,
-        val icon: ImageVector
+    val navItems = listOf(
+        BottomNavItem("Home", Route.HomeScreen.route, Icons.Rounded.Home),
+        BottomNavItem("Post", Route.PostScreen.route, Icons.Rounded.AddBox),
+        BottomNavItem("Notification", Route.NotificationScreen.route, Icons.Rounded.Notifications),
+        BottomNavItem("Profile", Route.ProfileScreen.route, Icons.Rounded.AccountCircle)
     )
 
-    // Define the list of navigation items
-    val navItems = remember {
-        listOf(
-            BottomNavItem("Home", Route.HomeScreen.route, Icons.Rounded.Home),
-            BottomNavItem("Post", Route.PostScreen.route, Icons.Rounded.AddBox),
-            BottomNavItem("Notification", Route.NotificationScreen.route, Icons.Rounded.Notifications),
-            BottomNavItem("Profile", Route.ProfileScreen.route, Icons.Rounded.AccountCircle)
-        )
-    }
-
-    // Create an elevated card for the bottom bar
     ElevatedCard(
         modifier = Modifier
-            .shadow(32.dp, CircleShape, ambientColor = Color.Black, spotColor = Color.Black)
             .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
             .height(60.dp),
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(10.dp)
     ) {
         BottomAppBar(
-            containerColor = Color.White,
+            containerColor = Color.White, // Consistent with Material 3
             tonalElevation = 10.dp
         ) {
             // Loop through navigation items and create a NavigationBarItem for each
             navItems.forEach { item ->
-                val isSelected = item.route == backStackEntry?.destination?.route
+                val isSelected = item.route == navController.currentBackStackEntry?.destination?.route
                 NavigationBarItem(
-                    modifier = Modifier
-                        .background(Color.Transparent)
-                        .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
                     selected = isSelected,
-                    enabled = true,
                     onClick = {
                         navController.navigate(item.route) {
                             // Navigate to the destination and pop up to start destination
@@ -152,6 +133,7 @@ fun MyBottomBar(navController: NavHostController) {
                                 saveState = true
                             }
                             launchSingleTop = true
+                            restoreState = true
                         }
                     },
                     alwaysShowLabel = false,
@@ -159,7 +141,7 @@ fun MyBottomBar(navController: NavHostController) {
                         Icon(
                             modifier = Modifier.size(27.dp),
                             imageVector = item.icon,
-                            tint = if (isSelected) colorResource(id = R.color.white) else Color.Gray,
+                            tint = if (isSelected) colorResource(id = R.color.black) else Color.Gray,
                             contentDescription = item.title
                         )
                     }
@@ -168,3 +150,5 @@ fun MyBottomBar(navController: NavHostController) {
         }
     }
 }
+
+data class BottomNavItem(val title: String, val route: String, val icon: ImageVector)

@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
@@ -188,7 +189,7 @@ fun ProductCard(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    product.description?.let {
+                    product.title?.let {
                         val truncatedTitle = if (it.length > 12) {
                             "${it.take(12)}..."
                         } else {
@@ -226,7 +227,8 @@ fun ProductCard(
                     modifier = Modifier
                         .size(100.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Color.LightGray)
+                        .background(Color.LightGray),
+                    contentScale = ContentScale.Crop
                 )
             }
 

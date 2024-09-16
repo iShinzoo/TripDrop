@@ -1,35 +1,14 @@
 package com.example.tripdrop.ui.presentation.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.DeliveryDining
-import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material.icons.filled.Policy
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,14 +25,16 @@ import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.CommonImage
+import com.example.tripdrop.ui.presentation.DefaultPadding
+import com.example.tripdrop.ui.presentation.IconSize
+import com.example.tripdrop.ui.presentation.LargePadding
+import com.example.tripdrop.ui.presentation.SmallSpacing
 
 @Composable
 fun ProfileScreen(navController: NavController, vm: DropViewModel) {
-
     val userData = vm.userData.value
     val imageUrl = userData?.imageUrl
 
-    // Main container for the Profile Screen
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,74 +43,60 @@ fun ProfileScreen(navController: NavController, vm: DropViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(DefaultPadding)
                 .align(Alignment.TopStart)
         ) {
-            // Header with profile title
-            Text(
-                text = "Profile",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, start = 8.dp),
-                color = colorResource(id = R.color.black),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(32.dp)) // Space between header and content
+            ProfileHeader()
+            Spacer(modifier = Modifier.height(LargePadding))
         }
 
-        // Scrollable content below the header
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = 88.dp, // Adjust based on the height of the header
-                    start = 16.dp,
-                    end = 16.dp
+                    top = 88.dp, // Adjust based on header height
+                    start = DefaultPadding,
+                    end = DefaultPadding
                 )
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // User details card
             UserDetailsCard(
                 onMove = { navController.navigate(route = Route.ProfileDetailsScreen.route) },
                 imageUrl = imageUrl
             )
-            Spacer(modifier = Modifier.height(16.dp)) // Space between items
-            // Buttons for additional profile options
-            CustomButton(text = "Your Orders", leadingIcon = Icons.Default.DeliveryDining) { }
-            Spacer(modifier = Modifier.height(16.dp))
-            CustomButton(text = "Payments", leadingIcon = Icons.Default.Payment) { }
-            Spacer(modifier = Modifier.height(16.dp))
-            CustomButton(text = "Help", leadingIcon = Icons.Default.QuestionMark) { }
-            Spacer(modifier = Modifier.height(16.dp))
-            CustomButton(text = "Policies", leadingIcon = Icons.Default.Policy) { }
-            Spacer(modifier = Modifier.height(16.dp))
-            CustomButton(text = "Feedback Form", leadingIcon = Icons.Default.Forum) { }
+            Spacer(modifier = Modifier.height(SmallSpacing))
+            ProfileOptionButtons(navController)
         }
     }
 }
 
 @Composable
+fun ProfileHeader() {
+    Text(
+        text = "Profile",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = LargePadding, start = SmallSpacing),
+        color = colorResource(id = R.color.black),
+        fontSize = 32.sp,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
 fun UserDetailsCard(onMove: () -> Unit, imageUrl: String?) {
-    // Card displaying user details
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(SmallSpacing),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // User profile image
+        Column(modifier = Modifier.padding(DefaultPadding)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 CommonImage(
                     data = imageUrl,
                     contentScale = ContentScale.Crop,
@@ -137,10 +104,7 @@ fun UserDetailsCard(onMove: () -> Unit, imageUrl: String?) {
                         .size(60.dp)
                         .clip(CircleShape)
                 )
-
-                Spacer(modifier = Modifier.width(16.dp)) // Space between image and text
-
-                // User name and number
+                Spacer(modifier = Modifier.width(DefaultPadding))
                 Column {
                     Text(
                         text = "Aman Nishant",
@@ -155,9 +119,7 @@ fun UserDetailsCard(onMove: () -> Unit, imageUrl: String?) {
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp)) // Space between user details and button
-
+            Spacer(modifier = Modifier.height(DefaultPadding))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onMove,
@@ -174,20 +136,34 @@ fun UserDetailsCard(onMove: () -> Unit, imageUrl: String?) {
 }
 
 @Composable
+fun ProfileOptionButtons(navController: NavController) {
+    val buttons = listOf(
+        "Your Orders" to Icons.Default.DeliveryDining,
+        "Payments" to Icons.Default.Payment,
+        "Help" to Icons.Default.QuestionMark,
+        "Policies" to Icons.Default.Policy,
+        "Feedback Form" to Icons.Default.Forum
+    )
+    buttons.forEach { (text, icon) ->
+        Spacer(modifier = Modifier.height(SmallSpacing))
+        CustomButton(text = text, leadingIcon = icon) { /* Navigate as required */ }
+    }
+}
+
+@Composable
 fun CustomButton(
     text: String,
     leadingIcon: ImageVector,
     onClick: () -> Unit
 ) {
-    // Custom button with an icon and text
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .height(48.dp), // Button height
-        contentPadding = PaddingValues(horizontal = 16.dp),
+            .padding(SmallSpacing)
+            .height(48.dp),
+        contentPadding = PaddingValues(horizontal = DefaultPadding),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Black,
             contentColor = Color.White
@@ -198,16 +174,12 @@ fun CustomButton(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Leading icon
             Icon(
                 imageVector = leadingIcon,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(IconSize)
             )
-
-            Spacer(modifier = Modifier.width(12.dp)) // Space between icon and text
-
-            // Center text
+            Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = text,
                 fontSize = 16.sp,
@@ -215,12 +187,10 @@ fun CustomButton(
                 color = Color.White,
                 modifier = Modifier.weight(1f)
             )
-
-            // Trailing icon
             Icon(
                 imageVector = Icons.Default.ArrowForwardIos,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(IconSize)
             )
         }
     }
