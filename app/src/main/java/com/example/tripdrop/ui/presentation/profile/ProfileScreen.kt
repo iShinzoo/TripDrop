@@ -93,7 +93,7 @@ fun ProfileScreen(navController: NavController, vm: DropViewModel) {
         ) {
             // User details card
             UserDetailsCard(
-                onMove = { navController.navigate(route = Route.ProfileDetailsScreen.route) },
+                onMove = { navController.navigate(route = Route.ProfileDetailScreen.name) },
                 imageUrl = imageUrl
             )
             Spacer(modifier = Modifier.height(16.dp)) // Space between items

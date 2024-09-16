@@ -39,7 +39,7 @@ fun WelcomeScreen(navController: NavController) {
 
     val auth = Firebase.auth
     if (auth.currentUser != null) {
-        navController.navigate(Route.BottomNav.route)
+        navController.navigate(Route.BottomNav.name)
     }
 
     BackHandler(true) {
@@ -94,7 +94,7 @@ fun WelcomeScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    navController.navigate(route = Route.LoginScreen.route)
+                    navController.navigate(route = Route.LoginScreen.name)
                 },
                 modifier = Modifier
                     .width(320.dp)
@@ -115,7 +115,7 @@ fun WelcomeScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    navController.navigate(route = Route.SignUpScreen.route)
+                    navController.navigate(route = Route.SignUpScreen.name)
                 },
                 modifier = Modifier
                     .width(320.dp)

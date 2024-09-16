@@ -71,8 +71,8 @@ fun UserDataCollectionScreen(
 
     LaunchedEffect(profileUpdateStatus) {
         if (profileUpdateStatus == DropViewModel.ProfileUpdateStatus.SUCCESS) {
-            navController.navigate(Route.BottomNav.route) {
-                popUpTo(Route.BottomNav.route) { inclusive = true }
+            navController.navigate(Route.BottomNav.name) {
+                popUpTo(Route.BottomNav.name) { inclusive = true }
             }
         }
     }

@@ -62,11 +62,11 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
 
     val signIn by remember(vm.signIn) { vm.signIn }
     if (signIn) {
-        navController.navigate(Route.BottomNav.route)
+        navController.navigate(Route.BottomNav.name)
     }
 
     BackHandler {
-        navController.navigate(Route.WelcomeScreen.route)
+        navController.navigate(Route.WelcomeScreen.name)
     }
 
     // Root container
@@ -287,7 +287,7 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
                 Text(
                     text = "Sign Up",
                     modifier = Modifier.clickable {
-                        navController.navigate(route = Route.SignUpScreen.route)
+                        navController.navigate(route = Route.SignUpScreen.name)
                     },
                     color = colorResource(id = R.color.black),
                     fontSize = 18.sp,

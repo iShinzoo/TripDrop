@@ -66,8 +66,8 @@ class DropViewModel @Inject constructor(
                 // Handle null userId
                 Log.e("CheckUserData", "User ID is null. User might not be signed in.")
                 // Optionally, navigate to login screen or show an error message
-                navController.navigate(Route.LoginScreen.route) {
-                    popUpTo(Route.LoginScreen.route) { inclusive = true }
+                navController.navigate(Route.LoginScreen.name) {
+                    popUpTo(Route.LoginScreen.name) { inclusive = true }
                 }
                 return@launch
             }
@@ -76,13 +76,13 @@ class DropViewModel @Inject constructor(
                 val userDoc = db.collection("users").document(userId).get().await()
                 if (userDoc.exists()) {
                     // User data exists, navigate to HomeScreen
-                    navController.navigate(Route.BottomNav.route) {
-                        popUpTo(Route.BottomNav.route) { inclusive = true }
+                    navController.navigate(Route.BottomNav.name) {
+                        popUpTo(Route.BottomNav.name) { inclusive = true }
                     }
                 } else {
                     // User data does not exist, navigate to UserDataCollectionScreen
-                    navController.navigate(Route.UserDataCollectionScreen.route) {
-                        popUpTo(Route.UserDataCollectionScreen.route) { inclusive = true }
+                    navController.navigate(Route.UserDataCollectionScreen.name) {
+                        popUpTo(Route.UserDataCollectionScreen.name) { inclusive = true }
                     }
                 }
             } catch (e: Exception) {
@@ -105,7 +105,7 @@ class DropViewModel @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     showToast(context, "Sign-Up Successful")
-                    navController.navigate(Route.UserDataCollectionScreen.route) // Navigate to UserDataCollection Screen
+                    navController.navigate(Route.UserDataCollectionScreen.name) // Navigate to UserDataCollection Screen
                 } else {
                     showToast(context, "Sign-Up Failed: ${task.exception?.message}")
                 }

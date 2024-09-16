@@ -61,7 +61,7 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
     var passwordHidden by remember { mutableStateOf(true) }
 
     BackHandler {
-        navController.navigate(Route.WelcomeScreen.route)
+        navController.navigate(Route.WelcomeScreen.name)
     }
 
     CheckUserSignedIn(vm = vm, navController = navController)
@@ -225,7 +225,7 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
                 Text(
                     text = "Sign In",
                     modifier = Modifier.clickable {
-                        navController.navigate(route = Route.LoginScreen.route)
+                        navController.navigate(route = Route.LoginScreen.name)
                     },
                     color = colorResource(id = R.color.black),
                     fontSize = 18.sp,
