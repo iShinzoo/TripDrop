@@ -1,5 +1,6 @@
 package com.example.tripdrop.ui.presentation.home
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -27,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -54,19 +57,19 @@ import coil.compose.rememberImagePainter
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.Product
-import com.example.tripdrop.ui.navigation.Route
 
 @Composable
-fun HomeScreen(navController: NavController,vm : DropViewModel) {
+fun HomeScreen(navController: NavController, vm: DropViewModel) {
     var productList by remember { mutableStateOf(listOf<Product>()) }
 
-    // Fetch the product data from Fire store
+    // Fetch product data from Fire store
     LaunchedEffect(Unit) {
-         vm.fetchProductsFromFirestore{ products ->
+        vm.fetchProductsFromFirestore { products ->
             productList = products
         }
     }
 
+    // Handle back press to exit the app
     BackHandler(true) {
         (navController.context as ComponentActivity).finish()
     }
@@ -88,26 +91,21 @@ fun HomeScreen(navController: NavController,vm : DropViewModel) {
             SearchBar()
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Dynamically load product cards
+            // Display product cards dynamically
             productList.forEach { product ->
-                DetailsCard(product) {
+                ProductCard(product, onDetailsClick = {
                     navController.navigate("productDetailsScreen/${product.productId}")
-                }
+                })
             }
         }
 
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .align(Alignment.TopStart)
-        )
+        CustomTopAppBar(modifier = Modifier.align(Alignment.TopStart))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(modifier: Modifier = Modifier) {
+fun CustomTopAppBar(modifier: Modifier = Modifier) {
     TopAppBar(
         title = {
             Text(
@@ -126,12 +124,13 @@ fun TopAppBar(modifier: Modifier = Modifier) {
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.white)),
         modifier = modifier
+            .fillMaxWidth()
+            .height(70.dp)
     )
 }
 
 @Composable
 fun SearchBar() {
-
     var query by remember { mutableStateOf("") }
 
     OutlinedTextField(
@@ -141,22 +140,16 @@ fun SearchBar() {
             .fillMaxWidth()
             .padding(start = 8.dp, end = 8.dp)
             .background(Color.LightGray, shape = RoundedCornerShape(32.dp)),
-        placeholder = {
-            Text(
-                text = "Search", color = Color.Black
-            )
-        },
+        placeholder = { Text(text = "Search", color = Color.Black) },
         leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search, contentDescription = null, tint = Color.Black
-            )
+            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = Color.Black)
         },
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.Transparent,  // Removes the black border when focused
-            unfocusedBorderColor = Color.Transparent, // Removes the black border when unfocused
-            disabledBorderColor = Color.Transparent,  // Ensures the border is transparent when disabled
-            errorBorderColor = Color.Transparent,     // Ensures the border is transparent when there's an error
+            focusedBorderColor = Color.Transparent,
+            unfocusedBorderColor = Color.Transparent,
+            disabledBorderColor = Color.Transparent,
+            errorBorderColor = Color.Transparent,
             focusedTextColor = Color.Black,
             cursorColor = Color.Black
         )
@@ -165,19 +158,19 @@ fun SearchBar() {
 
 
 @Composable
-fun DetailsCard(
+fun ProductCard(
     product: Product,
-    onClick: () -> Unit
+    onDetailsClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(235.dp)
-            .padding(8.dp),
+            .padding(8.dp)
+            .height(235.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(
@@ -195,18 +188,30 @@ fun DetailsCard(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    product.title?.let {
+                    product.description?.let {
+                        val truncatedTitle = if (it.length > 12) {
+                            "${it.take(12)}..."
+                        } else {
+                            it
+                        }
                         Text(
-                            text = it,
+                            text = truncatedTitle,
                             color = colorResource(id = R.color.black),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
+
+                    // Truncate the description if it exceeds 44 characters
                     product.description?.let {
+                        val truncatedDescription = if (it.length > 44) {
+                            "${it.take(44)}..."
+                        } else {
+                            it
+                        }
                         Text(
-                            text = it,
+                            text = truncatedDescription,
                             color = colorResource(id = R.color.black),
                             fontSize = 18.sp
                         )
@@ -244,17 +249,32 @@ fun DetailsCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share Icon",
-                        tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    IconButton(onClick = {
+                        val shareIntent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            type = "text/plain"
+                            putExtra(
+                                Intent.EXTRA_TEXT, """
+                                    Check out this product on Dropit:
+                                    Title: ${product.title}
+                                    Description: ${product.description}
+                                    Price: ₹${product.rewards}
+                                """.trimIndent()
+                            )
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "Share Product"))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share Icon",
+                            tint = Color.Black
+                        )
+                    }
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Button(
-                        onClick = onClick,
+                        onClick = onDetailsClick,
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black,
@@ -268,4 +288,3 @@ fun DetailsCard(
         }
     }
 }
-
