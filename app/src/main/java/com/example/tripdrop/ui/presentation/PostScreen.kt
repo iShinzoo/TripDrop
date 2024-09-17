@@ -60,7 +60,7 @@ import com.example.tripdrop.R
 import java.util.Calendar
 
 @Composable
-fun PostScreen(vm : DropViewModel) {
+fun PostScreen(vm: DropViewModel) {
 
     val context = LocalContext.current
 
@@ -77,9 +77,13 @@ fun PostScreen(vm : DropViewModel) {
     // Date Picker
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(
-        context, { _, year, month, day ->
+        context,
+        { _, year, month, day ->
             date = "$day/${month + 1}/$year"
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
     )
 
     // Time Picker
@@ -90,10 +94,9 @@ fun PostScreen(vm : DropViewModel) {
     )
 
     // Image Picker Intent
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri -> productImageUri = uri }
-    )
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(),
+            onResult = { uri -> productImageUri = uri })
 
     Box(
         modifier = Modifier
@@ -148,8 +151,7 @@ fun PostScreen(vm : DropViewModel) {
                 ),
                 placeholder = {
                     Text(
-                        text = "Enter Your Product Name",
-                        color = colorResource(id = R.color.Gray)
+                        text = "Enter Your Product Name", color = colorResource(id = R.color.Gray)
                     )
                 },
                 singleLine = true,
@@ -182,8 +184,7 @@ fun PostScreen(vm : DropViewModel) {
                 ),
                 placeholder = {
                     Text(
-                        text = "Enter Product Description",
-                        color = colorResource(id = R.color.Gray)
+                        text = "Enter Product Description", color = colorResource(id = R.color.Gray)
                     )
                 },
                 singleLine = false,
@@ -204,12 +205,11 @@ fun PostScreen(vm : DropViewModel) {
                     .height(200.dp)
                     .padding(horizontal = 16.dp)
                     .clickable { imagePickerLauncher.launch("image/*") },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, Color.Gray)
             ) {
                 Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
                 ) {
                     // Display selected image or default image
                     productImageUri?.let { uri ->
@@ -250,8 +250,7 @@ fun PostScreen(vm : DropViewModel) {
                 onValueChange = { pickupPoint = it },
                 placeholder = {
                     Text(
-                        text = "Add Pick Up Location",
-                        color = colorResource(id = R.color.Gray)
+                        text = "Add Pick Up Location", color = colorResource(id = R.color.Gray)
                     )
                 },
                 trailingIcon = {
@@ -284,8 +283,7 @@ fun PostScreen(vm : DropViewModel) {
                 onValueChange = { destinationPoint = it },
                 placeholder = {
                     Text(
-                        text = "Add Destination",
-                        color = colorResource(id = R.color.Gray)
+                        text = "Add Destination", color = colorResource(id = R.color.Gray)
                     )
                 },
                 trailingIcon = {
@@ -312,31 +310,27 @@ fun PostScreen(vm : DropViewModel) {
             // Date Picker Field
             OutlinedTextField(
                 value = date,
-                onValueChange = {date = it},
+                onValueChange = { date = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .clickable { datePickerDialog.show() },
                 placeholder = {
-                    Text(
-                        text = "Select Date",
+                    Text(text = "Select Date",
                         color = colorResource(id = R.color.Gray),
                         modifier = Modifier.clickable {
                             datePickerDialog.show()
-                        }
-                    )
+                        })
                 },
                 readOnly = true,
                 textStyle = LocalTextStyle.current.copy(fontSize = 18.sp),
                 leadingIcon = {
-                    Icon(
-                        Icons.Default.DateRange,
+                    Icon(Icons.Default.DateRange,
                         contentDescription = null,
                         tint = colorResource(id = R.color.Gray),
                         modifier = Modifier.clickable {
                             datePickerDialog.show()
-                        }
-                    )
+                        })
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
@@ -357,25 +351,21 @@ fun PostScreen(vm : DropViewModel) {
                     .padding(horizontal = 16.dp)
                     .clickable { timePickerDialog.show() },
                 placeholder = {
-                    Text(
-                        text = "Select Time",
+                    Text(text = "Select Time",
                         color = colorResource(id = R.color.Gray),
                         modifier = Modifier.clickable {
                             timePickerDialog.show()
-                        }
-                    )
+                        })
                 },
                 readOnly = true,
                 textStyle = LocalTextStyle.current.copy(fontSize = 18.sp),
                 leadingIcon = {
-                    Icon(
-                        Icons.Default.AccessTime,
+                    Icon(Icons.Default.AccessTime,
                         contentDescription = null,
                         tint = colorResource(id = R.color.Gray),
                         modifier = Modifier.clickable {
                             timePickerDialog.show()
-                        }
-                    )
+                        })
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Black,
@@ -406,8 +396,7 @@ fun PostScreen(vm : DropViewModel) {
                 ),
                 placeholder = {
                     Text(
-                        text = "Enter Product Price",
-                        color = colorResource(id = R.color.Gray)
+                        text = "Enter Product Price", color = colorResource(id = R.color.Gray)
                     )
                 },
                 singleLine = true,
@@ -424,37 +413,40 @@ fun PostScreen(vm : DropViewModel) {
             // Post Button
             Button(
                 onClick = {
-                    vm.uploadProductDetails(
-                        title = productName,
-                        description = productDesc,
-                        imageUri = productImageUri.toString(),
-                        pickupPoint = pickupPoint,
-                        deliveryPoint = destinationPoint,
-                        time = time,
-                        date = date,
-                        rewards = productPrice,
-                        context = context
-                    )
-                    Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT)
-                        .show()
+                    if (productName.isNotEmpty() && productDesc.isNotEmpty() && productImageUri != null && pickupPoint.isNotEmpty() && destinationPoint.isNotEmpty() && date.isNotEmpty() && time.isNotEmpty() && productPrice.isNotEmpty()) {
+
+                        // Call the ViewModel function to upload product details
+                        vm.uploadProductDetails(
+                            title = productName,
+                            description = productDesc,
+                            imageUri = productImageUri.toString(),
+                            pickupPoint = pickupPoint,
+                            deliveryPoint = destinationPoint,
+                            time = time,
+                            date = date,
+                            rewards = productPrice,
+                            context = context
+                        )
+                        Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT)
+                            .show()
+
+                    } else {
+                        // Handle empty fields case
+                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.black)
-                )
+                    .padding(horizontal = 16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             ) {
                 Text(
                     text = "Post",
-                    fontSize = 20.sp,
-                    color = Color.White
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

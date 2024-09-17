@@ -18,13 +18,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -38,151 +38,197 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
 import com.example.tripdrop.DropViewModel
-import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.CheckUserSignedIn
-import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
-import com.example.tripdrop.ui.theme.h1TextStyle
-import com.example.tripdrop.ui.theme.h3TextStyle
+import com.example.tripdrop.ui.presentation.buttonHeight
+import com.example.tripdrop.ui.presentation.largeTextSize
+import com.example.tripdrop.ui.presentation.smallTextSize
+import com.example.tripdrop.ui.presentation.standardPadding
 
 @Composable
 fun SignUpScreen(navController: NavController, vm: DropViewModel) {
     val context = LocalContext.current
-
-    // State variables for user input fields
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordHidden by remember { mutableStateOf(true) }
 
-    BackHandler {
-        navController.navigate(Route.WelcomeScreen.name)
-    }
-
+    BackHandler { navController.navigate(Route.WelcomeScreen.route) }
     CheckUserSignedIn(vm = vm, navController = navController)
 
-    // Main container
     Box(
         modifier = Modifier
-            .background(colorResource(id = R.color.white))
+            .background(Color.White)
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(standardPadding)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 80.dp, start = 8.dp, end = 8.dp),
+                .padding(top = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Header Text
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Let's Register",
-                    color = colorResource(id = R.color.black),
-                    fontSize = 35.sp,
-                    style = h1TextStyle,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Account",
-                    color = colorResource(id = R.color.black),
-                    fontSize = 35.sp,
-                    style = h1TextStyle,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                Text(
-                    text = "Hello Champ, hope you",
-                    color = colorResource(id = R.color.Gray),
-                    fontSize = 20.sp,
-                    style = h3TextStyle,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "have a grateful journey",
-                    color = colorResource(id = R.color.Gray),
-                    fontSize = 20.sp,
-                    style = h3TextStyle,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-            }
+            // Header Section
+            SignUpHeader()
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Email Input
-            email= TextField(icon = Icons.Default.Email, plText = "Enter your Email", prefixText = "")
-
+            EmailInputField(email) { email = it }
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Password Input
-            password = Password(icon = Icons.Default.Lock, plText = "Add Password", prefixText = "")
-
+            PasswordInputField(
+                password,
+                passwordHidden,
+                onPasswordChange = { password = it },
+                onVisibilityToggle = { passwordHidden = !passwordHidden })
 
             Spacer(modifier = Modifier.height(22.dp))
 
             // Sign Up Button
-            androidx.compose.material3.Button(
-                onClick = {
-                    vm.signUp(
-                        email = email,
-                        password = password,
-                        context = context,
-                        navController = navController
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.black))
-            ) {
-                Text(
-                    text = "Sign Up",
-                    color = colorResource(id = R.color.white),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+            SignUpButton {
+                vm.signUp(email, password, navController, context)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Sign In Navigation
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Already have an Account?" ,
-                    color = Color.DarkGray ,
-                    fontSize = 13.sp
-                )
-
-                Text(text = "Sign In" ,
-                    color = Color.Black ,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .padding(start = 5.dp)
-                        .clickable {
-                            navController.navigate(route = Route.LoginScreen.name)
-                        })
-            }
+            // Navigation to Sign In
+            SignInNavigation(navController)
         }
+    }
+}
+
+// Reusable header composable for sign-up
+@Composable
+fun SignUpHeader() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Let's Register",
+            style = MaterialTheme.typography.headlineMedium.copy(fontSize = largeTextSize),
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Account",
+            style = MaterialTheme.typography.headlineMedium.copy(fontSize = largeTextSize),
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(18.dp))
+        Text(
+            text = "Hello Champ, hope you",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = smallTextSize)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "have a grateful journey",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = smallTextSize)
+        )
+    }
+}
+
+// Email input field composable
+@Composable
+private fun EmailInputField(email: String, onValueChange: (String) -> Unit) {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = email,
+        onValueChange = onValueChange,
+        placeholder = { Text(text = "Email", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+        singleLine = true,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.LightGray,
+            cursorColor = Color.Black
+        )
+    )
+}
+
+// Password input field with visibility toggle
+@Composable
+private fun PasswordInputField(
+    password: String,
+    passwordHidden: Boolean,
+    onPasswordChange: (String) -> Unit,
+    onVisibilityToggle: () -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = password,
+        onValueChange = onPasswordChange,
+        placeholder = {
+            Text(
+                text = "Password",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+        trailingIcon = {
+            IconButton(onClick = onVisibilityToggle) {
+                val visibilityIcon =
+                    if (passwordHidden) Icons.Default.VisibilityOff else Icons.Default.Visibility
+                Icon(imageVector = visibilityIcon, contentDescription = null)
+            }
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+        visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+        singleLine = true,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.LightGray,
+            cursorColor = Color.Black
+        )
+    )
+}
+
+// Sign Up button with rounded corners
+@Composable
+fun SignUpButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(buttonHeight)
+            .clip(RoundedCornerShape(12.dp)),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+    ) {
+        Text(
+            text = "Sign Up",
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.Bold,
+            fontSize = smallTextSize
+        )
+    }
+}
+
+// Reusable composable for sign-in navigation
+@Composable
+fun SignInNavigation(navController: NavController) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Already have an Account?",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = smallTextSize)
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = "Sign In",
+            modifier = Modifier.clickable {
+                navController.navigate(Route.LoginScreen.route)
+            },
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontSize = smallTextSize,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            )
+        )
     }
 }
