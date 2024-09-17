@@ -147,4 +147,7 @@ dependencies {
     implementation ("androidx.compose.material:material:1.7.1")
     implementation ("androidx.compose.ui:ui:1.7.1")
 
+    //lottie Animations JSON support
+    implementation ("com.airbnb.android:lottie-compose:6.0.0")
+
 }

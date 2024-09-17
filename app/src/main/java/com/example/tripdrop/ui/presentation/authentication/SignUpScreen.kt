@@ -46,10 +46,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.CheckUserSignedIn
+import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
+import com.example.tripdrop.ui.theme.h1TextStyle
+import com.example.tripdrop.ui.theme.h3TextStyle
 
 @Composable
 fun SignUpScreen(navController: NavController, vm: DropViewModel) {
@@ -87,7 +91,8 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
                 Text(
                     text = "Let's Register",
                     color = colorResource(id = R.color.black),
-                    fontSize = 42.sp,
+                    fontSize = 35.sp,
+                    style = h1TextStyle,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start)
                 )
@@ -95,22 +100,25 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
                 Text(
                     text = "Account",
                     color = colorResource(id = R.color.black),
-                    fontSize = 42.sp,
+                    fontSize = 35.sp,
+                    style = h1TextStyle,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start)
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
                     text = "Hello Champ, hope you",
-                    color = colorResource(id = R.color.black),
-                    fontSize = 24.sp,
+                    color = colorResource(id = R.color.Gray),
+                    fontSize = 20.sp,
+                    style = h3TextStyle,
                     modifier = Modifier.align(Alignment.Start)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "have a grateful journey",
-                    color = colorResource(id = R.color.black),
-                    fontSize = 24.sp,
+                    color = colorResource(id = R.color.Gray),
+                    fontSize = 20.sp,
+                    style = h3TextStyle,
                     modifier = Modifier.align(Alignment.Start)
                 )
             }
@@ -118,69 +126,13 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
             Spacer(modifier = Modifier.height(32.dp))
 
             // Email Input
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.white)),
-                value = email,
-                onValueChange = { email = it },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Email,
-                        contentDescription = null,
-                        tint = colorResource(id = R.color.Gray)
-                    )
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-                placeholder = { Text(text = "Email", color = colorResource(id = R.color.Gray)) },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    cursorColor = Color.Black,
-                )
-            )
+            email= TextField(icon = Icons.Default.Email, plText = "Enter your Email", prefixText = "")
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Password Input
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.white)),
-                value = password,
-                onValueChange = { password = it },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = colorResource(id = R.color.Gray)
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                        val visibilityIcon =
-                            if (passwordHidden) Icons.Default.VisibilityOff else Icons.Default.Visibility
-                        val description = if (passwordHidden) "Show Password" else "Hide Password"
-                        Icon(
-                            imageVector = visibilityIcon,
-                            contentDescription = description,
-                            tint = colorResource(id = R.color.Gray)
-                        )
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-                placeholder = { Text(text = "Password", color = colorResource(id = R.color.Gray)) },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    cursorColor = Color.Black,
-                )
-            )
+            password = Password(icon = Icons.Default.Lock, plText = "Add Password", prefixText = "")
+
 
             Spacer(modifier = Modifier.height(22.dp))
 
@@ -216,21 +168,20 @@ fun SignUpScreen(navController: NavController, vm: DropViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Already have an Account?",
-                    color = colorResource(id = R.color.Gray),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "Already have an Account?" ,
+                    color = Color.DarkGray ,
+                    fontSize = 13.sp
                 )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = "Sign In",
-                    modifier = Modifier.clickable {
-                        navController.navigate(route = Route.LoginScreen.name)
-                    },
-                    color = colorResource(id = R.color.black),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+
+                Text(text = "Sign In" ,
+                    color = Color.Black ,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .clickable {
+                            navController.navigate(route = Route.LoginScreen.name)
+                        })
             }
         }
     }

@@ -21,7 +21,7 @@ import androidx.navigation.compose.*
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.authentication.LoginScreen
+import com.example.tripdrop.ui.presentation.authentication.LoginScreen.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen

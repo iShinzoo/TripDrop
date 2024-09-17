@@ -1,6 +1,5 @@
-package com.example.tripdrop.ui.presentation.authentication
+package com.example.tripdrop.ui.presentation.authentication.LoginScreen
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,8 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -41,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -48,9 +51,18 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
+import com.example.tripdrop.ui.theme.h1TextStyle
+import com.example.tripdrop.ui.theme.h3TextStyle
 
 @Composable
 fun LoginScreen(navController: NavController,vm : DropViewModel) {
@@ -59,6 +71,12 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
     var password by remember { mutableStateOf("") }
     var passwordHidden by remember { mutableStateOf(true) }
     val context = LocalContext.current
+
+
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.drop))
+    val progress by animateLottieCompositionAsState(composition = composition, restartOnPlay = true,
+        iterations = LottieConstants.IterateForever)
+
 
     val signIn by remember(vm.signIn) { vm.signIn }
     if (signIn) {
@@ -73,7 +91,8 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
     Box(
         modifier = Modifier
             .background(colorResource(id = R.color.white)) // Background color
-            .fillMaxSize() // Fill the screen
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())// Fill the screen
             .padding(16.dp) // Padding for spacing
     ) {
         Column(
@@ -90,8 +109,9 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
                 Text(
                     text = "Let's Sign you in",
                     color = colorResource(id = R.color.black),
-                    fontSize = 42.sp, // Large font size for readability
+                    fontSize = 35.sp, // Large font size for readability
                     fontWeight = FontWeight.Bold,
+                    style = h1TextStyle,
                     modifier = Modifier.align(Alignment.Start) // Align text to start
                 )
 
@@ -99,122 +119,52 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
 
                 Text(
                     text = "Welcome Back, ",
-                    color = colorResource(id = R.color.black),
-                    fontSize = 24.sp,
+                    color = colorResource(id = R.color.Gray),
+                    fontSize = 20.sp,
+                    style = h3TextStyle,
                     modifier = Modifier.align(Alignment.Start) // Align text to start
                 )
                 Text(
                     text = "You have been missed",
-                    color = colorResource(id = R.color.black),
-                    fontSize = 24.sp,
+                    color = colorResource(id = R.color.Gray),
+                    fontSize = 20.sp,
+                    style = h3TextStyle,
                     modifier = Modifier
                         .padding(top = 4.dp) // Spacing between texts
                         .align(Alignment.Start) // Align text to start
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            LottieAnimation(
+                modifier = Modifier.size(300.dp),
+                composition = composition,
+                progress = {progress})
 
             // Email Input Field
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.white)), // Background color
-
-                value = email,
-                onValueChange = { email = it }, // Update email
-
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Email,
-                        contentDescription = null,
-                        tint = colorResource(id = R.color.Gray)
-                    )
-                },
-
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email
-                ),
-
-                placeholder = {
-                    Text(
-                        text = "Email", color = colorResource(id = R.color.Gray)
-                    )
-                },
-
-                singleLine = true,
-
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    cursorColor = Color.Black,
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            email = TextField(icon = Icons.Default.Email, plText = "Enter Your Email" , prefixText = "")
 
             // Password Input Field
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.white)), // Background color
-
-                value = password,
-                onValueChange = { password = it }, // Update password
-
-                placeholder = {
-                    Text(
-                        text = "Password", color = colorResource(id = R.color.Gray)
-                    )
-                },
-                singleLine = true,
-
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = colorResource(id = R.color.Gray)
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                        val visibilityIcon =
-                            if (passwordHidden) Icons.Default.VisibilityOff else Icons.Default.Visibility
-                        val description = if (passwordHidden) "Show Password" else "Hide Password"
-
-                        Icon(
-                            imageVector = visibilityIcon,
-                            contentDescription = description,
-                            tint = colorResource(id = R.color.Gray)
-                        )
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Password
-                ),
-                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    cursorColor = Color.Black,
-                )
-            )
+            password = Password(icon = Icons.Default.Lock, plText = "sshh... Keep it Secret" , prefixText = "")
 
             Spacer(modifier = Modifier.height(8.dp))
 
             // Forgot Password Text
-            Text(
-                text = "Forgot Password ?",
+            Column(
                 modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 8.dp), // Padding for alignment
-                color = colorResource(id = R.color.black),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(vertical = 10.dp) ,
+                horizontalAlignment = Alignment.End
+            ) {
+
+                Text(text = "Forgot Password?" ,
+                    color = Color.DarkGray ,
+                    fontSize = 14.sp ,
+                    modifier = Modifier.clickable {
+
+                    })
+            }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -272,27 +222,31 @@ fun LoginScreen(navController: NavController,vm : DropViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
 
             // Sign Up Text
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(vertical = 10.dp) ,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Don't have an Account ?",
-                    color = colorResource(id = R.color.Gray),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.width(8.dp))
+                Row {
 
-                Text(
-                    text = "Sign Up",
-                    modifier = Modifier.clickable {
-                        navController.navigate(route = Route.SignUpScreen.name)
-                    },
-                    color = colorResource(id = R.color.black),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                    Text(
+                        text = "Don't have an Account?" ,
+                        color = Color.DarkGray ,
+                        fontSize = 13.sp
+                    )
+
+                    Text(text = "Sign Up" ,
+                        color = Color.Black ,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .clickable {
+
+                            })
+                }
             }
         }
     }

@@ -9,7 +9,7 @@ import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.NotificationScreen
 import com.example.tripdrop.ui.presentation.PostScreen
 import com.example.tripdrop.ui.presentation.UserDataCollectionScreen
-import com.example.tripdrop.ui.presentation.authentication.LoginScreen
+import com.example.tripdrop.ui.presentation.authentication.LoginScreen.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
