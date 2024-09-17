@@ -17,7 +17,7 @@ fun CheckUserSignedIn(vm: DropViewModel, navController: NavController) {
 
     if (signIn && !alreadySignedIn.value) {
         alreadySignedIn.value = true
-        navController.navigate(Route.BottomNav.route) {
+        navController.navigate(Route.BottomNav.name) {
             popUpTo(0)
         }
     }

@@ -63,7 +63,7 @@ fun ProfileScreen(navController: NavController, vm: DropViewModel) {
             verticalArrangement = Arrangement.Top
         ) {
             UserDetailsCard(
-                onMove = { navController.navigate(route = Route.ProfileDetailsScreen.route) },
+                onMove = { navController.navigate(route = Route.ProfileDetailScreen.name) },
                 imageUrl = imageUrl
             )
             Spacer(modifier = Modifier.height(SmallSpacing))

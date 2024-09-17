@@ -74,7 +74,7 @@ fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
         },
         onLogout = {
             vm.logout()
-            navController.navigate(Route.LoginScreen.route)
+            navController.navigate(Route.LoginScreen.name)
         },
         name = name,
         number = number,
@@ -135,7 +135,7 @@ fun ProfileContent(
                 }
             },
             navigationIcon = {
-                IconButton(onClick = { navController.navigate(Route.ProfileScreen.route) }) {
+                IconButton(onClick = { navController.navigate(Route.ProfileScreen.name) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",

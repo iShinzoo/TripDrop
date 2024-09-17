@@ -23,29 +23,29 @@ import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 fun NavGraph(vm: DropViewModel) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Route.WelcomeScreen.route) {
-        composable(Route.HomeScreen.route) {
+    NavHost(navController = navController, startDestination = Route.WelcomeScreen.name) {
+        composable(Route.HomeScreen.name) {
             HomeScreen(navController,vm)
         }
-        composable(Route.PostScreen.route) {
+        composable(Route.PostScreen.name) {
             PostScreen(vm)
         }
-        composable(Route.NotificationScreen.route) {
+        composable(Route.NotificationScreen.name) {
             NotificationScreen()
         }
-        composable(Route.WelcomeScreen.route) {
+        composable(Route.WelcomeScreen.name) {
             WelcomeScreen(navController)
         }
-        composable(Route.LoginScreen.route) {
+        composable(Route.LoginScreen.name) {
             LoginScreen(navController, vm)
         }
-        composable(Route.SignUpScreen.route) {
+        composable(Route.SignUpScreen.name) {
             SignUpScreen(navController, vm)
         }
-        composable(Route.ProfileScreen.route) {
+        composable(Route.ProfileScreen.name) {
             ProfileScreen(navController, vm)
         }
-        composable(Route.UserDataCollectionScreen.route) {
+        composable(Route.UserDataCollectionScreen.name) {
             UserDataCollectionScreen(navController, vm)
         }
         composable("productDetailsScreen/{productId}") { backStackEntry ->
@@ -54,13 +54,13 @@ fun NavGraph(vm: DropViewModel) {
                 ProductDetailsScreen(vm = vm, productId = it, navController = navController)
             }
         }
-        composable(Route.SingleChatScreen.route) {
+        composable(Route.SingleChatScreen.name) {
             SingleChatScreen()
         }
-        composable(Route.ProfileDetailsScreen.route) {
+        composable(Route.ProfileDetailScreen.name) {
             ProfileDetailsScreen(navController, vm = vm)
         }
-        composable(Route.BottomNav.route) {
+        composable(Route.BottomNav.name) {
             BottomBar(vm)
         }
     }

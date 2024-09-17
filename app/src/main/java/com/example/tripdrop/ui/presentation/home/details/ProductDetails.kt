@@ -90,7 +90,7 @@ fun ProductHeader(navController: NavController) {
             tint = Color.Black,
             modifier = Modifier
                 .size(32.dp)
-                .clickable { navController.navigate(Route.HomeScreen.route) }
+                .clickable { navController.navigate(Route.HomeScreen.name) }
         )
         Text(
             text = "Product Details",
@@ -131,7 +131,7 @@ fun ProductDetailsContent(product: Product, navController: NavController) {
         ProductActionButton(
             icon = Icons.Default.Chat,
             buttonText = "Chat with User",
-            onClick = { navController.navigate(Route.SingleChatScreen.route) }
+            onClick = { navController.navigate(Route.SingleChatScreen.name) }
         )
 
         ProductActionButton(
