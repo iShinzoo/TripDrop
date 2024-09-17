@@ -14,20 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,23 +39,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
 import com.example.tripdrop.ui.presentation.buttonHeight
-import com.example.tripdrop.ui.presentation.largeTextSize
-import com.example.tripdrop.ui.presentation.mediumTextSize
 import com.example.tripdrop.ui.presentation.roundedCornerSize
 import com.example.tripdrop.ui.presentation.smallTextSize
 import com.example.tripdrop.ui.presentation.standardPadding
+import com.example.tripdrop.ui.theme.h1TextStyle
+import com.example.tripdrop.ui.theme.h3TextStyle
 
 @Composable
-fun LoginScreen(navController: NavController, vm: DropViewModel) {
+fun LoginScreen(
+    navController: NavController, vm: DropViewModel
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
@@ -66,12 +71,12 @@ fun LoginScreen(navController: NavController, vm: DropViewModel) {
     val signIn by remember(vm.signIn) { vm.signIn }
 
     if (signIn) {
-        navController.navigate(Route.BottomNav.route) {
-            popUpTo(Route.LoginScreen.route) { inclusive = true }
+        navController.navigate(Route.BottomNav.name) {
+            popUpTo(Route.LoginScreen.name) { inclusive = true }
         }
     }
 
-    BackHandler { navController.navigate(Route.WelcomeScreen.route) }
+    BackHandler { navController.navigate(Route.WelcomeScreen.name) }
 
     Box(
         modifier = Modifier
@@ -82,19 +87,15 @@ fun LoginScreen(navController: NavController, vm: DropViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(top = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             LoginHeaderText()
-            Spacer(modifier = Modifier.height(32.dp))
-            EmailInputField(email) { email = it }
-            Spacer(modifier = Modifier.height(16.dp))
-            PasswordInputField(
-                password,
-                passwordHidden,
-                onPasswordChange = { password = it },
-                onVisibilityToggle = { passwordHidden = !passwordHidden })
+            LottieAnimationLoginPage()
+            email=TextField(icon = Icons.Default.Email, plText = "Enter Your Email", prefixText = "" )
+            password=Password(icon = Icons.Default.Lock, plText = "sshhh... Keep it Secret!!!", prefixText = "" )
             Spacer(modifier = Modifier.height(8.dp))
             ForgotPasswordText()
             Spacer(modifier = Modifier.height(16.dp))
@@ -109,6 +110,19 @@ fun LoginScreen(navController: NavController, vm: DropViewModel) {
     }
 }
 
+@Composable
+fun LottieAnimationLoginPage() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.drop))
+    val progress by animateLottieCompositionAsState(composition = composition, restartOnPlay = true,
+        iterations = LottieConstants.IterateForever)
+
+    LottieAnimation(
+        modifier = Modifier.size(300.dp),
+        composition = composition,
+        progress = {progress})
+
+}
+
 // Header composable for the title text
 @Composable
 fun LoginHeaderText() {
@@ -118,7 +132,8 @@ fun LoginHeaderText() {
         Text(
             text = "Let's Sign you in",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = largeTextSize,
+            fontSize = 35.sp,
+            style = h1TextStyle,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.Start)
         )
@@ -126,13 +141,15 @@ fun LoginHeaderText() {
         Text(
             text = "Welcome Back, ",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = mediumTextSize,
+            fontSize = 20.sp,
+            style = h3TextStyle,
             modifier = Modifier.align(Alignment.Start)
         )
         Text(
             text = "You have been missed",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = mediumTextSize,
+            style = h3TextStyle,
+            fontSize = 20.sp,
             modifier = Modifier
                 .padding(top = 4.dp)
                 .align(Alignment.Start)
@@ -140,75 +157,25 @@ fun LoginHeaderText() {
     }
 }
 
-// Email input field composable
-@Composable
-private fun EmailInputField(email: String, onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = email,
-        onValueChange = onValueChange,
-        placeholder = { Text(text = "Email", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-        singleLine = true,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.LightGray,
-            cursorColor = Color.Black
-        )
-    )
-}
 
-// Password input field with visibility toggle
-@Composable
-private fun PasswordInputField(
-    password: String,
-    passwordHidden: Boolean,
-    onPasswordChange: (String) -> Unit,
-    onVisibilityToggle: () -> Unit
-) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = password,
-        onValueChange = onPasswordChange,
-        placeholder = {
-            Text(
-                text = "Password",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-        trailingIcon = {
-            IconButton(onClick = onVisibilityToggle) {
-                val visibilityIcon =
-                    if (passwordHidden) Icons.Default.VisibilityOff else Icons.Default.Visibility
-                Icon(imageVector = visibilityIcon, contentDescription = null)
-            }
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-        visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-        singleLine = true,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.LightGray,
-            cursorColor = Color.Black
-        )
-    )
-}
 
 // Forgot password text
 @Composable
 fun ForgotPasswordText() {
-    Column {
-        Text(
-            text = "Forgot Password?",
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = smallTextSize,
-            fontWeight = FontWeight.Bold
-        )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 10.dp) ,
+        horizontalAlignment = Alignment.End
+    ) {
+
+        Text(text = "Forgot Password" ,
+            color = Color.DarkGray ,
+            fontSize = 15.sp ,
+            modifier = Modifier.clickable {
+
+            })
     }
 }
 
@@ -273,22 +240,33 @@ fun SocialMediaIcons() {
 // Sign-up text
 @Composable
 fun SignUpText(navController: NavController) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 10.dp) ,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Don't have an Account?",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = smallTextSize
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = "Sign Up",
-            modifier = Modifier.clickable { navController.navigate(route = Route.SignUpScreen.route) },
-            color = Color.Black,
-            fontSize = smallTextSize,
-            fontWeight = FontWeight.Bold
-        )
+        Row {
+
+            Text(
+                text = "Don't have an Account?" ,
+                color = Color.DarkGray ,
+                fontSize = 15.sp
+            )
+
+            Text(text = "Sign Up" ,
+                color = Color.Black ,
+                fontSize = 16.sp ,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .clickable {
+
+                    })
+        }
     }
 }
+
+
+

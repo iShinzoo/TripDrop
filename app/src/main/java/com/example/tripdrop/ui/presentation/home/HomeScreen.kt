@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -46,10 +48,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,11 +94,77 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
             verticalArrangement = Arrangement.Top
         ) {
             Spacer(modifier = Modifier.height(90.dp))
-            SearchBar()
-            Spacer(modifier = Modifier.height(12.dp))
+
+            var searchText by remember { mutableStateOf("") }
+            val containerColor = Color(0xFF222222)
+            val keyboardController = LocalSoftwareKeyboardController.current
+
+
+
+            OutlinedTextField(
+
+                value = searchText,
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Search, contentDescription = "icon",
+                        tint = Color(0xFFA7A7A7)
+                    )
+                },
+                onValueChange = { searchText = it },
+                shape = RoundedCornerShape(15.dp) ,
+                prefix = {
+                    Text(
+                        text = "" ,
+                        color = Color(0xFFF6F6F6) ,
+                        fontSize = 14.sp
+                    )
+                },
+
+
+                placeholder = { Text(text = "Search News...", color = Color(0xFFA7A7A7)
+                    ,fontSize = 14.sp) },
+
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                ) ,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black ,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.White ,
+                    unfocusedContainerColor = Color.White ,
+                    focusedBorderColor = Color.Black ,
+                    unfocusedBorderColor = Color.DarkGray ,
+                ) ,
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .padding(top = 14.dp)
+                    .padding(horizontal = 20.dp),
+
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        //
+
+
+
+                    }
+                ) ,
+
+                )
+
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp))
+
+            val filteredItems = productList?.filter {
+                it.title!!.contains(searchText, ignoreCase = true)
+            }
 
             // Display product cards dynamically
-            productList.forEach { product ->
+            filteredItems!!.forEach { product ->
                 ProductCard(product, onDetailsClick = {
                     navController.navigate("productDetailsScreen/${product.productId}")
                 })

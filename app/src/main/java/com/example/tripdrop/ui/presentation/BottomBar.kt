@@ -42,10 +42,10 @@ fun BottomBar(vm: DropViewModel) {
             val currentRoute = navBackStackEntry?.destination?.route
 
             if (currentRoute in listOf(
-                    Route.HomeScreen.route,
-                    Route.PostScreen.route,
-                    Route.NotificationScreen.route,
-                    Route.ProfileScreen.route
+                    Route.HomeScreen.name,
+                    Route.PostScreen.name,
+                    Route.NotificationScreen.name,
+                    Route.ProfileScreen.name
                 )
             ) {
                 MyBottomBar(navController)
@@ -54,31 +54,31 @@ fun BottomBar(vm: DropViewModel) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Route.HomeScreen.route,
+            startDestination = Route.HomeScreen.name,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Route.HomeScreen.route) {
+            composable(Route.HomeScreen.name) {
                 HomeScreen(navController,vm)
             }
-            composable(Route.PostScreen.route) {
+            composable(Route.PostScreen.name) {
                 PostScreen(vm)
             }
-            composable(Route.NotificationScreen.route) {
+            composable(Route.NotificationScreen.name) {
                 NotificationScreen()
             }
-            composable(Route.WelcomeScreen.route) {
+            composable(Route.WelcomeScreen.name) {
                 WelcomeScreen(navController)
             }
-            composable(Route.LoginScreen.route) {
+            composable(Route.LoginScreen.name) {
                 LoginScreen(navController, vm)
             }
-            composable(Route.SignUpScreen.route) {
+            composable(Route.SignUpScreen.name) {
                 SignUpScreen(navController, vm)
             }
-            composable(Route.ProfileScreen.route) {
+            composable(Route.ProfileScreen.name) {
                 ProfileScreen(navController, vm)
             }
-            composable(Route.UserDataCollectionScreen.route) {
+            composable(Route.UserDataCollectionScreen.name) {
                 UserDataCollectionScreen(navController, vm)
             }
             composable("productDetailsScreen/{productId}") { backStackEntry ->
@@ -87,13 +87,13 @@ fun BottomBar(vm: DropViewModel) {
                     ProductDetailsScreen(vm = vm, productId = it, navController = navController)
                 }
             }
-            composable(Route.SingleChatScreen.route) {
+            composable(Route.SingleChatScreen.name) {
                 SingleChatScreen()
             }
-            composable(Route.ProfileDetailsScreen.route) {
+            composable(Route.ProfileDetailScreen.name) {
                 ProfileDetailsScreen(navController, vm = vm)
             }
-            composable(Route.BottomNav.route) {
+            composable(Route.BottomNav.name) {
                 BottomBar(vm)
             }
         }
@@ -104,10 +104,10 @@ fun BottomBar(vm: DropViewModel) {
 fun MyBottomBar(navController: NavHostController) {
     // Data class to define bottom navigation items
     val navItems = listOf(
-        BottomNavItem("Home", Route.HomeScreen.route, Icons.Rounded.Home),
-        BottomNavItem("Post", Route.PostScreen.route, Icons.Rounded.AddBox),
-        BottomNavItem("Notification", Route.NotificationScreen.route, Icons.Rounded.Notifications),
-        BottomNavItem("Profile", Route.ProfileScreen.route, Icons.Rounded.AccountCircle)
+        BottomNavItem("Home", Route.HomeScreen.name, Icons.Rounded.Home),
+        BottomNavItem("Post", Route.PostScreen.name, Icons.Rounded.AddBox),
+        BottomNavItem("Notification", Route.NotificationScreen.name, Icons.Rounded.Notifications),
+        BottomNavItem("Profile", Route.ProfileScreen.name, Icons.Rounded.AccountCircle)
     )
 
     ElevatedCard(
@@ -123,11 +123,11 @@ fun MyBottomBar(navController: NavHostController) {
         ) {
             // Loop through navigation items and create a NavigationBarItem for each
             navItems.forEach { item ->
-                val isSelected = item.route == navController.currentBackStackEntry?.destination?.route
+                val isSelected = item.name == navController.currentBackStackEntry?.destination?.route
                 NavigationBarItem(
                     selected = isSelected,
                     onClick = {
-                        navController.navigate(item.route) {
+                        navController.navigate(item.name) {
                             // Navigate to the destination and pop up to start destination
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -151,4 +151,4 @@ fun MyBottomBar(navController: NavHostController) {
     }
 }
 
-data class BottomNavItem(val title: String, val route: String, val icon: ImageVector)
+data class BottomNavItem(val title: String, val name: String, val icon: ImageVector)
