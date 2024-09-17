@@ -1,32 +1,46 @@
 package com.example.tripdrop.ui.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.AddBox
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
+import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
+import com.example.tripdrop.ui.presentation.post.PostScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.example.tripdrop.ui.theme.bgwhite
@@ -87,8 +101,16 @@ fun BottomBar(vm: DropViewModel) {
                     ProductDetailsScreen(vm = vm, productId = it, navController = navController)
                 }
             }
-            composable(Route.SingleChatScreen.name) {
-                SingleChatScreen()
+            composable(
+                route = "chatScreen/{senderId}/{receiverId}",
+                arguments = listOf(
+                    navArgument("senderId") { type = NavType.StringType },
+                    navArgument("receiverId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val senderId = backStackEntry.arguments?.getString("senderId") ?: ""
+                val receiverId = backStackEntry.arguments?.getString("receiverId") ?: ""
+                SingleChatScreen(vm = vm, senderId = senderId, receiverId = receiverId, navController = navController)
             }
             composable(Route.ProfileDetailScreen.name) {
                 ProfileDetailsScreen(navController, vm = vm)

@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation
+package com.example.tripdrop.ui.presentation.authentication
 
 import android.net.Uri
 import android.widget.Toast
@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.ui.presentation.CommonImage
 
 
 @Composable

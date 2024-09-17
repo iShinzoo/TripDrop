@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation
+package com.example.tripdrop.ui.presentation.post
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog

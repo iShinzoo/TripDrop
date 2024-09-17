@@ -337,7 +337,7 @@ fun ProductCard(
                                     type = "text/plain"
                                     putExtra(
                                         Intent.EXTRA_TEXT, """
-                                    Check out this product on Dropit:
+                                    Check out this product on Dropit. :
                                     Title: ${product.title}
                                     Description: ${product.description}
                                     Price: ₹${product.rewards}

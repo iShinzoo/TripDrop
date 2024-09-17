@@ -1,14 +1,16 @@
 package com.example.tripdrop.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.NotificationScreen
-import com.example.tripdrop.ui.presentation.PostScreen
-import com.example.tripdrop.ui.presentation.UserDataCollectionScreen
+import com.example.tripdrop.ui.presentation.post.PostScreen
+import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
@@ -54,8 +56,16 @@ fun NavGraph(vm: DropViewModel) {
                 ProductDetailsScreen(vm = vm, productId = it, navController = navController)
             }
         }
-        composable(Route.SingleChatScreen.name) {
-            SingleChatScreen()
+        composable(
+            route = "chatScreen/{senderId}/{receiverId}",
+            arguments = listOf(
+                navArgument("senderId") { type = NavType.StringType },
+                navArgument("receiverId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val senderId = backStackEntry.arguments?.getString("senderId") ?: ""
+            val receiverId = backStackEntry.arguments?.getString("receiverId") ?: ""
+            SingleChatScreen(vm = vm, senderId = senderId, receiverId = receiverId, navController = navController)
         }
         composable(Route.ProfileDetailScreen.name) {
             ProfileDetailsScreen(navController, vm = vm)

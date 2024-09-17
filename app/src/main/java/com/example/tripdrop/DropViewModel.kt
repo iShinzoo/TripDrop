@@ -4,18 +4,20 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.tripdrop.data.ChatMessage
 import com.example.tripdrop.data.Event
 import com.example.tripdrop.data.Product
 import com.example.tripdrop.data.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +52,10 @@ class DropViewModel @Inject constructor(
 
     private val _userDetails = MutableStateFlow<UserData?>(null)
     val userDetails: StateFlow<UserData?> = _userDetails.asStateFlow()
+
+    // LiveData to observe chat messages
+    private val _chatMessages = MutableLiveData<List<ChatMessage>>()
+    val chatMessages: LiveData<List<ChatMessage>> get() = _chatMessages
 
     // Profile update status enum
     enum class ProfileUpdateStatus {
@@ -265,7 +271,7 @@ class DropViewModel @Inject constructor(
         }
     }
 
-    suspend fun uploadProductImage(uri: Uri): String? {
+    private suspend fun uploadProductImage(uri: Uri): String? {
         val userId = auth.currentUser?.uid ?: return null
         val imageRef = storage.reference.child("product_images/$userId/${UUID.randomUUID()}")
         return try {
@@ -347,6 +353,47 @@ class DropViewModel @Inject constructor(
                     Log.e("Firestore", "Error updating user details", exception)
                 }
         }
+    }
+
+
+    // Function to load chat between two users
+    fun loadChat(senderId: String, receiverId: String) {
+        db.collection("chats")
+            .whereEqualTo("senderId", senderId)
+            .whereEqualTo("receiverId", receiverId)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("ChatViewModel", "Error fetching chat: ", error)
+                    return@addSnapshotListener
+                }
+
+                val messages = snapshot?.documents?.map { document ->
+                    document.toObject(ChatMessage::class.java)!!
+                } ?: emptyList()
+
+                _chatMessages.postValue(messages)
+            }
+    }
+
+    // Function to send a new message
+    fun sendMessage(senderId: String, receiverId: String, message: String) {
+        val chatMessage = ChatMessage(
+            messageId = UUID.randomUUID().toString(),
+            senderId = senderId,
+            receiverId = receiverId,
+            message = message,
+            timestamp = System.currentTimeMillis()
+        )
+
+        db.collection("chats")
+            .add(chatMessage)
+            .addOnSuccessListener {
+                Log.d("ChatViewModel", "Message sent successfully")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("ChatViewModel", "Error sending message: ", exception)
+            }
     }
 
 }

@@ -65,7 +65,7 @@ fun ProductDetailsScreen(
             // Handle loading and error states
             productDetails?.let { product ->
                 isLoading = false
-                ProductDetailsContent(product, navController)
+                ProductDetailsContent(product, navController, vm = vm)
             } ?: run {
                 if (isLoading) {
                     LoadingView()
@@ -106,7 +106,10 @@ fun ProductHeader(navController: NavController) {
 }
 
 @Composable
-fun ProductDetailsContent(product: Product, navController: NavController) {
+fun ProductDetailsContent(product: Product, navController: NavController, vm: DropViewModel) {
+
+    val userData by vm.userDetails.collectAsState()
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -131,7 +134,9 @@ fun ProductDetailsContent(product: Product, navController: NavController) {
         ProductActionButton(
             icon = Icons.Default.Chat,
             buttonText = "Chat with User",
-            onClick = { navController.navigate(Route.SingleChatScreen.name) }
+            onClick = {
+//                navController.navigate("chatScreen/${userData?.userId}/${product.userId}")
+            }
         )
 
         ProductActionButton(
@@ -165,7 +170,12 @@ fun ProductImageCard(imageUrl: String) {
 }
 
 @Composable
-fun ProductDetailText(label: String, value: String, isTitle: Boolean = false, isReward: Boolean = false) {
+fun ProductDetailText(
+    label: String,
+    value: String,
+    isTitle: Boolean = false,
+    isReward: Boolean = false
+) {
     if (isTitle || isReward) {
         Text(
             text = buildAnnotatedString {
