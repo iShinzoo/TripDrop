@@ -94,9 +94,9 @@ fun PostScreen(vm: DropViewModel) {
     )
 
     // Image Picker Intent
-    val imagePickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(),
-            onResult = { uri -> productImageUri = uri })
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri -> productImageUri = uri })
 
     Box(
         modifier = Modifier
@@ -127,7 +127,7 @@ fun PostScreen(vm: DropViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 88.dp, start = 8.dp, end = 8.dp) // Padding to fit header space
+                .padding(top = 88.dp) // Padding to fit header space
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top

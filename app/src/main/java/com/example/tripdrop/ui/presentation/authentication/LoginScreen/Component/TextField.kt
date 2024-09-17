@@ -67,6 +67,7 @@ fun TextField(icon: ImageVector , plText: String , prefixText : String): String 
             unfocusedContainerColor = Color.White ,
             focusedBorderColor =Color.Black ,
             unfocusedBorderColor = Color.DarkGray ,
+            cursorColor = Color.Black
         ) ,
         singleLine = true,
         modifier = Modifier

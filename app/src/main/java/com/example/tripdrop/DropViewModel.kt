@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,7 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
@@ -35,7 +37,6 @@ class DropViewModel @Inject constructor(
     private val inProcess = mutableStateOf(false)
     private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)
-    val userData = mutableStateOf<UserData?>(null)
 
     // LiveData to observe product details
     private val _productDetails = MutableLiveData<Product?>()
@@ -46,6 +47,9 @@ class DropViewModel @Inject constructor(
     // StateFlow for profile update status
     private val _profileUpdateStatus = MutableStateFlow(ProfileUpdateStatus.IDLE)
     val profileUpdateStatus: StateFlow<ProfileUpdateStatus> = _profileUpdateStatus
+
+    private val _userDetails = MutableStateFlow<UserData?>(null)
+    val userDetails: StateFlow<UserData?> = _userDetails.asStateFlow()
 
     // Profile update status enum
     enum class ProfileUpdateStatus {
@@ -140,7 +144,7 @@ class DropViewModel @Inject constructor(
     fun logout() {
         auth.signOut()
         signIn.value = false
-        userData.value = null
+        _userDetails.value = null
         eventMutableState.value = Event("Logged Out")
     }
 
@@ -308,4 +312,41 @@ class DropViewModel @Inject constructor(
                 // Handle failure
             }
     }
+
+    fun fetchUserDetails() {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid ?: return@launch
+            db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val user = documentSnapshot.toObject(UserData::class.java)
+                        user?.let {
+                            _userDetails.value = it
+                            _userDetails.value = it
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("Firestore", "Error fetching user details", exception)
+                }
+        }
+    }
+
+    fun saveUserDetails(updatedUser: UserData) {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid ?: return@launch
+            db.collection("users").document(userId)
+                .set(updatedUser)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "User details successfully updated!")
+                    // Optionally, fetch the user data again to ensure the UI reflects the changes
+                    fetchUserDetails()
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("Firestore", "Error updating user details", exception)
+                }
+        }
+    }
+
 }

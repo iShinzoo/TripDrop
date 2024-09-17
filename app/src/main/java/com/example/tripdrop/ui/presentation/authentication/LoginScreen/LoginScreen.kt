@@ -262,7 +262,7 @@ fun SignUpText(navController: NavController) {
                 modifier = Modifier
                     .padding(start = 5.dp)
                     .clickable {
-
+                        navController.navigate(Route.SignUpScreen.name)
                     })
         }
     }

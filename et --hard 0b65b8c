@@ -1,0 +1,31 @@
+[33m0b65b8c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: reset: moving to HEAD^
+[33mc29bb11[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{1}: merge origin/master: Fast-forward
+[33m0b65b8c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{2}: commit: removing dark theme
+[33m0eeca6d[m HEAD@{3}: commit: optimizing other ui
+[33mcb76840[m HEAD@{4}: commit: optimizing authentication ui
+[33m3724bb6[m HEAD@{5}: merge origin/master: Merge made by the 'ort' strategy.
+[33mfa65316[m HEAD@{6}: commit: product posting and fetching part done
+[33m5a1ad5f[m HEAD@{7}: commit: posting product details to firebase
+[33m2ea8994[m HEAD@{8}: commit: posting user details to firebase
+[33mfd8055b[m HEAD@{9}: commit: Authentication and related glitches fix
+[33m775b7ee[m HEAD@{10}: commit: working on ui and authentication
+[33mebf819f[m HEAD@{11}: commit: working on ui
+[33me8e615a[m HEAD@{12}: commit: ProfileScreen.kt and NotificationScreen.kt Ui
+[33m250d7b3[m HEAD@{13}: commit: HomeScreen.kt and PostScreen.kt Ui
+[33m21b0788[m HEAD@{14}: commit: ui changes
+[33mbf7a7b6[m HEAD@{15}: commit: PostScreen.kt ui
+[33me3fd04a[m HEAD@{16}: commit: Navigation and bottom bar
+[33mb8affed[m HEAD@{17}: commit: Authentication ui
+[33m0b0bf70[m HEAD@{18}: commit: welcome screen ui
+[33mb2c844a[m HEAD@{19}: commit: welcome screen ui
+[33me66d9a6[m HEAD@{20}: commit: cleaning up
+[33m95c6cab[m HEAD@{21}: commit: working on NotificationScreen.kt
+[33m2adf0fd[m HEAD@{22}: commit: working on NotificationScreen.kt
+[33m60d4daa[m HEAD@{23}: commit: working on NotificationScreen.kt
+[33m7d1fb64[m HEAD@{24}: commit: working on NotificationScreen.kt
+[33md03aa41[m HEAD@{25}: commit: working on BottomBar.kt
+[33m3c3a928[m HEAD@{26}: commit: working on BottomBar.kt
+[33mbfc40fe[m HEAD@{27}: commit: working on BottomBar.kt
+[33m3172b54[m HEAD@{28}: commit: started to work
+[33m3152722[m HEAD@{29}: commit: setting up environment
+[33m71ed815[m HEAD@{30}: commit (initial): Initial commit

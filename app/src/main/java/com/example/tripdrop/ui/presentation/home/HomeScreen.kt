@@ -8,11 +8,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -57,14 +54,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -72,11 +67,10 @@ import coil.compose.rememberImagePainter
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.Product
+import com.example.tripdrop.ui.presentation.standardPadding
 import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle
 import com.example.tripdrop.ui.theme.h4TextStyle
-import com.example.tripdrop.ui.theme.infoTextStyle
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -102,11 +96,12 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
        Column(
            modifier = Modifier
                .fillMaxWidth()
+               .padding(standardPadding)
                .verticalScroll(rememberScrollState()),
            horizontalAlignment = Alignment.CenterHorizontally,
            verticalArrangement = Arrangement.Top
        ) {
-           Spacer(modifier = Modifier.height(70.dp))
+           Spacer(modifier = Modifier.height(80.dp))
 
            var searchText by remember { mutableStateOf("") }
            val containerColor = Color(0xFF222222)
@@ -156,8 +151,7 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
                modifier = Modifier
                    .fillMaxWidth()
                    .height(70.dp)
-                   .padding(top = 14.dp)
-                   .padding(horizontal = 20.dp),
+                   .padding(top = 14.dp),
 
                keyboardActions = KeyboardActions(
                    onDone = {
@@ -176,12 +170,12 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
                    .height(10.dp)
            )
 
-           val filteredItems = productList?.filter {
+           val filteredItems = productList.filter {
                it.title!!.contains(searchText, ignoreCase = true)
            }
 
            // Display product cards dynamically
-           filteredItems!!.forEach { product ->
+           filteredItems.forEach { product ->
                ProductCard(product, onDetailsClick = {
                    navController.navigate("productDetailsScreen/${product.productId}")
                })
@@ -237,7 +231,7 @@ fun ProductCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(top = 8.dp, bottom = 8.dp)
             .wrapContentHeight(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

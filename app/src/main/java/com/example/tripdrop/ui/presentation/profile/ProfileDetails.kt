@@ -1,40 +1,19 @@
 package com.example.tripdrop.ui.presentation.profile
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.SaveAs
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,38 +28,60 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
+import com.example.tripdrop.data.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.CommonImage
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
-    // Get user data from the ViewModel
-    val userData = vm.userData.value
+    LaunchedEffect(Unit) {
+        vm.fetchUserDetails()
+    }
 
-    // State to manage user input
+    val userData by vm.userDetails.collectAsState()
     var name by rememberSaveable { mutableStateOf(userData?.name ?: "") }
     var number by rememberSaveable { mutableStateOf(userData?.number ?: "") }
-    val imageUrl = vm.userData.value?.imageUrl
+    val imageUrl by remember { mutableStateOf(userData?.imageUrl) }
 
-    val context = LocalContext.current
+    if (userData == null) {
+        LoadingScreen()
+    } else {
+        ProfileContent(
+            navController = navController,
+            imageUrl = imageUrl,
+            vm = vm,
+            onSave = {
+                val updatedUser = UserData(
+                    userId = userData!!.userId,
+                    name = name,
+                    number = number,
+                    imageUrl = imageUrl
+                )
+                vm.saveUserDetails(updatedUser)
+            },
+            onLogout = {
+                vm.logout()
+                navController.navigate(Route.LoginScreen.name)
+            },
+            name = name,
+            number = number,
+            onNameChange = { name = it },
+            onNumberChange = { number = it }
+        )
+    }
+}
 
-    ProfileContent(
-        navController = navController,
-        imageUrl = imageUrl,
-        vm = vm,
-        onSave = {
-            vm.createOrUpdateProfile(name = name, number = number, imageUri = imageUrl)
-            Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT).show()
-        },
-        onLogout = {
-            vm.logout()
-            navController.navigate(Route.LoginScreen.name)
-        },
-        name = name,
-        number = number,
-        onNameChange = { name = it },
-        onNumberChange = { number = it }
-    )
+@Composable
+fun LoadingScreen() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Loading...", color = Color.Gray)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,69 +98,40 @@ fun ProfileContent(
     onNumberChange: (String) -> Unit
 ) {
     val context = LocalContext.current
-
-    // State to manage whether text fields are enabled
     var isNameFieldEnabled by remember { mutableStateOf(false) }
     var isNumberFieldEnabled by remember { mutableStateOf(false) }
 
-    // Launcher for picking a profile image
-//    val chooseProfileImage =
-//        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
-//            uri?.let {
-//                // Launch a coroutine to call the suspend function
-//                viewModelScope.launch {
-//                    vm.uploadProfileImage(uri)
-//                }
-//            }
-//        }
-
+    val chooseProfileImage = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        MainScope().launch {
+            uri?.let {
+                vm.uploadProfileImage(uri)
+            }
+        }
+    }
 
     Column(
-        modifier = Modifier.fillMaxSize().background(Color.White)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
-        // Top App Bar
         TopAppBar(
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = "My Profile",
-                        color = Color.White,
-                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            },
+            title = { AppBarTitle() },
             navigationIcon = {
                 IconButton(onClick = { navController.navigate(Route.ProfileScreen.name) }) {
-                    Icon(
-                        Icons.Default.ArrowBackIosNew,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
+                    Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Back", tint = Color.White)
                 }
             },
             actions = {
                 IconButton(onClick = onSave) {
-                    Icon(
-                        Icons.Default.SaveAs,
-                        contentDescription = "Save",
-                        tint = Color.White
-                    )
+                    Icon(Icons.Default.SaveAs, contentDescription = "Save", tint = Color.White)
                 }
                 IconButton(onClick = {
                     onLogout()
                     Toast.makeText(context, "Logout Successfully", Toast.LENGTH_SHORT).show()
                 }) {
-                    Icon(
-                        Icons.Default.Logout,
-                        contentDescription = "Logout",
-                        tint = Color.White
-                    )
+                    Icon(Icons.Default.Logout, contentDescription = "Logout", tint = Color.White)
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.black))
@@ -167,86 +139,131 @@ fun ProfileContent(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        // Profile Image Picker Section
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CommonImage(
-                data = imageUrl,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clickable {
-//                        chooseProfileImage.launch("image/*")
-                    }
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Change Profile Picture",
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W500,
-                    color = colorResource(id = R.color.black)
-                )
-            )
-        }
+        ProfileImagePicker(imageUrl = imageUrl, chooseProfileImage = chooseProfileImage)
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        // User Information Updating Section
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Name TextField
-            OutlinedTextField(
-                modifier = Modifier.width(380.dp),
-                value = name,
-                onValueChange = onNameChange,
-                enabled = isNameFieldEnabled,
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = colorResource(id = R.color.black),
-                    focusedBorderColor = colorResource(id = R.color.black),
-                    cursorColor = colorResource(id = R.color.black),
-                    disabledBorderColor = colorResource(id = R.color.black),
-                    disabledTextColor = colorResource(id = R.color.black)
-                ),
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color.Black) },
-                trailingIcon = {
-                    IconButton(onClick = { isNameFieldEnabled = !isNameFieldEnabled }) {
-                        Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Black)
-                    }
-                }
-            )
+        UserInfoFields(
+            name = name,
+            number = number,
+            onNameChange = onNameChange,
+            onNumberChange = onNumberChange,
+            isNameFieldEnabled = isNameFieldEnabled,
+            isNumberFieldEnabled = isNumberFieldEnabled,
+            onNameFieldToggle = { isNameFieldEnabled = !isNameFieldEnabled },
+            onNumberFieldToggle = { isNumberFieldEnabled = !isNumberFieldEnabled }
+        )
+    }
+}
 
-            Spacer(modifier = Modifier.height(12.dp))
+@Composable
+fun AppBarTitle() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "My Profile",
+            color = Color.White,
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+    }
+}
 
-            // Phone Number TextField
-            OutlinedTextField(
-                modifier = Modifier.width(380.dp),
-                value = number,
-                onValueChange = onNumberChange,
-                enabled = isNumberFieldEnabled,
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = colorResource(id = R.color.black),
-                    focusedBorderColor = colorResource(id = R.color.black),
-                    cursorColor = colorResource(id = R.color.black),
-                    disabledBorderColor = colorResource(id = R.color.black),
-                    disabledTextColor = colorResource(id = R.color.black)
-                ),
-                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Color.Black) },
-                trailingIcon = {
-                    IconButton(onClick = { isNumberFieldEnabled = !isNumberFieldEnabled }) {
-                        Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Black)
-                    }
-                }
+@Composable
+fun ProfileImagePicker(imageUrl: String?, chooseProfileImage: ManagedActivityResultLauncher<String, Uri?>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CommonImage(
+            data = imageUrl,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(100.dp)
+                .clickable { chooseProfileImage.launch("image/*") }
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Change Profile Picture",
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.W500,
+                color = colorResource(id = R.color.black)
             )
-        }
+        )
+    }
+}
+
+@Composable
+fun UserInfoFields(
+    name: String,
+    number: String,
+    onNameChange: (String) -> Unit,
+    onNumberChange: (String) -> Unit,
+    isNameFieldEnabled: Boolean,
+    isNumberFieldEnabled: Boolean,
+    onNameFieldToggle: () -> Unit,
+    onNumberFieldToggle: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.width(380.dp),
+            value = name,
+            onValueChange = onNameChange,
+            enabled = isNameFieldEnabled,
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = colorResource(id = R.color.black),
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = colorResource(id = R.color.black),
+                cursorColor = colorResource(id = R.color.black),
+                disabledBorderColor = colorResource(id = R.color.black),
+                disabledTextColor = colorResource(id = R.color.black)
+            ),
+            leadingIcon = {
+                Icon(Icons.Default.Person, contentDescription = null, tint = Color.Black)
+            },
+            trailingIcon = {
+                IconButton(onClick = onNameFieldToggle) {
+                    Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Black)
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.width(380.dp),
+            value = number,
+            onValueChange = onNumberChange,
+            enabled = isNumberFieldEnabled,
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = colorResource(id = R.color.black),
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = colorResource(id = R.color.black),
+                cursorColor = colorResource(id = R.color.black),
+                disabledBorderColor = colorResource(id = R.color.black),
+                disabledTextColor = colorResource(id = R.color.black)
+            ),
+            leadingIcon = {
+                Icon(Icons.Default.Phone, contentDescription = null, tint = Color.Black)
+            },
+            trailingIcon = {
+                IconButton(onClick = onNumberFieldToggle) {
+                    Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Black)
+                }
+            }
+        )
     }
 }

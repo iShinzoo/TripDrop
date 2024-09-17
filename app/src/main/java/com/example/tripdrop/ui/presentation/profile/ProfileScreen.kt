@@ -10,6 +10,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,8 +38,9 @@ import com.example.tripdrop.ui.presentation.SmallSpacing
 
 @Composable
 fun ProfileScreen(navController: NavController, vm: DropViewModel) {
-    val userData = vm.userData.value
-    val imageUrl = userData?.imageUrl
+    val userData by vm.userDetails.collectAsState()
+    var name by rememberSaveable { mutableStateOf(userData?.name ?: "") }
+    val imageUrl by remember { mutableStateOf(userData?.imageUrl) }
 
     Box(
         modifier = Modifier
@@ -63,6 +70,7 @@ fun ProfileScreen(navController: NavController, vm: DropViewModel) {
             verticalArrangement = Arrangement.Top
         ) {
             UserDetailsCard(
+                name = name,
                 onMove = { navController.navigate(route = Route.ProfileDetailScreen.name) },
                 imageUrl = imageUrl
             )
@@ -86,7 +94,7 @@ fun ProfileHeader() {
 }
 
 @Composable
-fun UserDetailsCard(onMove: () -> Unit, imageUrl: String?) {
+fun UserDetailsCard(name: String,onMove: () -> Unit, imageUrl: String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,15 +115,10 @@ fun UserDetailsCard(onMove: () -> Unit, imageUrl: String?) {
                 Spacer(modifier = Modifier.width(DefaultPadding))
                 Column {
                     Text(
-                        text = "Aman Nishant",
+                        text = name,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
-                    )
-                    Text(
-                        text = "9893467890",
-                        fontSize = 16.sp,
-                        color = Color.Gray
                     )
                 }
             }
