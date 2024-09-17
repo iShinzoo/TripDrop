@@ -125,20 +125,19 @@ fun HomeScreen(navController: NavController,vm : DropViewModel) {
                     keyboardType = KeyboardType.Text
                 ) ,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White ,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = containerColor ,
-                    unfocusedContainerColor = containerColor ,
-                    disabledContainerColor = containerColor ,
-                    focusedBorderColor = Color(0xFF555555) ,
-                    unfocusedBorderColor = Color(0xFF555555) ,
+                    focusedTextColor = Color.Black ,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.White ,
+                    unfocusedContainerColor = Color.White ,
+                    focusedBorderColor = Color.Black ,
+                    unfocusedBorderColor = Color.DarkGray ,
                 ) ,
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
                     .padding(top = 14.dp)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 8.dp),
 
                 keyboardActions = KeyboardActions(
                     onDone = {
