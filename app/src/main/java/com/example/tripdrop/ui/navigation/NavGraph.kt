@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.NotificationScreen
@@ -22,7 +23,7 @@ import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 
 
 @Composable
-fun NavGraph(vm: DropViewModel) {
+fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Route.WelcomeScreen.name) {
@@ -57,21 +58,18 @@ fun NavGraph(vm: DropViewModel) {
             }
         }
         composable(
-            route = "chatScreen/{senderId}/{receiverId}",
-            arguments = listOf(
-                navArgument("senderId") { type = NavType.StringType },
-                navArgument("receiverId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val senderId = backStackEntry.arguments?.getString("senderId") ?: ""
-            val receiverId = backStackEntry.arguments?.getString("receiverId") ?: ""
-            SingleChatScreen(vm = vm, senderId = senderId, receiverId = receiverId, navController = navController)
+            route = Route.SingleChatScreen.name
+        ) {
+            val chatId = it.arguments?.getString("chatId")
+            chatId?.let {
+                SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
+            }
         }
         composable(Route.ProfileDetailScreen.name) {
             ProfileDetailsScreen(navController, vm = vm)
         }
         composable(Route.BottomNav.name) {
-            BottomBar(vm)
+            BottomBar(vm,chatViewModel)
         }
     }
 }

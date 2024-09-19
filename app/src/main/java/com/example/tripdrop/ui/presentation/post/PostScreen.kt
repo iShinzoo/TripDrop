@@ -450,13 +450,3 @@ fun PostScreen(vm: DropViewModel) {
         }
     }
 }
-
-Button(
-onClick = {
-    // Send FCM notification to the product owner
-    sendNotificationToOwner(productId, ownerId)
-}
-) {
-    Text("Ready to Drop")
-}
-

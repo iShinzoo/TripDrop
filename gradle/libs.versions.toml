@@ -13,6 +13,7 @@ firebaseAuth = "23.0.0"
 firebaseFirestore = "25.1.0"
 firebaseStorage = "21.0.0"
 media3Effect = "1.4.1"
+playServicesAnalyticsImpl = "18.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 androidx-media3-effect = { group = "androidx.media3", name = "media3-effect", version.ref = "media3Effect" }
+play-services-analytics-impl = { group = "com.google.android.gms", name = "play-services-analytics-impl", version.ref = "playServicesAnalyticsImpl" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

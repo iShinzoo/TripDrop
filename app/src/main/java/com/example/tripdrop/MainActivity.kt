@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: DropViewModel by viewModels()
+    private val chatViewModel: ChatViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    NavGraph(vm = viewModel)
+                    NavGraph(vm = viewModel,chatViewModel)
                 }
             }
         }
