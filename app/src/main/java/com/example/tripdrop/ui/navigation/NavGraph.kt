@@ -58,9 +58,12 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel) {
             }
         }
         composable(
-            route = Route.SingleChatScreen.name
-        ) {
-            val chatId = it.arguments?.getString("chatId")
+            route = "singleChatScreen/{chatId}",
+            arguments = listOf(navArgument("chatId") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId")
             chatId?.let {
                 SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
             }

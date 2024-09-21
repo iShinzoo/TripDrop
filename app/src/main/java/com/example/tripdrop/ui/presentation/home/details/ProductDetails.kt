@@ -135,7 +135,7 @@ fun ProductDetailsContent(product: Product, navController: NavController, vm: Dr
             icon = Icons.Default.Chat,
             buttonText = "Chat with User",
             onClick = {
-                navController.navigate("singleChatScreen/${userData?.userId}")
+                navController.navigate(Route.SingleChatScreen.name)
             }
         )
 
