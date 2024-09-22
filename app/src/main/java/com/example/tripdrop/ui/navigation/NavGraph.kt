@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.NotificationScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
@@ -23,7 +24,7 @@ import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 
 
 @Composable
-fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel) {
+fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Route.WelcomeScreen.name) {
@@ -54,7 +55,7 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel) {
         composable("productDetailsScreen/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
             productId?.let {
-                ProductDetailsScreen(vm = vm, productId = it, navController = navController)
+                ProductDetailsScreen(vm = vm, productId = it, navController = navController, nm = nm)
             }
         }
         composable(
@@ -72,7 +73,7 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel) {
             ProfileDetailsScreen(navController, vm = vm)
         }
         composable(Route.BottomNav.name) {
-            BottomBar(vm,chatViewModel)
+            BottomBar(vm,chatViewModel,nm)
         }
     }
 }

@@ -31,15 +31,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.R
-import com.example.tripdrop.data.Product
+import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.ui.navigation.Route
 
 @Composable
 fun ProductDetailsScreen(
     navController: NavController,
     vm: DropViewModel,
-    productId: String
+    productId: String,
+    nm: NotificationViewModel
 ) {
     val productDetails by vm.productDetails.observeAsState()
     var isLoading by remember { mutableStateOf(true) }
@@ -65,7 +67,7 @@ fun ProductDetailsScreen(
             // Handle loading and error states
             productDetails?.let { product ->
                 isLoading = false
-                ProductDetailsContent(product, navController, vm = vm)
+                ProductDetailsContent(product, navController, vm = vm,nm)
             } ?: run {
                 if (isLoading) {
                     LoadingView()
@@ -106,9 +108,12 @@ fun ProductHeader(navController: NavController) {
 }
 
 @Composable
-fun ProductDetailsContent(product: Product, navController: NavController, vm: DropViewModel) {
+fun ProductDetailsContent(product: Product, navController: NavController, vm: DropViewModel, nm : NotificationViewModel) {
 
     val userData by vm.userDetails.collectAsState()
+    val fcmToken by nm.fcmToken.observeAsState()
+
+    val productName = product.title
 
     Column(
         modifier = Modifier
@@ -142,7 +147,13 @@ fun ProductDetailsContent(product: Product, navController: NavController, vm: Dr
         ProductActionButton(
             icon = Icons.Default.DeliveryDining,
             buttonText = "Ready to Drop it?",
-            onClick = { /* Handle Drop Action */ }
+            onClick = {
+                if (fcmToken != null) {
+                    if (productName != null) {
+                        nm.sendNotification(fcmToken!!, productName)
+                    }
+                }
+            }
         )
     }
 }

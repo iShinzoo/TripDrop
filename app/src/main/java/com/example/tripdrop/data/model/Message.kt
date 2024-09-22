@@ -1,4 +1,4 @@
-package com.example.tripdrop.data
+package com.example.tripdrop.data.model
 
 data class Message(
     val sendBy : String?= "",

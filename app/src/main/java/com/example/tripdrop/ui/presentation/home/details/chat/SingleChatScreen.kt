@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.R
-import com.example.tripdrop.data.Message
+import com.example.tripdrop.data.model.Message
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.CommonImage
 

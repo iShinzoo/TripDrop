@@ -3,10 +3,10 @@ package com.example.tripdrop
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.tripdrop.data.ChatData
-import com.example.tripdrop.data.Message
-import com.example.tripdrop.data.Event
-import com.example.tripdrop.data.UserData
+import com.example.tripdrop.data.model.ChatData
+import com.example.tripdrop.data.model.Message
+import com.example.tripdrop.data.model.Event
+import com.example.tripdrop.data.model.UserData
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration

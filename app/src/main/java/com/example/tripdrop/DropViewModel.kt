@@ -9,9 +9,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.tripdrop.data.Event
-import com.example.tripdrop.data.Product
-import com.example.tripdrop.data.UserData
+import com.example.tripdrop.data.model.Event
+import com.example.tripdrop.data.model.Product
+import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: DropViewModel by viewModels()
     private val chatViewModel: ChatViewModel by viewModels()
+    private val notificationViewModel: NotificationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    NavGraph(vm = viewModel,chatViewModel)
+                    NavGraph(vm = viewModel,chatViewModel,notificationViewModel)
                 }
             }
         }
