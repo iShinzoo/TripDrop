@@ -1,5 +1,6 @@
 package com.example.tripdrop.ui.presentation.authentication
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,9 +20,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,10 +41,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -58,7 +64,9 @@ import com.example.tripdrop.ui.presentation.roundedCornerSize
 import com.example.tripdrop.ui.presentation.smallTextSize
 import com.example.tripdrop.ui.presentation.standardPadding
 import com.example.tripdrop.ui.theme.h1TextStyle
+import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle
+
 
 @Composable
 fun LoginScreen(
@@ -97,7 +105,7 @@ fun LoginScreen(
             email=TextField(icon = Icons.Default.Email, plText = "Enter Your Email", prefixText = "" )
             password=Password(icon = Icons.Default.Lock, plText = "sshhh... Keep it Secret!!!", prefixText = "" )
             Spacer(modifier = Modifier.height(8.dp))
-            ForgotPasswordText()
+            ForgotPasswordText(vm)
             Spacer(modifier = Modifier.height(16.dp))
             SignInButton(email, password, vm, navController)
             Spacer(modifier = Modifier.height(16.dp))
@@ -107,6 +115,14 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
             SignUpText(navController)
         }
+
+
+        if(vm.isDialogShow){
+            SendResetPasswordDialogBox(onDismiss = {vm.dismissDialog()}, onConfirm = {
+                // we can call the forget pass firebase technique from vm
+            })
+        }
+
     }
 }
 
@@ -161,7 +177,7 @@ fun LoginHeaderText() {
 
 // Forgot password text
 @Composable
-fun ForgotPasswordText() {
+fun ForgotPasswordText(vm:DropViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,10 +190,62 @@ fun ForgotPasswordText() {
             color = Color.DarkGray ,
             fontSize = 15.sp ,
             modifier = Modifier.clickable {
-
+                vm.displayDialog()
             })
     }
 }
+
+
+
+@Composable
+fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:()->Unit){
+
+    Dialog(onDismissRequest = onDismiss,properties = DialogProperties(
+        usePlatformDefaultWidth = false
+    )
+    ) {
+
+        /// BIG MISTAKE SHOULD DO THIS CHANGES IN NEW BRANCH
+
+        val context= LocalContext.current
+        val textInput by remember { mutableStateOf("xyz@gmail.com") }
+
+        Box(Modifier.padding(horizontal = 18.dp)
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(color = Color.White)){
+
+            Column(modifier=Modifier.wrapContentHeight().padding(horizontal = 12.dp, vertical = 18.dp),
+                verticalArrangement = Arrangement.Center){
+
+                Text(text = "Enter Your Email",
+                    color = Color.Black,
+                    style = h2TextStyle,
+                    modifier = Modifier
+                )
+
+                TextField(icon = Icons.Filled.AccountCircle, plText = textInput , prefixText = "")
+
+                Button(onClick = {
+
+                    Toast.makeText(context, "Check your email to reset password!!!", Toast.LENGTH_SHORT).show()
+                    onDismiss()
+                                 }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black,
+                        contentColor = Color.White)) {
+                    Text("Submit")
+                }
+
+            }
+
+        }
+
+    }
+
+
+}
+
 
 @Composable
 fun SignInButton(
