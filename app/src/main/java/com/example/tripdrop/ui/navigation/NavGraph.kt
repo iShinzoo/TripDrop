@@ -56,21 +56,31 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationVi
         composable(Route.UserDataCollectionScreen.name) {
             UserDataCollectionScreen(navController, vm)
         }
-        composable("productDetailsScreen/{productId}") { backStackEntry ->
+        composable(Route.ProductDetailScreen.name + "/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
             productId?.let {
-                ProductDetailsScreen(vm = vm, productId = it, navController = navController, nm = nm, chatModel = chatViewModel)
+                ProductDetailsScreen(
+                    vm = vm,
+                    productId = it,
+                    navController = navController,
+                    nm = nm,
+                    chatModel = chatViewModel
+                )
             }
         }
         composable(
-            route = "singleChatScreen/{chatId}",
+            route = Route.SingleChatScreen.name + "/{chatId}",
             arguments = listOf(navArgument("chatId") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId")
             chatId?.let {
-                SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
+                SingleChatScreen(
+                    navController = navController,
+                    chatModel = chatViewModel,
+                    chatId = chatId
+                )
             }
         }
         composable(Route.ProfileDetailScreen.name) {

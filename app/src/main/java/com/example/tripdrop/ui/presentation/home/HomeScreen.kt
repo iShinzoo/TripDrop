@@ -67,6 +67,7 @@ import coil.compose.rememberImagePainter
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
+import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.standardPadding
 import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle
@@ -177,7 +178,7 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
            // Display product cards dynamically
            filteredItems.forEach { product ->
                ProductCard(product, onDetailsClick = {
-                   navController.navigate("productDetailsScreen/${product.productId}")
+                   navController.navigate(Route.ProductDetailScreen.name + "/${product.productId}")
                })
            }
        }
@@ -384,12 +385,4 @@ fun ProductCard(
                 }
             }
         }
-
 }
-
-
-//@Preview()
-//@Composable
-//fun check(){
-//    ProductCard()
-//}

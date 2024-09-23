@@ -101,7 +101,7 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
             composable(Route.UserDataCollectionScreen.name) {
                 UserDataCollectionScreen(navController, vm)
             }
-            composable("productDetailsScreen/{productId}") { backStackEntry ->
+            composable(Route.ProductDetailScreen.name + "/{productId}") { backStackEntry ->
                 val productId = backStackEntry.arguments?.getString("productId")
                 productId?.let {
                     ProductDetailsScreen(
@@ -114,7 +114,7 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
                 }
             }
             composable(
-                route = "singleChatScreen/{chatId}",
+                route = Route.SingleChatScreen.name + "/{chatId}",
                 arguments = listOf(navArgument("chatId") {
                     type = NavType.StringType
                 })
