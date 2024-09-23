@@ -103,8 +103,11 @@ fun LoginScreen(
         ) {
             LoginHeaderText()
             LottieAnimationLoginPage()
-            email=TextField(icon = Icons.Default.Email, plText = "Enter Your Email", prefixText = "" )
-            password=Password(icon = Icons.Default.Lock, plText = "sshhh... Keep it Secret!!!", prefixText = "" )
+            email =
+                TextField(icon = Icons.Default.Email, plText = "Enter Your Email", prefixText = "")
+            password = Password(
+                icon = Icons.Default.Lock, plText = "sshhh... Keep it Secret!!!", prefixText = ""
+            )
             Spacer(modifier = Modifier.height(8.dp))
             ForgotPasswordText(vm)
             Spacer(modifier = Modifier.height(16.dp))
@@ -118,10 +121,9 @@ fun LoginScreen(
         }
 
 
-        if(vm.isDialogShow){
-            SendResetPasswordDialogBox(onDismiss = {vm.dismissDialog()},
-                onConfirm = {
-                    vm.resetPassword(it,context)
+        if (vm.isDialogShow) {
+            SendResetPasswordDialogBox(onDismiss = { vm.dismissDialog() }, onConfirm = {
+                vm.resetPassword(it, context)
 
             })
         }
@@ -132,13 +134,14 @@ fun LoginScreen(
 @Composable
 fun LottieAnimationLoginPage() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.drop))
-    val progress by animateLottieCompositionAsState(composition = composition, restartOnPlay = true,
-        iterations = LottieConstants.IterateForever)
+    val progress by animateLottieCompositionAsState(
+        composition = composition, restartOnPlay = true, iterations = LottieConstants.IterateForever
+    )
 
     LottieAnimation(
         modifier = Modifier.size(300.dp),
         composition = composition,
-        progress = {progress})
+        progress = { progress })
 
 }
 
@@ -177,37 +180,35 @@ fun LoginHeaderText() {
 }
 
 
-
 // Forgot password text
 @Composable
-fun ForgotPasswordText(vm:DropViewModel) {
+fun ForgotPasswordText(vm: DropViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(vertical = 10.dp) ,
+            .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.End
     ) {
 
-        Text(text = "Forgot Password" ,
-            color = Color.DarkGray ,
-            fontSize = 15.sp ,
+        Text(text = "Forgot Password",
+            color = Color.DarkGray,
+            fontSize = 15.sp,
             modifier = Modifier.clickable {
                 vm.displayDialog()
             })
     }
 }
 
-
-
 @Composable
-fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:(String)->Unit){
+fun SendResetPasswordDialogBox(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
 
-    Dialog(onDismissRequest = onDismiss,properties = DialogProperties(
-        usePlatformDefaultWidth = false
-    )
+    Dialog(
+        onDismissRequest = onDismiss, properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
     ) {
-        val context= LocalContext.current
+        val context = LocalContext.current
 
         Box(
             Modifier
@@ -215,54 +216,52 @@ fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:(String)->Unit){
                 .wrapContentHeight()
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(color = Color.White)){
-
-            Column(modifier= Modifier
-                .wrapContentHeight()
-                .padding(horizontal = 12.dp, vertical = 18.dp),
-                verticalArrangement = Arrangement.Center){
-
-                Text(text = "Enter Your Email",
+                .background(color = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .padding(horizontal = 12.dp, vertical = 18.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Enter Your Email",
                     color = Color.Black,
                     style = h2TextStyle,
                     modifier = Modifier
                 )
-
-              val userEmail =  TextField(icon = Icons.Filled.AccountCircle, plText = "xyz@gmail.com" , prefixText = "")
-
-                Button(onClick = {
-
-                    if(userEmail.isEmpty()){
-                        Toast.makeText(context, "Enter a valid email address", Toast.LENGTH_SHORT).show()
-                    }else{
-                        onConfirm(userEmail.trim())
-                        onDismiss()
-                    }
-
-                                 }, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black,
-                        contentColor = Color.White)) {
+                val userEmail = TextField(
+                    icon = Icons.Filled.AccountCircle, plText = "xyz@gmail.com", prefixText = ""
+                )
+                Button(
+                    onClick = {
+                        if (userEmail.isEmpty()) {
+                            Toast.makeText(
+                                context, "Enter a valid email address", Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            onConfirm(userEmail.trim())
+                            onDismiss()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black, contentColor = Color.White
+                    )
+                ) {
                     Text("Submit")
                 }
-
             }
-
         }
-
     }
-
-
 }
 
 
 @Composable
 fun SignInButton(
-    email: String,
-    password: String,
-    vm: DropViewModel,
-    navController: NavController
+    email: String, password: String, vm: DropViewModel, navController: NavController
 ) {
     val context = LocalContext.current  // Use LocalContext.current directly
 
@@ -322,20 +321,18 @@ fun SignUpText(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(vertical = 10.dp) ,
+            .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row {
 
             Text(
-                text = "Don't have an Account?" ,
-                color = Color.DarkGray ,
-                fontSize = 15.sp
+                text = "Don't have an Account?", color = Color.DarkGray, fontSize = 15.sp
             )
 
-            Text(text = "Sign Up" ,
-                color = Color.Black ,
-                fontSize = 16.sp ,
+            Text(text = "Sign Up",
+                color = Color.Black,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier
                     .padding(start = 5.dp)

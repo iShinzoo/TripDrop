@@ -1,9 +1,19 @@
 package com.example.tripdrop.ui.presentation.home.details
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -11,9 +21,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.DeliveryDining
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,18 +51,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
+import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ProductDetailsScreen(
     navController: NavController,
     vm: DropViewModel,
     productId: String,
-    nm: NotificationViewModel
+    nm: NotificationViewModel,
+    chatModel: ChatViewModel
 ) {
     val productDetails by vm.productDetails.observeAsState()
     var isLoading by remember { mutableStateOf(true) }
@@ -67,7 +92,7 @@ fun ProductDetailsScreen(
             // Handle loading and error states
             productDetails?.let { product ->
                 isLoading = false
-                ProductDetailsContent(product, navController, vm = vm,nm)
+                ProductDetailsContent(product, navController,nm,chatModel,vm)
             } ?: run {
                 if (isLoading) {
                     LoadingView()
@@ -108,11 +133,24 @@ fun ProductHeader(navController: NavController) {
 }
 
 @Composable
-fun ProductDetailsContent(product: Product, navController: NavController, vm: DropViewModel, nm : NotificationViewModel) {
+fun ProductDetailsContent(
+    product: Product,
+    navController: NavController,
+    nm: NotificationViewModel,
+    chatModel : ChatViewModel,
+    vm: DropViewModel
+) {
 
-    val userData by vm.userDetails.collectAsState()
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val productOwner = remember { mutableStateOf<UserData?>(null) } // Product owner info
+
+    // Fetch product details and owner data here (assuming a function exists to fetch it)
+    LaunchedEffect(product.productId) {
+        vm.getProductOwner(product.productId) { owner ->
+            productOwner.value = owner
+        }
+    }
     val fcmToken by nm.fcmToken.observeAsState()
-
     val productName = product.title
 
     Column(
@@ -140,7 +178,26 @@ fun ProductDetailsContent(product: Product, navController: NavController, vm: Dr
             icon = Icons.Default.Chat,
             buttonText = "Chat with User",
             onClick = {
-                navController.navigate(Route.SingleChatScreen.name)
+
+                if(currentUser == null){
+                    Log.e("AuthError", "User is not authenticated!")
+                } else{
+                    val user1 = currentUser.uid // Current user
+                    val user2 = productOwner.value?.userId // Product owner
+
+                    if (user2 != null) {
+                        chatModel.getOrCreateChat(user1, user2) { chatId ->
+                            if (chatId != null) {
+                                Log.d("ProductDetailsScreen", "Navigating to chat with chatId: $chatId")
+                                navController.navigate("singleChatScreen/$chatId")
+                            } else {
+                                Log.e("ProductDetailsScreen", "Failed to create or retrieve chat!")
+                            }
+                        }
+                    } else {
+                        Log.e("ProductDetailsScreen", "User1 or User2 is null!")
+                    }
+                }
             }
         )
 
@@ -148,16 +205,15 @@ fun ProductDetailsContent(product: Product, navController: NavController, vm: Dr
             icon = Icons.Default.DeliveryDining,
             buttonText = "Ready to Drop it?",
             onClick = {
-                if (fcmToken != null) {
-                    if (productName != null) {
-                        nm.sendNotification(fcmToken!!, productName)
+                fcmToken?.let { token ->
+                    productName?.let { name ->
+                        nm.sendNotification(token, name)
                     }
                 }
             }
         )
     }
 }
-
 @Composable
 fun ProductImageCard(imageUrl: String) {
     Card(

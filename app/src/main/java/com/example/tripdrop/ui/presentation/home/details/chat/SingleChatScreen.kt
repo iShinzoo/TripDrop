@@ -76,28 +76,41 @@ fun SingleChatScreen(navController: NavController, chatModel: ChatViewModel, cha
 
     val myUser = chatModel.userData.value
 
-    val currentChat = chatModel.chats.value.first { it.chatId == chatId }
+    // Use firstOrNull to prevent crashes when no matching chat is found
+    val currentChat = chatModel.chats.value.firstOrNull { it.chatId == chatId }
 
+    // If currentChat is null, handle the error by returning or showing an error message
+    if (currentChat == null) {
+        // You can handle it by showing a default message or navigate back
+        LaunchedEffect(Unit) {
+            navController.popBackStack() // Optional, navigate back if chat not found
+        }
+        return // Prevent further execution if no chat is found
+    }
+
+    // Determine the chatUser based on the current user
     val chatUser =
         if (myUser?.userId == currentChat.user1.userId) currentChat.user2 else currentChat.user1
 
     val chatMsg by chatModel.chatMessages
 
+    // Load the chat messages when the chatId changes
     LaunchedEffect(key1 = chatId) {
         chatModel.displayMessages(chatId)
     }
 
+    // Handle back button press to navigate to the previous screen
     BackHandler {
         navController.navigate(Route.ProductDetailScreen.name)
     }
 
+    // UI layout
     Column(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
             .background(Color.White)
     ) {
-
         TopChatBar(name = chatUser.name ?: "", imageUrl = chatUser.imageUrl ?: "") {
             navController.popBackStack()
             chatModel.hideMessage()
@@ -110,6 +123,7 @@ fun SingleChatScreen(navController: NavController, chatModel: ChatViewModel, cha
         ReplyBox(reply = reply, onReplyChange = { reply = it }, onSendReply = onSendReply)
     }
 }
+
 
 
 @Composable

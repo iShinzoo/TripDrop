@@ -20,9 +20,9 @@ class ChatViewModel @Inject constructor(
     var db: FirebaseFirestore
 ) : ViewModel() {
 
-
     val inProcess = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+    val chatData = mutableStateOf<ChatData?>(null)
     val inProcessChats = mutableStateOf(false)
     val eventMutbaleState = mutableStateOf<Event<String>?>(null)
     val chats = mutableStateOf<List<ChatData>>(listOf())
@@ -108,6 +108,50 @@ class ChatViewModel @Inject constructor(
         val msg = userData.value?.userId?.let { Message(it, message, time) }
         if (msg != null) {
             db.collection(CHATS).document(chatId).collection(MESSAGES).document().set(msg)
+        }
+    }
+
+    fun getOrCreateChat(user1Id: String, user2Id: String, onChatIdReceived: (String?) -> Unit) {
+        inProcessChats.value = true
+
+        // Check if a chat already exists between these users
+        db.collection(CHATS).where(
+            Filter.or(
+                Filter.and(
+                    Filter.equalTo("user1.userId", user1Id),
+                    Filter.equalTo("user2.userId", user2Id)
+                ),
+                Filter.and(
+                    Filter.equalTo("user1.userId", user2Id),
+                    Filter.equalTo("user2.userId", user1Id)
+                )
+            )
+        ).get().addOnSuccessListener { querySnapshot ->
+            val existingChat = querySnapshot.documents.firstOrNull()?.toObject<ChatData>()
+
+            if (existingChat != null) {
+                // Chat exists, return the chatId
+                onChatIdReceived(existingChat.chatId)
+            } else {
+                // Chat doesn't exist, create a new one
+                val newChatId = db.collection(CHATS).document().id
+                val newChat = ChatData(
+                    chatId = newChatId,
+                    user1 = UserData(userId = user1Id),
+                    user2 = UserData(userId = user2Id)
+                )
+                db.collection(CHATS).document(newChatId).set(newChat).addOnSuccessListener {
+                    onChatIdReceived(newChatId)
+                }.addOnFailureListener {
+                    onChatIdReceived(null) // Return null if creation fails
+                    handleException(it, "Failed to create new chat")
+                }
+            }
+            inProcessChats.value = false
+        }.addOnFailureListener {
+            onChatIdReceived(null) // Return null if retrieval fails
+            handleException(it, "Failed to retrieve chat")
+            inProcessChats.value = false
         }
     }
 

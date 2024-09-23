@@ -108,7 +108,8 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
                         vm = vm,
                         productId = it,
                         navController = navController,
-                        nm = nm
+                        nm = nm,
+                        chatModel = chatViewModel
                     )
                 }
             }

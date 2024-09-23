@@ -17,6 +17,7 @@ import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +38,7 @@ class DropViewModel @Inject constructor(
 
     // dialog box state
     var isDialogShow by mutableStateOf(false)
-        private  set
+        private set
 
     // Mutable state variables for UI updates
     private val inProcess = mutableStateOf(false)
@@ -50,32 +51,38 @@ class DropViewModel @Inject constructor(
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    // StateFlow for profile update status
     private val _profileUpdateStatus = MutableStateFlow(ProfileUpdateStatus.IDLE)
     val profileUpdateStatus: StateFlow<ProfileUpdateStatus> = _profileUpdateStatus
 
     private val _userDetails = MutableStateFlow<UserData?>(null)
     val userDetails: StateFlow<UserData?> = _userDetails.asStateFlow()
 
-    // Profile update status enum
     enum class ProfileUpdateStatus {
         IDLE, SUCCESS, FAILURE
     }
 
-//    init {
-//        // Check if the user is already signed in and fetch user data
-//        auth.currentUser?.uid?.let {
-//            getUserData(it)
-//        }
-//    }
-
-
-    fun displayDialog(){
-        isDialogShow=true
+    fun displayDialog() {
+        isDialogShow = true
     }
 
-    fun dismissDialog(){
-        isDialogShow =false
+    fun dismissDialog() {
+        isDialogShow = false
+    }
+
+    val currentUser: FirebaseUser?
+        get() = auth.currentUser
+
+
+    fun displayUserDetails() {
+        val user = currentUser
+        if (user != null) {
+            val userId = user.uid
+            val userEmail = user.email
+            // Use this information for your logic
+            Log.d("User Info", "User ID: $userId, Email: $userEmail")
+        } else {
+            Log.e("User Info", "No user is currently signed in")
+        }
     }
 
 
@@ -133,14 +140,14 @@ class DropViewModel @Inject constructor(
     }
 
 
-    fun resetPassword(email: String,context: Context){
+    fun resetPassword(email: String, context: Context) {
 
-        auth.sendPasswordResetEmail(email).addOnCompleteListener{task->
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
 
-            if (task.isSuccessful){
-               showToast(context,"A password reset email has been sent to your email")
-            }else{
-                showToast(context,"Something went Wrong - ${task.exception?.message}")
+            if (task.isSuccessful) {
+                showToast(context, "A password reset email has been sent to your email")
+            } else {
+                showToast(context, "Something went Wrong - ${task.exception?.message}")
             }
 
         }
@@ -218,7 +225,8 @@ class DropViewModel @Inject constructor(
                     UserData(userId = uid, name = name, number = number, imageUrl = null)
 
                 // Upload profile image if exists
-                val imageUrl = imageUri?.let { Uri.parse(it)?.let { uri -> uploadProfileImage(uri) } }
+                val imageUrl =
+                    imageUri?.let { Uri.parse(it)?.let { uri -> uploadProfileImage(uri) } }
 
                 // Update Fire store user profile
                 userProfile.copy(imageUrl = imageUrl).let { updatedProfile ->
@@ -269,7 +277,8 @@ class DropViewModel @Inject constructor(
 
             try {
                 // Upload image if provided
-                val imageUrl = imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
+                val imageUrl =
+                    imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
                 Log.d("UploadProductDetails", "Image URL: $imageUrl")
 
                 // Create a Product object
@@ -382,7 +391,38 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    fun getProductOwner(productId: String, onOwnerFetched: (UserData?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                // Fetch product from Firestore using productId
+                val productSnapshot = db.collection("products").document(productId).get().await()
 
+                // Check if the product exists
+                if (productSnapshot.exists()) {
+                    val product = productSnapshot.toObject(Product::class.java)
 
+                    // Fetch the user who uploaded the product (owner)
+                    product?.userId?.let { userId ->
+                        val userSnapshot = db.collection("users").document(userId).get().await()
+
+                        // Check if user exists
+                        if (userSnapshot.exists()) {
+                            val user = userSnapshot.toObject(UserData::class.java)
+                            onOwnerFetched(user) // Return the user data (owner)
+                        } else {
+                            Log.e("Firestore", "User not found")
+                            onOwnerFetched(null) // Return null if user not found
+                        }
+                    }
+                } else {
+                    Log.e("Firestore", "Product not found")
+                    onOwnerFetched(null) // Return null if product not found
+                }
+            } catch (e: Exception) {
+                Log.e("Firestore", "Error fetching product owner", e)
+                onOwnerFetched(null) // Handle errors
+            }
+        }
+    }
 
 }

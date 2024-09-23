@@ -59,7 +59,7 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationVi
         composable("productDetailsScreen/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
             productId?.let {
-                ProductDetailsScreen(vm = vm, productId = it, navController = navController, nm = nm)
+                ProductDetailsScreen(vm = vm, productId = it, navController = navController, nm = nm, chatModel = chatViewModel)
             }
         }
         composable(
