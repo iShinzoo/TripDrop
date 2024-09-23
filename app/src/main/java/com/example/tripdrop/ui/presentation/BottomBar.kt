@@ -30,6 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
@@ -48,7 +49,7 @@ import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.example.tripdrop.ui.theme.bgwhite
 
 @Composable
-fun BottomBar(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationViewModel) {
+fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -74,12 +75,15 @@ fun BottomBar(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationV
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Route.HomeScreen.name) {
-                HomeScreen(navController,vm)
+                HomeScreen(navController, vm)
             }
             composable(Route.PostScreen.name) {
                 PostScreen(vm)
             }
-            composable(Route.NotificationScreen.name) {
+            composable(
+                Route.NotificationScreen.name,
+                deepLinks = listOf(navDeepLink { uriPattern = "myapp://notification" })
+            ) {
                 NotificationScreen()
             }
             composable(Route.WelcomeScreen.name) {
@@ -100,7 +104,12 @@ fun BottomBar(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationV
             composable("productDetailsScreen/{productId}") { backStackEntry ->
                 val productId = backStackEntry.arguments?.getString("productId")
                 productId?.let {
-                    ProductDetailsScreen(vm = vm, productId = it, navController = navController, nm = nm)
+                    ProductDetailsScreen(
+                        vm = vm,
+                        productId = it,
+                        navController = navController,
+                        nm = nm
+                    )
                 }
             }
             composable(
@@ -111,14 +120,18 @@ fun BottomBar(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationV
             ) { backStackEntry ->
                 val chatId = backStackEntry.arguments?.getString("chatId")
                 chatId?.let {
-                    SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
+                    SingleChatScreen(
+                        navController = navController,
+                        chatModel = chatViewModel,
+                        chatId = chatId
+                    )
                 }
             }
             composable(Route.ProfileDetailScreen.name) {
                 ProfileDetailsScreen(navController, vm = vm)
             }
             composable(Route.BottomNav.name) {
-                BottomBar(vm,chatViewModel,nm)
+                BottomBar(vm, chatViewModel, nm)
             }
         }
     }
@@ -147,7 +160,8 @@ fun MyBottomBar(navController: NavHostController) {
         ) {
             // Loop through navigation items and create a NavigationBarItem for each
             navItems.forEach { item ->
-                val isSelected = item.name == navController.currentBackStackEntry?.destination?.route
+                val isSelected =
+                    item.name == navController.currentBackStackEntry?.destination?.route
                 NavigationBarItem(
                     selected = isSelected,
                     onClick = {

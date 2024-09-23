@@ -7,10 +7,8 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface FcmService {
-    @POST("v1/projects/\n" +
-            "dropit-cdbed/messages:send")
+    @POST("v1/projects/dropit-cdbed/messages:send")
     suspend fun sendNotification(
         @Body notification: NotificationRequest
-    ): Response<ResponseBody>// No need for type arguments here
+    ): Response<ResponseBody>
 }
-

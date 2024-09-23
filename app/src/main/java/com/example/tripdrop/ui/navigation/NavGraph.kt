@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
@@ -34,7 +35,10 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationVi
         composable(Route.PostScreen.name) {
             PostScreen(vm)
         }
-        composable(Route.NotificationScreen.name) {
+        composable(
+            Route.NotificationScreen.name,
+            deepLinks = listOf(navDeepLink { uriPattern = "myapp://notification" })
+        ) {
             NotificationScreen()
         }
         composable(Route.WelcomeScreen.name) {

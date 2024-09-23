@@ -1,7 +1,10 @@
 package com.example.tripdrop
 
 import android.Manifest
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -31,22 +34,36 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String?, body: String?) {
-        val notificationManager = NotificationManagerCompat.from(this)
+        val deepLinkIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("myapp://notification")
+        )
+        deepLinkIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            deepLinkIntent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notificationBuilder = NotificationCompat.Builder(this, "default")
             .setContentTitle(title)
             .setContentText(body)
             .setSmallIcon(R.drawable.delivery)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return
         }
+
+        val notificationManager = NotificationManagerCompat.from(this)
         notificationManager.notify(1001, notificationBuilder.build())
     }
+
+
 
     private fun saveTokenToFirestore(token: String) {
         // This is where you would save the token to Firestore or elsewhere
