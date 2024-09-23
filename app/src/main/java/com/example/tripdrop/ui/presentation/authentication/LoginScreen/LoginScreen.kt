@@ -231,6 +231,9 @@ fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:()->Unit){
 
                     Toast.makeText(context, "Check your email to reset password!!!", Toast.LENGTH_SHORT).show()
                     onDismiss()
+
+                    // testing
+
                                  }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black,
                         contentColor = Color.White)) {
