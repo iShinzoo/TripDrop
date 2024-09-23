@@ -4,7 +4,10 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,6 +34,10 @@ class DropViewModel @Inject constructor(
     private val db: FirebaseFirestore,
     private val storage: FirebaseStorage
 ) : ViewModel() {
+
+    // dialog box state
+    var isDialogShow by mutableStateOf(false)
+        private  set
 
     // Mutable state variables for UI updates
     private val inProcess = mutableStateOf(false)
@@ -61,6 +68,16 @@ class DropViewModel @Inject constructor(
 //            getUserData(it)
 //        }
 //    }
+
+
+    fun displayDialog(){
+        isDialogShow=true
+    }
+
+    fun dismissDialog(){
+        isDialogShow =false
+    }
+
 
     private fun checkUserData(navController: NavController) {
         viewModelScope.launch {
@@ -114,6 +131,23 @@ class DropViewModel @Inject constructor(
                 }
             }
     }
+
+
+    fun resetPassword(email: String,context: Context){
+
+        auth.sendPasswordResetEmail(email).addOnCompleteListener{task->
+
+            if (task.isSuccessful){
+               showToast(context,"A password reset email has been sent to your email")
+            }else{
+                showToast(context,"Something went Wrong - ${task.exception?.message}")
+            }
+
+        }
+
+
+    }
+
 
     /**
      * Log in the user with the provided email and password.
