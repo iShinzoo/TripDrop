@@ -72,6 +72,7 @@ import com.example.tripdrop.ui.theme.h3TextStyle
 fun LoginScreen(
     navController: NavController, vm: DropViewModel
 ) {
+    val context = LocalContext.current
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
@@ -118,8 +119,10 @@ fun LoginScreen(
 
 
         if(vm.isDialogShow){
-            SendResetPasswordDialogBox(onDismiss = {vm.dismissDialog()}, onConfirm = {
-                // we can call the forget pass firebase technique from vm
+            SendResetPasswordDialogBox(onDismiss = {vm.dismissDialog()},
+                onConfirm = {
+                    vm.resetPassword(it,context)
+
             })
         }
 
@@ -198,25 +201,25 @@ fun ForgotPasswordText(vm:DropViewModel) {
 
 
 @Composable
-fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:()->Unit){
+fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:(String)->Unit){
 
     Dialog(onDismissRequest = onDismiss,properties = DialogProperties(
         usePlatformDefaultWidth = false
     )
     ) {
-
-        /// BIG MISTAKE SHOULD DO THIS CHANGES IN NEW BRANCH
-
         val context= LocalContext.current
-        val textInput by remember { mutableStateOf("xyz@gmail.com") }
 
-        Box(Modifier.padding(horizontal = 18.dp)
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(color = Color.White)){
+        Box(
+            Modifier
+                .padding(horizontal = 18.dp)
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(color = Color.White)){
 
-            Column(modifier=Modifier.wrapContentHeight().padding(horizontal = 12.dp, vertical = 18.dp),
+            Column(modifier= Modifier
+                .wrapContentHeight()
+                .padding(horizontal = 12.dp, vertical = 18.dp),
                 verticalArrangement = Arrangement.Center){
 
                 Text(text = "Enter Your Email",
@@ -225,16 +228,20 @@ fun SendResetPasswordDialogBox(onDismiss:()->Unit,onConfirm:()->Unit){
                     modifier = Modifier
                 )
 
-                TextField(icon = Icons.Filled.AccountCircle, plText = textInput , prefixText = "")
+              val userEmail =  TextField(icon = Icons.Filled.AccountCircle, plText = "xyz@gmail.com" , prefixText = "")
 
                 Button(onClick = {
 
-                    Toast.makeText(context, "Check your email to reset password!!!", Toast.LENGTH_SHORT).show()
-                    onDismiss()
+                    if(userEmail.isEmpty()){
+                        Toast.makeText(context, "Enter a valid email address", Toast.LENGTH_SHORT).show()
+                    }else{
+                        onConfirm(userEmail.trim())
+                        onDismiss()
+                    }
 
-                    // testing
-
-                                 }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                                 }, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black,
                         contentColor = Color.White)) {
                     Text("Submit")

@@ -138,6 +138,23 @@ class DropViewModel @Inject constructor(
             }
     }
 
+
+    fun resetPassword(email: String,context: Context){
+
+        auth.sendPasswordResetEmail(email).addOnCompleteListener{task->
+
+            if (task.isSuccessful){
+               showToast(context,"A password reset email has been sent to your email")
+            }else{
+                showToast(context,"Something went Wrong - ${task.exception?.message}")
+            }
+
+        }
+
+
+    }
+
+
     /**
      * Log in the user with the provided email and password.
      */
