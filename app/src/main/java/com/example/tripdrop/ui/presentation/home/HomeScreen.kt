@@ -66,7 +66,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
-import com.example.tripdrop.data.Product
+import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.ui.presentation.standardPadding
 import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle

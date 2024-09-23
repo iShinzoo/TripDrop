@@ -1,4 +1,4 @@
-package com.example.tripdrop.data
+package com.example.tripdrop.data.model
 
 import java.util.UUID
 

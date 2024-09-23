@@ -30,7 +30,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
@@ -46,7 +48,7 @@ import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.example.tripdrop.ui.theme.bgwhite
 
 @Composable
-fun BottomBar(vm: DropViewModel) {
+fun BottomBar(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationViewModel) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -98,25 +100,25 @@ fun BottomBar(vm: DropViewModel) {
             composable("productDetailsScreen/{productId}") { backStackEntry ->
                 val productId = backStackEntry.arguments?.getString("productId")
                 productId?.let {
-                    ProductDetailsScreen(vm = vm, productId = it, navController = navController)
+                    ProductDetailsScreen(vm = vm, productId = it, navController = navController, nm = nm)
                 }
             }
             composable(
-                route = "chatScreen/{senderId}/{receiverId}",
-                arguments = listOf(
-                    navArgument("senderId") { type = NavType.StringType },
-                    navArgument("receiverId") { type = NavType.StringType }
-                )
+                route = "singleChatScreen/{chatId}",
+                arguments = listOf(navArgument("chatId") {
+                    type = NavType.StringType
+                })
             ) { backStackEntry ->
-                val senderId = backStackEntry.arguments?.getString("senderId") ?: ""
-                val receiverId = backStackEntry.arguments?.getString("receiverId") ?: ""
-                SingleChatScreen(vm = vm, senderId = senderId, receiverId = receiverId, navController = navController)
+                val chatId = backStackEntry.arguments?.getString("chatId")
+                chatId?.let {
+                    SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
+                }
             }
             composable(Route.ProfileDetailScreen.name) {
                 ProfileDetailsScreen(navController, vm = vm)
             }
             composable(Route.BottomNav.name) {
-                BottomBar(vm)
+                BottomBar(vm,chatViewModel,nm)
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.tripdrop.data
+package com.example.tripdrop.data.model
 
 open class Event<out T>(val content : T) {
     var hasBeenHandeled = false

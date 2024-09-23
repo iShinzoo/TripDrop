@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.androidx.media3.effect)
+    implementation(libs.play.services.analytics.impl)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -96,6 +98,7 @@ dependencies {
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // paging 3 library
     implementation("androidx.paging:paging-runtime:3.3.2")
@@ -116,27 +119,27 @@ dependencies {
     implementation("androidx.paging:paging-compose:3.3.2")
 
     // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.8.0")
+    implementation("androidx.navigation:navigation-compose:2.8.1")
 
     //Compose Foundation
-    implementation("androidx.compose.foundation:foundation:1.7.1")
+    implementation("androidx.compose.foundation:foundation:1.7.2")
 
     // System Ui Controller
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
 
     //material icon extended library
-    implementation ("androidx.compose.material:material-icons-extended:1.7.1")
+    implementation ("androidx.compose.material:material-icons-extended:1.7.2")
 
     // Compose Navigation
-    implementation ("androidx.navigation:navigation-compose:2.8.0")
+    implementation ("androidx.navigation:navigation-compose:2.8.1")
 
-    implementation ("androidx.compose.runtime:runtime-livedata:1.7.1")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.7.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
 
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
@@ -144,10 +147,10 @@ dependencies {
     implementation ("androidx.core:core-splashscreen:1.1.0-alpha02")
 
     // modal bottom sheet
-    implementation ("androidx.compose.material:material:1.7.1")
-    implementation ("androidx.compose.ui:ui:1.7.1")
+    implementation ("androidx.compose.material:material:1.7.2")
+    implementation ("androidx.compose.ui:ui:1.7.2")
 
     //lottie Animations JSON support
-    implementation ("com.airbnb.android:lottie-compose:6.0.0")
+    implementation ("com.airbnb.android:lottie-compose:6.5.2")
 
 }

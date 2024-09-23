@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
-import com.example.tripdrop.data.UserData
+import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.CommonImage
 import kotlinx.coroutines.MainScope
