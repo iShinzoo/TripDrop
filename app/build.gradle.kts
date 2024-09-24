@@ -153,4 +153,7 @@ dependencies {
     //lottie Animations JSON support
     implementation ("com.airbnb.android:lottie-compose:6.5.2")
 
+    implementation ("com.google.accompanist:accompanist-permissions:0.36.0")
+
+
 }

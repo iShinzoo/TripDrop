@@ -191,7 +191,7 @@ fun ForgotPasswordText(vm: DropViewModel) {
         horizontalAlignment = Alignment.End
     ) {
 
-        Text(text = "Forgot Password",
+        Text(text = "Forgot Password ?",
             color = Color.DarkGray,
             fontSize = 15.sp,
             modifier = Modifier.clickable {
@@ -287,7 +287,7 @@ fun SignInButton(
 @Composable
 fun DividerText() {
     Text(
-        text = "------------------ OR --------------------",
+        text = "---------- OR ----------",
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = smallTextSize,
         fontWeight = FontWeight.Bold

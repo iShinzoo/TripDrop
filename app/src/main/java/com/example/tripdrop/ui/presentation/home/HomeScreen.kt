@@ -90,104 +90,104 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
         (navController.context as ComponentActivity).finish()
     }
 
-   Scaffold(
-       topBar = { CustomTopAppBar() }
-   ) {
+    Scaffold(
+        topBar = { CustomTopAppBar() }
+    ) {
 
-       Column(
-           modifier = Modifier
-               .fillMaxWidth()
-               .padding(standardPadding)
-               .verticalScroll(rememberScrollState()),
-           horizontalAlignment = Alignment.CenterHorizontally,
-           verticalArrangement = Arrangement.Top
-       ) {
-           Spacer(modifier = Modifier.height(80.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(standardPadding)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Spacer(modifier = Modifier.height(80.dp))
 
-           var searchText by remember { mutableStateOf("") }
-           val containerColor = Color(0xFF222222)
-           val keyboardController = LocalSoftwareKeyboardController.current
-
-
-
-           OutlinedTextField(
-
-               value = searchText,
-               leadingIcon = {
-                   Icon(
-                       Icons.Filled.Search, contentDescription = "icon",
-                       tint = Color(0xFFA7A7A7)
-                   )
-               },
-               onValueChange = { searchText = it },
-               shape = RoundedCornerShape(15.dp),
-               prefix = {
-                   Text(
-                       text = "",
-                       color = Color(0xFFF6F6F6),
-                       fontSize = 14.sp
-                   )
-               },
+            var searchText by remember { mutableStateOf("") }
+            val containerColor = Color(0xFF222222)
+            val keyboardController = LocalSoftwareKeyboardController.current
 
 
-               placeholder = {
-                   Text(
-                       text = "Search News...", color = Color(0xFFA7A7A7), fontSize = 14.sp
-                   )
-               },
 
-               keyboardOptions = KeyboardOptions(
-                   imeAction = ImeAction.Next,
-                   keyboardType = KeyboardType.Text
-               ),
-               colors = OutlinedTextFieldDefaults.colors(
-                   focusedTextColor = Color.Black,
-                   unfocusedTextColor = Color.Black,
-                   focusedContainerColor = Color.White,
-                   unfocusedContainerColor = Color.White,
-                   focusedBorderColor = Color.Black,
-                   unfocusedBorderColor = Color.DarkGray,
-               ),
-               singleLine = true,
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .height(70.dp)
-                   .padding(top = 14.dp),
+            OutlinedTextField(
 
-               keyboardActions = KeyboardActions(
-                   onDone = {
-                       keyboardController?.hide()
-                       //
+                value = searchText,
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Search, contentDescription = "icon",
+                        tint = Color(0xFFA7A7A7)
+                    )
+                },
+                onValueChange = { searchText = it },
+                shape = RoundedCornerShape(15.dp),
+                prefix = {
+                    Text(
+                        text = "",
+                        color = Color(0xFFF6F6F6),
+                        fontSize = 14.sp
+                    )
+                },
 
 
-                   }
-               ),
+                placeholder = {
+                    Text(
+                        text = "Search News...", color = Color(0xFFA7A7A7), fontSize = 14.sp
+                    )
+                },
 
-               )
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.DarkGray,
+                ),
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .padding(top = 14.dp),
 
-           Spacer(
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .height(10.dp)
-           )
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        //
 
-           val filteredItems = productList.filter {
-               it.title!!.contains(searchText, ignoreCase = true)
-           }
 
-           // Display product cards dynamically
-           filteredItems.forEach { product ->
-               ProductCard(product, onDetailsClick = {
-                   navController.navigate(Route.ProductDetailScreen.name + "/${product.productId}")
-               })
-           }
-       }
-   }
+                    }
+                ),
+
+                )
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+            )
+
+            val filteredItems = productList.filter {
+                it.title!!.contains(searchText, ignoreCase = true)
+            }
+
+            // Display product cards dynamically
+            filteredItems.forEach { product ->
+                ProductCard(product, onDetailsClick = {
+                    navController.navigate(Route.ProductDetailScreen.name + "/${product.productId}")
+                })
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(modifier: Modifier = Modifier) {
+fun CustomTopAppBar() {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
@@ -291,98 +291,98 @@ fun ProductCard(
                 }
 
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-                    Image(
-                        painter =  rememberImagePainter(data = product.imageUrl),
-                        contentDescription = "Product Image",
-                        modifier = Modifier
-                            .padding(end = 20.dp)
-                            .size(80.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.LightGray),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                Image(
+                    painter = rememberImagePainter(data = product.imageUrl),
+                    contentDescription = "Product Image",
+                    modifier = Modifier
+                        .padding(end = 20.dp)
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
-                Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            Row(
+                modifier = Modifier
+                    .padding(end = 10.dp, bottom = 10.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text =
+                    "₹${product.rewards}",
+                    color = Color.Black,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Row(
-                    modifier = Modifier
-                        .padding(end = 10.dp, bottom = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text =
-                        "₹${product.rewards}",
-                        color = Color.Black,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier
-                            .clip(RoundedCornerShape(15.dp))
-                            .background(Color.DarkGray)
-                            .padding(4.dp)
-                            .wrapContentSize()
-                            .clickable {
-                                val shareIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    type = "text/plain"
-                                    putExtra(
-                                        Intent.EXTRA_TEXT, """
+                    Column(modifier = Modifier
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(Color.DarkGray)
+                        .padding(4.dp)
+                        .wrapContentSize()
+                        .clickable {
+                            val shareIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                type = "text/plain"
+                                putExtra(
+                                    Intent.EXTRA_TEXT, """
                                     Check out this product on Dropit. :
                                     Title: ${product.title}
                                     Description: ${product.description}
                                     Price: ₹${product.rewards}
                                 """.trimIndent()
-                                    )
-                                }
-                                context.startActivity(
-                                    Intent.createChooser(
-                                        shareIntent,
-                                        "Share Product"
-                                    )
                                 )
-                            }) {
-                            Icon(
-                                modifier = Modifier.size(30.dp),
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Share Icon",
-                                tint = Color(0xffa9d8f7)
+                            }
+                            context.startActivity(
+                                Intent.createChooser(
+                                    shareIntent,
+                                    "Share Product"
+                                )
                             )
+                        }) {
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share Icon",
+                            tint = Color(0xffa9d8f7)
+                        )
 
-                        }
+                    }
 
-                        Spacer(modifier = Modifier.width(18.dp))
+                    Spacer(modifier = Modifier.width(18.dp))
 
-                        Button(
-                            onClick = {
-                                onDetailsClick()
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.DarkGray,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(
-                                text = "Details",
-                                color = Color.White,
-                                style = h3TextStyle,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                    Button(
+                        onClick = {
+                            onDetailsClick()
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Details",
+                            color = Color.White,
+                            style = h3TextStyle,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
         }
+    }
 }

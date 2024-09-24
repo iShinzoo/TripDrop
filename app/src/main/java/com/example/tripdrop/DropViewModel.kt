@@ -85,7 +85,6 @@ class DropViewModel @Inject constructor(
         }
     }
 
-
     private fun checkUserData(navController: NavController) {
         viewModelScope.launch {
             val userId = auth.currentUser?.uid
@@ -139,7 +138,6 @@ class DropViewModel @Inject constructor(
             }
     }
 
-
     fun resetPassword(email: String, context: Context) {
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
@@ -176,8 +174,6 @@ class DropViewModel @Inject constructor(
                 }
             }
     }
-
-
     /**
      * Log out the current user and reset state.
      */
