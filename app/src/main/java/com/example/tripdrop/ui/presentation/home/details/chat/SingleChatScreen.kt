@@ -59,7 +59,7 @@ import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Message
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.CommonImage
+import com.example.tripdrop.ui.presentation.common.CommonImage
 
 
 @Composable

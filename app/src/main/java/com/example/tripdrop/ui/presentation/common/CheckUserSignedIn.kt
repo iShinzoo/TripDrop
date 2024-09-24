@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation
+package com.example.tripdrop.ui.presentation.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf

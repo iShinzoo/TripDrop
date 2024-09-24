@@ -38,11 +38,11 @@ import androidx.navigation.NavController
 import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.CheckUserSignedIn
+import com.example.tripdrop.ui.presentation.common.CheckUserSignedIn
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
-import com.example.tripdrop.ui.presentation.buttonHeight
-import com.example.tripdrop.ui.presentation.smallTextSize
-import com.example.tripdrop.ui.presentation.standardPadding
+import com.example.tripdrop.ui.presentation.common.buttonHeight
+import com.example.tripdrop.ui.presentation.common.smallTextSize
+import com.example.tripdrop.ui.presentation.common.standardPadding
 import com.example.tripdrop.ui.theme.h1TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle
 import com.example.tripdrop.ui.theme.infoTextStyle

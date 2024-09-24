@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation
+package com.example.tripdrop.ui.presentation.common
 
 import android.os.Build
 import androidx.compose.foundation.layout.Column

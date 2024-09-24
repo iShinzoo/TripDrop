@@ -68,7 +68,7 @@ import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.standardPadding
+import com.example.tripdrop.ui.presentation.common.standardPadding
 import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle
 import com.example.tripdrop.ui.theme.h4TextStyle

@@ -29,4 +29,9 @@ enum class Route {
     SingleChatScreen,
     ProfileDetailScreen,
     UserDataCollectionScreen,
+    YoursOrderScreen,
+    PaymentScreen,
+    HelpScreen,
+    PolicyScreen,
+    FeedbackScreen
 }

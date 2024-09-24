@@ -44,8 +44,13 @@ import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
-import com.example.tripdrop.ui.presentation.profile.ProfileDetailsScreen
+import com.example.tripdrop.ui.presentation.profile.FeedbackFormScreen
+import com.example.tripdrop.ui.presentation.profile.HelpScreen
+import com.example.tripdrop.ui.presentation.profile.PaymentScreen
+import com.example.tripdrop.ui.presentation.profile.PolicyScreen
+import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
+import com.example.tripdrop.ui.presentation.profile.YourOrdersScreen
 import com.example.tripdrop.ui.theme.bgwhite
 
 @Composable
@@ -53,7 +58,7 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
     val navController = rememberNavController()
 
     Scaffold(
-        containerColor = bgwhite,
+        containerColor = Color.White,
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
@@ -133,6 +138,21 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
             }
             composable(Route.BottomNav.name) {
                 BottomBar(vm, chatViewModel, nm)
+            }
+            composable(Route.YoursOrderScreen.name) {
+                YourOrdersScreen(navController, vm = vm)
+            }
+            composable(Route.PaymentScreen.name) {
+                PaymentScreen()
+            }
+            composable(Route.PolicyScreen.name) {
+                PolicyScreen()
+            }
+            composable(Route.FeedbackScreen.name) {
+                FeedbackFormScreen()
+            }
+            composable(Route.HelpScreen.name) {
+                HelpScreen()
             }
         }
     }

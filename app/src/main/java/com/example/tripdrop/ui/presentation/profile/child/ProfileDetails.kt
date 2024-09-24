@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation.profile
+package com.example.tripdrop.ui.presentation.profile.child
 
 import android.net.Uri
 import android.widget.Toast
@@ -30,7 +30,7 @@ import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.CommonImage
+import com.example.tripdrop.ui.presentation.common.CommonImage
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

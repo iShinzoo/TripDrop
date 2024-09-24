@@ -11,7 +11,12 @@ import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
+import com.example.tripdrop.ui.presentation.profile.FeedbackFormScreen
+import com.example.tripdrop.ui.presentation.profile.HelpScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen
+import com.example.tripdrop.ui.presentation.profile.PaymentScreen
+import com.example.tripdrop.ui.presentation.profile.PolicyScreen
+import com.example.tripdrop.ui.presentation.profile.YourOrdersScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
 import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
@@ -20,17 +25,17 @@ import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
-import com.example.tripdrop.ui.presentation.profile.ProfileDetailsScreen
+import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 
 
 @Composable
-fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationViewModel) {
+fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Route.WelcomeScreen.name) {
         composable(Route.HomeScreen.name) {
-            HomeScreen(navController,vm)
+            HomeScreen(navController, vm)
         }
         composable(Route.PostScreen.name) {
             PostScreen(vm)
@@ -87,7 +92,22 @@ fun NavGraph(vm: DropViewModel,chatViewModel : ChatViewModel,nm : NotificationVi
             ProfileDetailsScreen(navController, vm = vm)
         }
         composable(Route.BottomNav.name) {
-            BottomBar(vm,chatViewModel,nm)
+            BottomBar(vm, chatViewModel, nm)
+        }
+        composable(Route.YoursOrderScreen.name) {
+            YourOrdersScreen(navController, vm = vm)
+        }
+        composable(Route.PaymentScreen.name) {
+            PaymentScreen()
+        }
+        composable(Route.PolicyScreen.name) {
+            PolicyScreen()
+        }
+        composable(Route.FeedbackScreen.name) {
+            FeedbackFormScreen()
+        }
+        composable(Route.HelpScreen.name) {
+            HelpScreen()
         }
     }
 }

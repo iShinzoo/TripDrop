@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation
+package com.example.tripdrop.ui.presentation.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -16,7 +16,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.tripdrop.R // Ensure this import for default image resource
 
 @Composable

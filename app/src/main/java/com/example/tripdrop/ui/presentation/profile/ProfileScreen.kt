@@ -1,21 +1,41 @@
 package com.example.tripdrop.ui.presentation.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.DeliveryDining
+import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.filled.Payment
+import androidx.compose.material.icons.filled.Policy
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,16 +50,16 @@ import androidx.navigation.NavController
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.CommonImage
-import com.example.tripdrop.ui.presentation.DefaultPadding
-import com.example.tripdrop.ui.presentation.IconSize
-import com.example.tripdrop.ui.presentation.LargePadding
-import com.example.tripdrop.ui.presentation.SmallSpacing
+import com.example.tripdrop.ui.presentation.common.CommonImage
+import com.example.tripdrop.ui.presentation.common.DefaultPadding
+import com.example.tripdrop.ui.presentation.common.IconSize
+import com.example.tripdrop.ui.presentation.common.LargePadding
+import com.example.tripdrop.ui.presentation.common.SmallSpacing
 
 @Composable
 fun ProfileScreen(navController: NavController, vm: DropViewModel) {
     val userData by vm.userDetails.collectAsState()
-    var name by rememberSaveable { mutableStateOf(userData?.name ?: "") }
+    val name by rememberSaveable { mutableStateOf(userData?.name ?: "") }
     val imageUrl by remember { mutableStateOf(userData?.imageUrl) }
 
     Box(
@@ -149,7 +169,15 @@ fun ProfileOptionButtons(navController: NavController) {
     )
     buttons.forEach { (text, icon) ->
         Spacer(modifier = Modifier.height(SmallSpacing))
-        CustomButton(text = text, leadingIcon = icon) { /* Navigate as required */ }
+        CustomButton(text = text, leadingIcon = icon) {
+            when (text) {
+                "Your Orders" -> navController.navigate(Route.YoursOrderScreen.name)
+                "Payments" -> navController.navigate(Route.PaymentScreen.name)
+                "Help" -> navController.navigate(Route.HelpScreen.name)
+                "Policies" -> navController.navigate(Route.PolicyScreen.name)
+                "Feedback Form" -> navController.navigate(Route.FeedbackScreen.name)
+            }
+        }
     }
 }
 

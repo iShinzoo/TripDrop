@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,9 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -59,10 +56,10 @@ import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
-import com.example.tripdrop.ui.presentation.buttonHeight
-import com.example.tripdrop.ui.presentation.roundedCornerSize
-import com.example.tripdrop.ui.presentation.smallTextSize
-import com.example.tripdrop.ui.presentation.standardPadding
+import com.example.tripdrop.ui.presentation.common.buttonHeight
+import com.example.tripdrop.ui.presentation.common.roundedCornerSize
+import com.example.tripdrop.ui.presentation.common.smallTextSize
+import com.example.tripdrop.ui.presentation.common.standardPadding
 import com.example.tripdrop.ui.theme.h1TextStyle
 import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle

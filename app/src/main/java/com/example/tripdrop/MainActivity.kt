@@ -11,7 +11,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.tripdrop.ui.navigation.NavGraph
-import com.example.tripdrop.ui.presentation.RequestAppPermissionsScreen
+import com.example.tripdrop.ui.presentation.common.RequestAppPermissionsScreen
 import com.example.tripdrop.ui.theme.TripDropTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
