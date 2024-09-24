@@ -1,6 +1,5 @@
 package com.example.tripdrop.ui.presentation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,14 +14,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tripdrop.R
 
 @Composable
@@ -69,13 +73,7 @@ fun NotificationScreen() {
         ) {
             if (notifications.isEmpty()) {
                 // Display default image if there are no notifications
-                Image(
-                    painter = painterResource(id = R.drawable.package_arrived), // Replace with your default image
-                    contentDescription = "No Notifications",
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(16.dp)
-                )
+                LottieAnimationNotification()
                 Text(
                     text = "No Notifications Yet",
                     color = colorResource(id = R.color.black),
@@ -97,6 +95,19 @@ fun NotificationScreen() {
             }
         }
     }
+}
+
+@Composable
+fun LottieAnimationNotification() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.notification))
+    val progress by animateLottieCompositionAsState(
+        composition = composition, restartOnPlay = true, iterations = LottieConstants.IterateForever
+    )
+
+    LottieAnimation(modifier = Modifier.size(300.dp),
+        composition = composition,
+        progress = { progress })
+
 }
 
 

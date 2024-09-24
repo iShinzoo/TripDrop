@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,6 +57,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.R
@@ -204,14 +210,18 @@ fun PostScreen(vm: DropViewModel) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .wrapContentHeight()
+                    .background(Color.White)
                     .padding(horizontal = 16.dp)
                     .clickable { imagePickerLauncher.launch("image/*") },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, Color.Gray)
             ) {
                 Box(
-                    contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
                 ) {
                     // Display selected image or default image
                     productImageUri?.let { uri ->
@@ -222,11 +232,7 @@ fun PostScreen(vm: DropViewModel) {
                             contentScale = ContentScale.Crop
                         )
                     } ?: run {
-                        Image(
-                            painter = painterResource(id = R.drawable.friend_delivers),
-                            contentDescription = null,
-                            modifier = Modifier.size(328.dp)
-                        )
+                        LottieAnimationUploadImage()
                     }
 
                     Text(
@@ -235,7 +241,7 @@ fun PostScreen(vm: DropViewModel) {
                             .align(Alignment.BottomCenter)
                             .padding(bottom = 16.dp),
                         color = colorResource(id = R.color.Gray),
-                        fontSize = 28.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -451,4 +457,17 @@ fun PostScreen(vm: DropViewModel) {
             }
         }
     }
+}
+
+@Composable
+fun LottieAnimationUploadImage() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.upload))
+    val progress by animateLottieCompositionAsState(
+        composition = composition, restartOnPlay = true, iterations = LottieConstants.IterateForever
+    )
+
+    LottieAnimation(modifier = Modifier.size(300.dp),
+        composition = composition,
+        progress = { progress })
+
 }
