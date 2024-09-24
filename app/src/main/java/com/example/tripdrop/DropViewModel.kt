@@ -69,19 +69,12 @@ class DropViewModel @Inject constructor(
         isDialogShow = false
     }
 
-    val currentUser: FirebaseUser?
-        get() = auth.currentUser
-
-
-    fun displayUserDetails() {
-        val user = currentUser
-        if (user != null) {
-            val userId = user.uid
-            val userEmail = user.email
-            // Use this information for your logic
-            Log.d("User Info", "User ID: $userId, Email: $userEmail")
-        } else {
-            Log.e("User Info", "No user is currently signed in")
+    fun getCurrentUserId(callback: (String) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.let {
+            callback(it.uid)
+        } ?: run {
+            callback("") // Handle if no user is logged in
         }
     }
 

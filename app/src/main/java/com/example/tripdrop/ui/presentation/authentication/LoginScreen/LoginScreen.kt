@@ -138,8 +138,7 @@ fun LottieAnimationLoginPage() {
         composition = composition, restartOnPlay = true, iterations = LottieConstants.IterateForever
     )
 
-    LottieAnimation(
-        modifier = Modifier.size(300.dp),
+    LottieAnimation(modifier = Modifier.size(300.dp),
         composition = composition,
         progress = { progress })
 
