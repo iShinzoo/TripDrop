@@ -1,5 +1,10 @@
 package com.example.tripdrop.ui.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,12 +16,9 @@ import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
-import com.example.tripdrop.ui.presentation.profile.FeedbackFormScreen
-import com.example.tripdrop.ui.presentation.profile.HelpScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen
-import com.example.tripdrop.ui.presentation.profile.PaymentScreen
-import com.example.tripdrop.ui.presentation.profile.PolicyScreen
-import com.example.tripdrop.ui.presentation.profile.YourOrdersScreen
+import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
+import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
 import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
@@ -25,20 +27,32 @@ import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
+import com.example.tripdrop.ui.presentation.post.profile.child.FeedbackFormScreen
+import com.example.tripdrop.ui.presentation.post.profile.child.HelpScreen
+import com.example.tripdrop.ui.presentation.post.profile.child.PolicyScreen
 import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Route.WelcomeScreen.name) {
+    AnimatedNavHost(
+        navController = navController,
+        startDestination = Route.WelcomeScreen.name,
+        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
+    ) {
         composable(Route.HomeScreen.name) {
             HomeScreen(navController, vm)
         }
         composable(Route.PostScreen.name) {
-            PostScreen(vm)
+            PostScreen(vm,navController)
         }
         composable(
             Route.NotificationScreen.name,

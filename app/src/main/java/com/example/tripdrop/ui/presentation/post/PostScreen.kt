@@ -218,7 +218,7 @@ fun PostScreen(vm: DropViewModel, navController: NavController) {
                 border = BorderStroke(1.dp, Color.Gray)
             ) {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().background(Color.White),
                     contentAlignment = Alignment.Center
                 ) {
                     productImageUri?.let { uri ->

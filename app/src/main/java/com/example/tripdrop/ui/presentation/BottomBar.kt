@@ -1,5 +1,11 @@
 package com.example.tripdrop.ui.presentation
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,15 +50,16 @@ import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
-import com.example.tripdrop.ui.presentation.profile.FeedbackFormScreen
-import com.example.tripdrop.ui.presentation.profile.HelpScreen
-import com.example.tripdrop.ui.presentation.profile.PaymentScreen
-import com.example.tripdrop.ui.presentation.profile.PolicyScreen
+import com.example.tripdrop.ui.presentation.post.profile.child.FeedbackFormScreen
+import com.example.tripdrop.ui.presentation.post.profile.child.HelpScreen
+import com.example.tripdrop.ui.presentation.post.profile.child.PolicyScreen
+import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
 import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
-import com.example.tripdrop.ui.presentation.profile.YourOrdersScreen
-import com.example.tripdrop.ui.theme.bgwhite
+import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
     val navController = rememberNavController()
@@ -74,16 +81,20 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
             }
         }
     ) { innerPadding ->
-        NavHost(
+        AnimatedNavHost(
             navController = navController,
             startDestination = Route.HomeScreen.name,
+            enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() },
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Route.HomeScreen.name) {
                 HomeScreen(navController, vm)
             }
             composable(Route.PostScreen.name) {
-                PostScreen(vm)
+                PostScreen(vm,navController)
             }
             composable(
                 Route.NotificationScreen.name,
@@ -186,21 +197,28 @@ fun MyBottomBar(navController: NavHostController) {
                 NavigationBarItem(
                     selected = isSelected,
                     onClick = {
-                        navController.navigate(item.name) {
-                            // Navigate to the destination and pop up to start destination
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                        // Navigate only if the item clicked is different from the current item
+                        if (!isSelected) {
+                            navController.navigate(item.name) {
+                                // Navigate to the destination and pop up to start destination
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     },
                     alwaysShowLabel = false,
                     icon = {
+                        val tintColor = if (isSelected) colorResource(id = R.color.black) else Color.Gray
+
+                        // Change tint color briefly for visual feedback on click
                         Icon(
-                            modifier = Modifier.size(27.dp),
+                            modifier = Modifier
+                                .size(27.dp),
                             imageVector = item.icon,
-                            tint = if (isSelected) colorResource(id = R.color.black) else Color.Gray,
+                            tint = tintColor,
                             contentDescription = item.title
                         )
                     }

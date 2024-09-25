@@ -31,6 +31,8 @@ import com.example.tripdrop.R
 import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.common.CommonImage
+import com.example.tripdrop.ui.presentation.common.LoaderScreen
+import com.example.tripdrop.ui.presentation.common.standardPadding
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -46,8 +48,9 @@ fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
     val imageUrl by remember { mutableStateOf(userData?.imageUrl) }
 
     if (userData == null) {
-        LoadingScreen()
+        LoaderScreen()
     } else {
+        val context = LocalContext.current
         ProfileContent(
             navController = navController,
             imageUrl = imageUrl,
@@ -60,6 +63,11 @@ fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
                     imageUrl = imageUrl
                 )
                 vm.saveUserDetails(updatedUser)
+                Toast.makeText(
+                    context,
+                    "Profile update initiated",
+                    Toast.LENGTH_SHORT
+                ).show()
             },
             onLogout = {
                 vm.logout()
@@ -73,16 +81,6 @@ fun ProfileDetailsScreen(navController: NavController, vm: DropViewModel) {
     }
 }
 
-@Composable
-fun LoadingScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Loading...", color = Color.Gray)
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +118,11 @@ fun ProfileContent(
             title = { AppBarTitle() },
             navigationIcon = {
                 IconButton(onClick = { navController.navigate(Route.ProfileScreen.name) }) {
-                    Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Back", tint = Color.White)
+                    Icon(
+                        Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
                 }
             },
             actions = {
@@ -174,7 +176,10 @@ fun AppBarTitle() {
 }
 
 @Composable
-fun ProfileImagePicker(imageUrl: String?, chooseProfileImage: ManagedActivityResultLauncher<String, Uri?>) {
+fun ProfileImagePicker(
+    imageUrl: String?,
+    chooseProfileImage: ManagedActivityResultLauncher<String, Uri?>
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -213,7 +218,9 @@ fun UserInfoFields(
     onNumberFieldToggle: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = standardPadding, end = standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(

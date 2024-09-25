@@ -46,6 +46,8 @@ class DropViewModel @Inject constructor(
     private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)
 
+    private var cachedUserDetails: UserData? = null
+
     private val _productDetails = MutableLiveData<Product?>()
     val productDetails: LiveData<Product?> get() = _productDetails
 
@@ -59,6 +61,10 @@ class DropViewModel @Inject constructor(
 
     enum class ProfileUpdateStatus {
         IDLE, SUCCESS, FAILURE
+    }
+
+    init {
+        fetchUserDetails()
     }
 
     fun displayDialog() {
@@ -398,11 +404,17 @@ class DropViewModel @Inject constructor(
      * If there is an error fetching the user's details, an error message is logged to the console.
      */
     fun fetchUserDetails() {
+        if (cachedUserDetails != null) {
+            _userDetails.value = cachedUserDetails
+            return
+        }
+
         ioScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
             try {
                 val userDoc = db.collection("users").document(userId).get().await()
-                _userDetails.value = userDoc.toObject(UserData::class.java)
+                cachedUserDetails = userDoc.toObject(UserData::class.java)
+                _userDetails.value = cachedUserDetails
             } catch (e: Exception) {
                 Log.e("Firestore", "Error fetching user details", e)
             }

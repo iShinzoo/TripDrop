@@ -1,4 +1,4 @@
-package com.example.tripdrop.ui.presentation.profile
+package com.example.tripdrop.ui.presentation.profile.child
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
