@@ -3,6 +3,10 @@ package com.example.tripdrop.ui.presentation.common
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+const val USER_NODE = "User"
+const val CHATS = "Chats"
+const val MESSAGES = "Message"
+
 // Define UI constants for padding, font size, etc.
 val standardPadding = 16.dp
 val buttonHeight = 50.dp

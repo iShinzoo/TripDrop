@@ -113,7 +113,7 @@ fun SingleChatScreen(navController: NavController, chatModel: ChatViewModel, cha
     ) {
         TopChatBar(name = chatUser.name ?: "", imageUrl = chatUser.imageUrl ?: "") {
             navController.popBackStack()
-            chatModel.hideMessage()
+            chatModel.hideMessages()
         }
         MessageBox(
             modifier = Modifier.weight(1f),

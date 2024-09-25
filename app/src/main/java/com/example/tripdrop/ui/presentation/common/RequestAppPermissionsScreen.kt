@@ -11,14 +11,13 @@ import com.google.accompanist.permissions.*
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestAppPermissionsScreen() {
-    // Permissions to request based on Android version
     val permissionsList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.READ_PHONE_STATE,
             android.Manifest.permission.SEND_SMS,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.POST_NOTIFICATIONS // For Android 13 and above
+            android.Manifest.permission.POST_NOTIFICATIONS
         )
     } else {
         listOf(
@@ -29,19 +28,17 @@ fun RequestAppPermissionsScreen() {
         )
     }
 
-    // Remember permission states
     val permissionsState = rememberMultiplePermissionsState(permissionsList)
 
-    // Launch permissions request when the composable is displayed
     LaunchedEffect(Unit) {
         permissionsState.launchMultiplePermissionRequest()
     }
 
-    // Handle different permission states
     when {
         permissionsState.allPermissionsGranted -> {
             Text("All permissions are granted. The app can proceed.")
         }
+
         permissionsState.shouldShowRationale -> {
             Column {
                 Text("Permissions are required for the app to function correctly.")
@@ -50,6 +47,7 @@ fun RequestAppPermissionsScreen() {
                 }
             }
         }
+
         else -> {
             Text("Permissions are denied. Please grant them in settings.")
         }

@@ -21,11 +21,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 
@@ -36,26 +39,23 @@ class DropViewModel @Inject constructor(
     private val storage: FirebaseStorage
 ) : ViewModel() {
 
-    // dialog box state
     var isDialogShow by mutableStateOf(false)
         private set
 
-    // Mutable state variables for UI updates
     private val inProcess = mutableStateOf(false)
     private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)
 
-    // LiveData to observe product details
     private val _productDetails = MutableLiveData<Product?>()
-    val productDetails: MutableLiveData<Product?> = _productDetails
-
-    private val firestore = FirebaseFirestore.getInstance()
+    val productDetails: LiveData<Product?> get() = _productDetails
 
     private val _profileUpdateStatus = MutableStateFlow(ProfileUpdateStatus.IDLE)
-    val profileUpdateStatus: StateFlow<ProfileUpdateStatus> = _profileUpdateStatus
+    val profileUpdateStatus: StateFlow<ProfileUpdateStatus> get() = _profileUpdateStatus
 
     private val _userDetails = MutableStateFlow<UserData?>(null)
-    val userDetails: StateFlow<UserData?> = _userDetails.asStateFlow()
+    val userDetails: StateFlow<UserData?> get() = _userDetails.asStateFlow()
+
+    private val ioScope = viewModelScope + Dispatchers.IO // Optimized scope for I/O tasks
 
     enum class ProfileUpdateStatus {
         IDLE, SUCCESS, FAILURE
@@ -70,50 +70,43 @@ class DropViewModel @Inject constructor(
     }
 
     fun getCurrentUserId(callback: (String) -> Unit) {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        currentUser?.let {
-            callback(it.uid)
-        } ?: run {
-            callback("") // Handle if no user is logged in
-        }
+        auth.currentUser?.uid?.let(callback) ?: callback("") // Optimized to one-liner
     }
 
     private fun checkUserData(navController: NavController) {
-        viewModelScope.launch {
+        ioScope.launch {
             val userId = auth.currentUser?.uid
             if (userId == null) {
-                // Handle null userId
-                Log.e("CheckUserData", "User ID is null. User might not be signed in.")
-                // Optionally, navigate to login screen or show an error message
-                navController.navigate(Route.LoginScreen.name) {
-                    popUpTo(Route.LoginScreen.name) { inclusive = true }
+                Log.e("CheckUserData", "User ID is null.")
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Route.LoginScreen.name) {
+                        popUpTo(Route.LoginScreen.name) { inclusive = true }
+                    }
                 }
                 return@launch
             }
 
-            try {
-                val userDoc = db.collection("users").document(userId).get().await()
+            val userDoc = try {
+                db.collection("users").document(userId).get().await()
+            } catch (e: Exception) {
+                handleException(e, "Error checking user data")
+                return@launch
+            }
+
+            withContext(Dispatchers.Main) {
                 if (userDoc.exists()) {
-                    // User data exists, navigate to HomeScreen
                     navController.navigate(Route.BottomNav.name) {
                         popUpTo(Route.BottomNav.name) { inclusive = true }
                     }
                 } else {
-                    // User data does not exist, navigate to UserDataCollectionScreen
                     navController.navigate(Route.UserDataCollectionScreen.name) {
                         popUpTo(Route.UserDataCollectionScreen.name) { inclusive = true }
                     }
                 }
-            } catch (e: Exception) {
-                handleException(e, "Error checking user data")
             }
         }
     }
 
-    /**
-     * Register a new user with the provided email and password.
-     * Navigates to the login screen upon success.
-     */
     fun signUp(email: String, password: String, navController: NavController, context: Context) {
         if (email.isEmpty() || password.isEmpty()) {
             showToast(context, "Email or password cannot be empty")
@@ -124,7 +117,7 @@ class DropViewModel @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     showToast(context, "Sign-Up Successful")
-                    navController.navigate(Route.UserDataCollectionScreen.name) // Navigate to UserDataCollection Screen
+                    navController.navigate(Route.UserDataCollectionScreen.name)
                 } else {
                     showToast(context, "Sign-Up Failed: ${task.exception?.message}")
                 }
@@ -132,24 +125,15 @@ class DropViewModel @Inject constructor(
     }
 
     fun resetPassword(email: String, context: Context) {
-
         auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
-
             if (task.isSuccessful) {
-                showToast(context, "A password reset email has been sent to your email")
+                showToast(context, "A password reset email has been sent")
             } else {
-                showToast(context, "Something went Wrong - ${task.exception?.message}")
+                showToast(context, "Something went wrong - ${task.exception?.message}")
             }
-
         }
-
-
     }
 
-
-    /**
-     * Log in the user with the provided email and password.
-     */
     fun login(email: String, password: String, context: Context, navController: NavController) {
         if (email.isEmpty() || password.isEmpty()) {
             showToast(context, "Email or password is empty")
@@ -159,17 +143,14 @@ class DropViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("Login Success", "Successfully logged in")
-                    checkUserData(navController) // Check user data and navigate accordingly
+                    checkUserData(navController)
                     showToast(context, "Login Successful")
                 } else {
                     showToast(context, "Login Failed: ${task.exception?.message}")
                 }
             }
     }
-    /**
-     * Log out the current user and reset state.
-     */
+
     fun logout() {
         auth.signOut()
         signIn.value = false
@@ -177,9 +158,6 @@ class DropViewModel @Inject constructor(
         eventMutableState.value = Event("Logged Out")
     }
 
-    /**
-     * Handle and log exceptions.
-     */
     private fun handleException(exception: Exception? = null, customMessage: String = "") {
         val errorMessage = exception?.localizedMessage ?: customMessage
         Log.e("Tag", errorMessage, exception)
@@ -187,19 +165,12 @@ class DropViewModel @Inject constructor(
         inProcess.value = false
     }
 
-    /**
-     * Utility function to show toast messages.
-     */
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * Create or update user profile in Fire store and upload profile image to Storage
-     */
     fun createOrUpdateProfile(name: String, number: String, imageUri: String? = null) {
-        viewModelScope.launch {
-            _profileUpdateStatus.value = ProfileUpdateStatus.IDLE
+        ioScope.launch {
             val userId = auth.currentUser?.uid ?: run {
                 handleException(Exception("User ID is null"), "Failed to get user ID")
                 _profileUpdateStatus.value = ProfileUpdateStatus.FAILURE
@@ -207,20 +178,10 @@ class DropViewModel @Inject constructor(
             }
 
             try {
+                val imageUrl = imageUri?.let { uploadProfileImage(Uri.parse(it)) }
+                val userProfile = UserData(userId, name, number, imageUrl)
 
-                val uid = auth.currentUser?.uid
-
-                val userProfile =
-                    UserData(userId = uid, name = name, number = number, imageUrl = null)
-
-                // Upload profile image if exists
-                val imageUrl =
-                    imageUri?.let { Uri.parse(it)?.let { uri -> uploadProfileImage(uri) } }
-
-                // Update Fire store user profile
-                userProfile.copy(imageUrl = imageUrl).let { updatedProfile ->
-                    db.collection("users").document(userId).set(updatedProfile)
-                }
+                db.collection("users").document(userId).set(userProfile).await()
 
                 _profileUpdateStatus.value = ProfileUpdateStatus.SUCCESS
             } catch (e: Exception) {
@@ -230,22 +191,17 @@ class DropViewModel @Inject constructor(
         }
     }
 
-
     suspend fun uploadProfileImage(uri: Uri): String? {
         val userId = auth.currentUser?.uid ?: return null
         val imageRef = storage.reference.child("profile_images/$userId/${UUID.randomUUID()}")
         return try {
-            Log.d("Upload", "Uploading image: $uri")
             imageRef.putFile(uri).await()
-            val downloadUrl = imageRef.downloadUrl.await().toString()
-            Log.d("Upload", "Upload successful, download URL: $downloadUrl")
-            downloadUrl
+            imageRef.downloadUrl.await().toString()
         } catch (e: Exception) {
             handleException(e, "Failed to upload profile image")
             null
         }
     }
-
 
     fun uploadProductDetails(
         title: String,
@@ -258,7 +214,8 @@ class DropViewModel @Inject constructor(
         rewards: String,
         context: Context
     ) {
-        viewModelScope.launch {
+        ioScope.launch {
+            // Fetch user ID
             val userId = auth.currentUser?.uid ?: run {
                 handleException(Exception("User ID is null"), "Failed to get user ID")
                 return@launch
@@ -266,11 +223,10 @@ class DropViewModel @Inject constructor(
 
             try {
                 // Upload image if provided
-                val imageUrl =
-                    imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
+                val imageUrl = imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
                 Log.d("UploadProductDetails", "Image URL: $imageUrl")
 
-                // Create a Product object
+                // Create the Product object
                 val product = Product(
                     title = title,
                     description = description,
@@ -280,138 +236,105 @@ class DropViewModel @Inject constructor(
                     time = time,
                     date = date,
                     rewards = rewards,
-                    userId = userId
+                    userId = userId // Ensuring userId is correctly assigned
                 )
                 Log.d("UploadProductDetails", "Product: $product")
 
-                // Save product to Fire store
+                // Upload product to Firestore
                 db.collection("products").document(product.productId).set(product).await()
-                Log.d("UploadProductDetails", "Product uploaded successfully")
 
-                showToast(context, "Product uploaded successfully")
+                // Switch back to main thread to show toast
+                withContext(Dispatchers.Main) {
+                    showToast(context, "Product uploaded successfully")
+                }
 
             } catch (e: Exception) {
+                // Handle any errors during the upload process
                 handleException(e, "Failed to upload product")
             }
         }
     }
 
+
     private suspend fun uploadProductImage(uri: Uri): String? {
         val userId = auth.currentUser?.uid ?: return null
         val imageRef = storage.reference.child("product_images/$userId/${UUID.randomUUID()}")
         return try {
-            Log.d("UploadImage", "Uploading image: $uri")
             imageRef.putFile(uri).await()
-            val downloadUrl = imageRef.downloadUrl.await().toString()
-            Log.d("UploadImage", "Upload successful, download URL: $downloadUrl")
-            downloadUrl
+            imageRef.downloadUrl.await().toString()
         } catch (e: Exception) {
             handleException(e, "Failed to upload product image")
             null
         }
     }
 
-    // Function to fetch product details from Firestore
     fun fetchProductDetails(productId: String) {
-        firestore.collection("products")
-            .document(productId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val product = document.toObject(Product::class.java)
-                    _productDetails.value = product
-                } else {
-                    Log.e("Firestore", "Product not found")
-                }
+        ioScope.launch {
+            try {
+                val productDoc = db.collection("products").document(productId).get().await()
+                _productDetails.postValue(productDoc.toObject(Product::class.java))
+            } catch (e: Exception) {
+                Log.e("Firestore", "Error fetching product details", e)
             }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error fetching product details", exception)
-            }
+        }
     }
 
-    // Function to fetch products from Firestore
     fun fetchProductsFromFirestore(onProductsFetched: (List<Product>) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("products").get()
-            .addOnSuccessListener { result ->
-                val productList = result.mapNotNull { document ->
-                    document.toObject(Product::class.java).copy(productId = document.id)
+        ioScope.launch {
+            try {
+                val products = db.collection("products").get().await().mapNotNull { doc ->
+                    doc.toObject(Product::class.java).copy(productId = doc.id)
                 }
-                onProductsFetched(productList)
+                withContext(Dispatchers.Main) {
+                    onProductsFetched(products)
+                }
+            } catch (e: Exception) {
+                Log.e("Firestore", "Error fetching products", e)
             }
-            .addOnFailureListener {
-                // Handle failure
-            }
+        }
     }
 
     fun fetchUserDetails() {
-        viewModelScope.launch {
+        ioScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
-            db.collection("users").document(userId)
-                .get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val user = documentSnapshot.toObject(UserData::class.java)
-                        user?.let {
-                            _userDetails.value = it
-                            _userDetails.value = it
-                        }
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("Firestore", "Error fetching user details", exception)
-                }
+            try {
+                val userDoc = db.collection("users").document(userId).get().await()
+                _userDetails.value = userDoc.toObject(UserData::class.java)
+            } catch (e: Exception) {
+                Log.e("Firestore", "Error fetching user details", e)
+            }
         }
     }
 
     fun saveUserDetails(updatedUser: UserData) {
-        viewModelScope.launch {
+        ioScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
-            db.collection("users").document(userId)
-                .set(updatedUser)
-                .addOnSuccessListener {
-                    Log.d("Firestore", "User details successfully updated!")
-                    // Optionally, fetch the user data again to ensure the UI reflects the changes
-                    fetchUserDetails()
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("Firestore", "Error updating user details", exception)
-                }
-        }
-    }
-
-    fun getProductOwner(productId: String, onOwnerFetched: (UserData?) -> Unit) {
-        viewModelScope.launch {
             try {
-                // Fetch product from Firestore using productId
-                val productSnapshot = db.collection("products").document(productId).get().await()
-
-                // Check if the product exists
-                if (productSnapshot.exists()) {
-                    val product = productSnapshot.toObject(Product::class.java)
-
-                    // Fetch the user who uploaded the product (owner)
-                    product?.userId?.let { userId ->
-                        val userSnapshot = db.collection("users").document(userId).get().await()
-
-                        // Check if user exists
-                        if (userSnapshot.exists()) {
-                            val user = userSnapshot.toObject(UserData::class.java)
-                            onOwnerFetched(user) // Return the user data (owner)
-                        } else {
-                            Log.e("Firestore", "User not found")
-                            onOwnerFetched(null) // Return null if user not found
-                        }
-                    }
-                } else {
-                    Log.e("Firestore", "Product not found")
-                    onOwnerFetched(null) // Return null if product not found
-                }
+                db.collection("users").document(userId).set(updatedUser).await()
+                fetchUserDetails()
             } catch (e: Exception) {
-                Log.e("Firestore", "Error fetching product owner", e)
-                onOwnerFetched(null) // Handle errors
+                Log.e("Firestore", "Error updating user details", e)
             }
         }
     }
 
+    fun getProductOwner(productId: String, onOwnerFetched: (UserData?) -> Unit) {
+        ioScope.launch {
+            try {
+                val productDoc = db.collection("products").document(productId).get().await()
+                val product = productDoc.toObject(Product::class.java)
+                product?.let {
+                    val ownerDoc =
+                        it.userId?.let { it1 -> db.collection("users").document(it1).get().await() }
+                    withContext(Dispatchers.Main) {
+                        if (ownerDoc != null) {
+                            onOwnerFetched(ownerDoc.toObject(UserData::class.java))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("Firestore", "Error fetching product owner", e)
+            }
+        }
+    }
 }

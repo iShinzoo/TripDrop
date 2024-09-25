@@ -23,18 +23,15 @@ object NetworkModule {
         }
 
         val client = OkHttpClient.Builder().addInterceptor(logging).addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("Authorization", "key=YOUR_SERVER_KEY") // Replace with your FCM server key
-                .addHeader("Content-Type", "application/json")
-                .build()
+            val request = chain.request().newBuilder().addHeader(
+                "Authorization", "key=YOUR_SERVER_KEY"
+            ) // Replace with your FCM server key
+                .addHeader("Content-Type", "application/json").build()
             chain.proceed(request)
         }.build()
 
-        return Retrofit.Builder()
-            .baseUrl("https://fcm.googleapis.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
+        return Retrofit.Builder().baseUrl("https://fcm.googleapis.com/")
+            .addConverterFactory(GsonConverterFactory.create()).client(client).build()
     }
 
 
