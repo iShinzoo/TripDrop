@@ -74,7 +74,7 @@ fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationVi
             }
         }
         composable(
-            route = Route.SingleChatScreen.name + "/{chatId}",
+            route = "${Route.SingleChatScreen.name}/{chatId}",
             arguments = listOf(navArgument("chatId") {
                 type = NavType.StringType
             })

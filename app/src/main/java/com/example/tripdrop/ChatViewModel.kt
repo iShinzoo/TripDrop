@@ -76,22 +76,6 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    private fun getUserData(uid: String) {
-        db.collection(USER_NODE).document(uid).addSnapshotListener { value, error ->
-
-            if (error != null) {
-                handleException(error, "Cannot Retrieve User")
-            }
-
-            if (value != null) {
-                val user = value.toObject<UserData>()
-                userData.value = user
-                inProcess.value = false
-                displayChats()
-            }
-        }
-    }
-
     fun handleException(exception: Exception? = null, customMessage: String = "") {
         Log.e("Tag", "ChatterBox exception!", exception)
         exception?.printStackTrace()

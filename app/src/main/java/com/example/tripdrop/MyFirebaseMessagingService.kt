@@ -1,6 +1,7 @@
 package com.example.tripdrop
 
 import android.Manifest
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,9 +22,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // Handle the notification received
+        super.onMessageReceived(remoteMessage)
         remoteMessage.notification?.let {
-            showNotification(it.title, it.body)
+            val title = it.title
+            val body = it.body
+
+            val notification = NotificationCompat.Builder(this,"XYZ")
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle(title)
+                .setContentText(body)
+                .build()
+
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(1002, notification)
         }
+
+        Log.i("DATA_MESSAGE", remoteMessage.data.toString())
     }
 
     override fun onNewToken(token: String) {
@@ -33,35 +47,60 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         saveTokenToFirestore(token)
     }
 
-    private fun showNotification(title: String?, body: String?) {
-        val deepLinkIntent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse("myapp://notification")
-        )
-        deepLinkIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            deepLinkIntent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notificationBuilder = NotificationCompat.Builder(this, "default")
+    private fun showNotification(title: String?, message: String?) {
+        val notificationBuilder = NotificationCompat.Builder(this, "channel_id")
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(title)
-            .setContentText(body)
-            .setSmallIcon(R.drawable.delivery)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         val notificationManager = NotificationManagerCompat.from(this)
-        notificationManager.notify(1001, notificationBuilder.build())
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        notificationManager.notify(0, notificationBuilder.build())
     }
+
+//    private fun showNotification(title: String?, body: String?) {
+//        val deepLinkIntent = Intent(
+//            Intent.ACTION_VIEW,
+//            Uri.parse("myapp://notification")
+//        )
+//        deepLinkIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//
+//        val pendingIntent = PendingIntent.getActivity(
+//            this,
+//            0,
+//            deepLinkIntent,
+//            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+//        )
+//
+//        val notificationBuilder = NotificationCompat.Builder(this, "default")
+//            .setContentTitle(title)
+//            .setContentText(body)
+//            .setSmallIcon(R.drawable.delivery)
+//            .setPriority(NotificationCompat.PRIORITY_HIGH)
+//            .setAutoCancel(true)
+//            .setContentIntent(pendingIntent)
+//
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+//            return
+//        }
+//
+//        val notificationManager = NotificationManagerCompat.from(this)
+//        notificationManager.notify(1001, notificationBuilder.build())
+//    }
 
 
 

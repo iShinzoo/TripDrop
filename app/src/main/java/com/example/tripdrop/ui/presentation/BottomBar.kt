@@ -119,7 +119,7 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
                 }
             }
             composable(
-                route = Route.SingleChatScreen.name + "/{chatId}",
+                route = "${Route.SingleChatScreen.name}/{chatId}",
                 arguments = listOf(navArgument("chatId") {
                     type = NavType.StringType
                 })
