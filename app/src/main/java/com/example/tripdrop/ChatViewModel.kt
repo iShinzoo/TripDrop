@@ -17,6 +17,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Calendar
 import javax.inject.Inject
 
+/**
+ * ViewModel for the chat functionality in the TripDrop app.
+ * Handles the state and logic for displaying chat messages, sending replies, and managing the chat data.
+ *
+ * @property db the FirebaseFirestore instance used to interact with the Firestore database
+ */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val db: FirebaseFirestore

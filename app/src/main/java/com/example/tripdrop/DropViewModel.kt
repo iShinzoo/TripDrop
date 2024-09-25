@@ -73,6 +73,13 @@ class DropViewModel @Inject constructor(
         auth.currentUser?.uid?.let(callback) ?: callback("") // Optimized to one-liner
     }
 
+    /**
+     * Checks the user's data and navigates to the appropriate screen based on whether the user's data exists in the database.
+     *
+     * This function retrieves the current user's ID from Firebase Authentication, and then checks if the user's data exists in the Firestore database. If the user's data exists, the function navigates to the main screen. If the user's data does not exist, the function navigates to the user data collection screen.
+     *
+     * @param navController The navigation controller to use for navigating to the appropriate screen.
+     */
     private fun checkUserData(navController: NavController) {
         ioScope.launch {
             val userId = auth.currentUser?.uid
@@ -107,6 +114,14 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Registers a new user with the provided email and password, and navigates to the user data collection screen upon successful sign-up.
+     *
+     * @param email The email address to use for the new user account.
+     * @param password The password to use for the new user account.
+     * @param navController The navigation controller to use for navigating to the user data collection screen.
+     * @param context The application context.
+     */
     fun signUp(email: String, password: String, navController: NavController, context: Context) {
         if (email.isEmpty() || password.isEmpty()) {
             showToast(context, "Email or password cannot be empty")
@@ -124,6 +139,12 @@ class DropViewModel @Inject constructor(
             }
     }
 
+    /**
+     * Sends a password reset email to the specified email address.
+     *
+     * @param email The email address to send the password reset email to.
+     * @param context The application context.
+     */
     fun resetPassword(email: String, context: Context) {
         auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -134,6 +155,16 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Logs in a user with the provided email and password, and navigates to the appropriate screen based on the user's data.
+     *
+     * This function takes the user's email and password, and attempts to sign in the user using Firebase Authentication. If the sign-in is successful, it checks the user's data and navigates to the appropriate screen (either the main screen or the user data collection screen). If the sign-in fails, it displays a toast message with the error message.
+     *
+     * @param email The email address of the user to sign in.
+     * @param password The password of the user to sign in.
+     * @param context The application context.
+     * @param navController The navigation controller to use for navigating to the appropriate screen.
+     */
     fun login(email: String, password: String, context: Context, navController: NavController) {
         if (email.isEmpty() || password.isEmpty()) {
             showToast(context, "Email or password is empty")
@@ -169,6 +200,17 @@ class DropViewModel @Inject constructor(
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Creates or updates the user's profile in the Firestore database.
+     *
+     * This function takes the user's name, phone number, and an optional profile image URI, and updates the user's profile in the Firestore database. If the user's profile image is provided, it first uploads the image to Firebase Storage and then updates the user's profile with the download URL of the uploaded image.
+     *
+     * If the update is successful, the function sets the [ProfileUpdateStatus] to [ProfileUpdateStatus.SUCCESS]. If there is an error during the update process, the function logs the error and sets the [ProfileUpdateStatus] to [ProfileUpdateStatus.FAILURE].
+     *
+     * @param name The user's name.
+     * @param number The user's phone number.
+     * @param imageUri The URI of the user's profile image (optional).
+     */
     fun createOrUpdateProfile(name: String, number: String, imageUri: String? = null) {
         ioScope.launch {
             val userId = auth.currentUser?.uid ?: run {
@@ -191,6 +233,14 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Uploads a profile image to Firebase Storage and returns the download URL.
+     *
+     * This function takes a Uri representing the profile image to be uploaded, and uploads it to Firebase Storage under the "profile_images" directory, using a unique filename based on the current user's ID. If the upload is successful, the function returns the download URL of the uploaded image. If there is an error during the upload process, the function logs the error and returns null.
+     *
+     * @param uri The Uri of the profile image to be uploaded.
+     * @return The download URL of the uploaded profile image, or null if the upload failed.
+     */
     suspend fun uploadProfileImage(uri: Uri): String? {
         val userId = auth.currentUser?.uid ?: return null
         val imageRef = storage.reference.child("profile_images/$userId/${UUID.randomUUID()}")
@@ -203,6 +253,23 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Uploads a new product to the Firestore database.
+     *
+     * This function is used to create a new product in the Firestore database. It takes in various product details such as title, description, image URI, pickup and delivery points, time, date, and rewards. It then uploads the product image to Firebase Storage (if provided) and creates a new [Product] object with the provided details. Finally, it uploads the product to the "products" collection in Firestore.
+     *
+     * If the upload is successful, a toast message is shown to the user indicating that the product was uploaded successfully. If there is an error during the upload process, the function logs the error and shows an error message to the user.
+     *
+     * @param title The title of the product.
+     * @param description The description of the product.
+     * @param imageUri The URI of the product image (optional).
+     * @param pickupPoint The pickup point for the product.
+     * @param deliveryPoint The delivery point for the product.
+     * @param time The time for the product pickup/delivery.
+     * @param date The date for the product pickup/delivery.
+     * @param rewards The rewards associated with the product.
+     * @param context The application context.
+     */
     fun uploadProductDetails(
         title: String,
         description: String,
@@ -223,7 +290,8 @@ class DropViewModel @Inject constructor(
 
             try {
                 // Upload image if provided
-                val imageUrl = imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
+                val imageUrl =
+                    imageUri?.let { Uri.parse(it)?.let { uri -> uploadProductImage(uri) } }
                 Log.d("UploadProductDetails", "Image URL: $imageUrl")
 
                 // Create the Product object
@@ -256,6 +324,16 @@ class DropViewModel @Inject constructor(
     }
 
 
+    /**
+     * Uploads a product image to the Firebase Storage and returns the download URL.
+     *
+     * This function is used to upload a product image to the Firebase Storage service. It generates a unique file name for the image based on the current user's ID and a random UUID, and then uploads the image to the "product_images" directory in the storage.
+     *
+     * If the upload is successful, the function returns the download URL of the uploaded image. If there is an error during the upload process, the function logs the error and returns `null`.
+     *
+     * @param uri The URI of the image to be uploaded.
+     * @return The download URL of the uploaded image, or `null` if the upload fails.
+     */
     private suspend fun uploadProductImage(uri: Uri): String? {
         val userId = auth.currentUser?.uid ?: return null
         val imageRef = storage.reference.child("product_images/$userId/${UUID.randomUUID()}")
@@ -268,6 +346,15 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches the details of a specific product from the Firestore database.
+     *
+     * This function is used to retrieve the details of a product with the given [productId] from the Firestore database. The product details are then stored in the `_productDetails` LiveData object, which can be observed by the UI layer to update the product information.
+     *
+     * If there is an error fetching the product details, an error message is logged to the console.
+     *
+     * @param productId The ID of the product to fetch.
+     */
     fun fetchProductDetails(productId: String) {
         ioScope.launch {
             try {
@@ -279,6 +366,15 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches a list of [Product] objects from the Firestore database.
+     *
+     * This function is used to retrieve a list of all products stored in the Firestore database. The products are returned as a list of [Product] objects, with each product's ID assigned to the `productId` property.
+     *
+     * If there is an error fetching the products, an error message is logged to the console.
+     *
+     * @param onProductsFetched A callback function that will be called with the list of fetched products.
+     */
     fun fetchProductsFromFirestore(onProductsFetched: (List<Product>) -> Unit) {
         ioScope.launch {
             try {
@@ -294,6 +390,13 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches the current user's details from the Firestore database.
+     *
+     * This function is used to retrieve the user's details, such as their name, email, and other profile information, from the Firestore database. The user's details are then stored in the `_userDetails` LiveData object, which can be observed by the UI layer to update the user's profile information.
+     *
+     * If there is an error fetching the user's details, an error message is logged to the console.
+     */
     fun fetchUserDetails() {
         ioScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
@@ -306,6 +409,11 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Saves the updated user details to the Firestore database.
+     *
+     * @param updatedUser The updated [UserData] object to be saved.
+     */
     fun saveUserDetails(updatedUser: UserData) {
         ioScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
@@ -318,6 +426,12 @@ class DropViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches the owner details for the specified product.
+     *
+     * @param productId The ID of the product to fetch the owner for.
+     * @param onOwnerFetched A callback function that will be called with the owner's [UserData] object, or `null` if the owner could not be fetched.
+     */
     fun getProductOwner(productId: String, onOwnerFetched: (UserData?) -> Unit) {
         ioScope.launch {
             try {

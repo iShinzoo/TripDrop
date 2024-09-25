@@ -41,7 +41,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,11 +50,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -63,16 +62,24 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tripdrop.DropViewModel
-import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.R
+import com.example.tripdrop.ui.navigation.Route
 import java.util.Calendar
 
+/**
+ * Composable function that represents the Post screen in the TripDrop app.
+ * This screen allows users to input details about a product they want to post, including the product name, description, image, pickup and destination locations, date, time, and price.
+ * The function also handles the logic for uploading the product details to the app's backend and navigating to the home screen after a successful post.
+ *
+ * @param vm The DropViewModel instance, which provides the necessary functionality for uploading the product details.
+ * @param navController The NavController instance, which is used for navigating to the home screen after a successful post.
+ */
+
 @Composable
-fun PostScreen(vm: DropViewModel) {
+fun PostScreen(vm: DropViewModel, navController: NavController) {
 
     val context = LocalContext.current
 
-    // State variables for form fields
     var productName by remember { mutableStateOf("") }
     var productDesc by remember { mutableStateOf("") }
     var pickupPoint by remember { mutableStateOf("") }
@@ -82,7 +89,6 @@ fun PostScreen(vm: DropViewModel) {
     var time by remember { mutableStateOf("") }
     var productImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Date Picker
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(
         context,
@@ -94,14 +100,12 @@ fun PostScreen(vm: DropViewModel) {
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    // Time Picker
     val timePickerDialog = TimePickerDialog(
         context, { _, hour, minute ->
             time = String.format("%02d:%02d", hour, minute)
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false
     )
 
-    // Image Picker Intent
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri -> productImageUri = uri })
@@ -117,7 +121,7 @@ fun PostScreen(vm: DropViewModel) {
                 .padding(16.dp)
                 .align(Alignment.TopStart)
         ) {
-            // Header for the Product Details Section
+
             Text(
                 text = "Product Details",
                 modifier = Modifier
@@ -131,7 +135,6 @@ fun PostScreen(vm: DropViewModel) {
             Spacer(modifier = Modifier.height(32.dp))
         }
 
-        // Main Content with Scroll
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,7 +176,6 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Product Description Field
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -206,41 +208,39 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Product Image Field
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(Color.White)
                     .padding(horizontal = 16.dp)
                     .clickable { imagePickerLauncher.launch("image/*") },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, Color.Gray)
             ) {
                 Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White)
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Display selected image or default image
                     productImageUri?.let { uri ->
+                        // Display the selected image
                         Image(
                             painter = rememberImagePainter(uri),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
                             contentScale = ContentScale.Crop
                         )
                     } ?: run {
+                        // Display Lottie animation if no image is selected
                         LottieAnimationUploadImage()
                     }
-
                     Text(
                         text = "Add Image",
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(bottom = 16.dp),
-                        color = colorResource(id = R.color.Gray),
+                        color = Color.Gray,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -249,7 +249,6 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Pickup Point Field
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,7 +281,6 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Destination Point Field
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -315,7 +313,6 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Date Picker Field
             OutlinedTextField(
                 value = date,
                 onValueChange = { date = it },
@@ -350,7 +347,6 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Time Picker Field
             OutlinedTextField(
                 value = time,
                 onValueChange = {},
@@ -385,7 +381,6 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Product Price Field
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -418,12 +413,10 @@ fun PostScreen(vm: DropViewModel) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Post Button
             Button(
                 onClick = {
                     if (productName.isNotEmpty() && productDesc.isNotEmpty() && productImageUri != null && pickupPoint.isNotEmpty() && destinationPoint.isNotEmpty() && date.isNotEmpty() && time.isNotEmpty() && productPrice.isNotEmpty()) {
 
-                        // Call the ViewModel function to upload product details
                         vm.uploadProductDetails(
                             title = productName,
                             description = productDesc,
@@ -435,11 +428,15 @@ fun PostScreen(vm: DropViewModel) {
                             rewards = productPrice,
                             context = context
                         )
-                        Toast.makeText(context, "Details Updated Successfully", Toast.LENGTH_SHORT)
+
+                        Toast.makeText(context, "Product Posted Successfully", Toast.LENGTH_SHORT)
                             .show()
 
+                        navController.navigate(Route.HomeScreen.name) {
+                            popUpTo("post") { inclusive = true }
+                        }
+
                     } else {
-                        // Handle empty fields case
                         Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                     }
                 },
