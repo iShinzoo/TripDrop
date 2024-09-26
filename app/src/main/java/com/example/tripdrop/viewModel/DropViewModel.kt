@@ -1,4 +1,4 @@
-package com.example.tripdrop
+package com.example.tripdrop.viewModel
 
 import android.content.Context
 import android.net.Uri
@@ -492,4 +492,5 @@ class DropViewModel @Inject constructor(
         val currentFavorites = _favoriteProducts.value ?: emptyList()
         _favoriteProducts.value = currentFavorites.filter { it.productId != product.productId }
     }
+
 }

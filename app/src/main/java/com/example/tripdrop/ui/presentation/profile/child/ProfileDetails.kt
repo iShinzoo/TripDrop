@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.viewModel.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route

@@ -35,9 +35,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.tripdrop.ChatViewModel
-import com.example.tripdrop.DropViewModel
-import com.example.tripdrop.NotificationViewModel
+import com.example.tripdrop.viewModel.ChatViewModel
+import com.example.tripdrop.viewModel.DropViewModel
+import com.example.tripdrop.viewModel.NotificationViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen

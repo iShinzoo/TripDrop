@@ -1,4 +1,4 @@
-package com.example.tripdrop
+package com.example.tripdrop.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf

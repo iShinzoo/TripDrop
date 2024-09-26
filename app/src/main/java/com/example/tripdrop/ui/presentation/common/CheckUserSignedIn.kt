@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
-import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.viewModel.DropViewModel
 import com.example.tripdrop.ui.navigation.Route
 
 @Composable

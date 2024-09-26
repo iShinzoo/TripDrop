@@ -20,6 +20,10 @@ import com.example.tripdrop.ui.presentation.NoNetworkScreen
 import com.example.tripdrop.ui.presentation.common.LoaderScreen
 import com.example.tripdrop.ui.presentation.common.RequestAppPermissionsScreen
 import com.example.tripdrop.ui.theme.TripDropTheme
+import com.example.tripdrop.viewModel.ChatViewModel
+import com.example.tripdrop.viewModel.DropViewModel
+import com.example.tripdrop.viewModel.NetworkViewModel
+import com.example.tripdrop.viewModel.NotificationViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 

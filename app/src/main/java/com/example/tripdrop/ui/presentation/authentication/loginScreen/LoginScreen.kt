@@ -52,7 +52,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tripdrop.ui.presentation.authentication.loginScreen.component.Password
-import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.viewModel.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.loginScreen.component.TextField

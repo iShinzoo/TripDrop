@@ -13,9 +13,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.tripdrop.ChatViewModel
-import com.example.tripdrop.DropViewModel
-import com.example.tripdrop.NotificationViewModel
+import com.example.tripdrop.viewModel.ChatViewModel
+import com.example.tripdrop.viewModel.DropViewModel
+import com.example.tripdrop.viewModel.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.FavoritesScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen

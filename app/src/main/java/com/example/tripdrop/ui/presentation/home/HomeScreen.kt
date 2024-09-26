@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,7 +26,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -70,7 +70,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.tripdrop.DropViewModel
+import com.example.tripdrop.viewModel.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.ui.navigation.Route
@@ -105,12 +105,14 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
     }
 
     Scaffold(
+        modifier = Modifier.background(Color.White),
         topBar = { CustomTopAppBar(navController) }
     ) {
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(Color.White)
                 .padding(standardPadding)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -119,7 +121,6 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
             Spacer(modifier = Modifier.height(80.dp))
 
             var searchText by remember { mutableStateOf("") }
-            val containerColor = Color(0xFF222222)
             val keyboardController = LocalSoftwareKeyboardController.current
 
             OutlinedTextField(
@@ -184,6 +185,8 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .align(Alignment.CenterHorizontally)
+                        .background(Color.White)
+                        .fillMaxSize()
                 )
             } else {
                 // Display product cards dynamically
@@ -216,7 +219,7 @@ fun LottieAnimationEmpty() {
 fun CustomTopAppBar(navController: NavController) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent
+            containerColor = Color.White
         ),
         title = {
             Text(
@@ -356,7 +359,7 @@ fun ProductCard(
                 ) {
                     Column(modifier = Modifier
                         .clip(RoundedCornerShape(15.dp))
-                        .background(Color.DarkGray)
+                        .background(Color.Black)
                         .padding(4.dp)
                         .wrapContentSize()
                         .clickable {
@@ -383,9 +386,8 @@ fun ProductCard(
                             modifier = Modifier.size(30.dp),
                             imageVector = Icons.Default.Share,
                             contentDescription = "Share Icon",
-                            tint = Color(0xffa9d8f7)
+                            tint = Color.White
                         )
-
                     }
 
                     Spacer(modifier = Modifier.width(18.dp))
@@ -396,7 +398,7 @@ fun ProductCard(
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.DarkGray,
+                            containerColor = Color.Black,
                             contentColor = Color.White
                         )
                     ) {
