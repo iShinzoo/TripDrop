@@ -105,7 +105,9 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
     }
 
     Scaffold(
-        modifier = Modifier.background(Color.White),
+        modifier = Modifier
+            .background(Color.White)
+            .padding(top = 30.dp),
         topBar = { CustomTopAppBar(navController) }
     ) {
 
@@ -118,7 +120,7 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             var searchText by remember { mutableStateOf("") }
             val keyboardController = LocalSoftwareKeyboardController.current
@@ -176,10 +178,10 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
 
             if (filteredItems.isEmpty()) {
                 // Show Lottie animation and "No product uploaded" message if no products are available
-                Column (
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
-                ){
+                ) {
                     LottieAnimationEmpty()
                     Spacer(modifier = Modifier.height(18.dp))
                     Text(

@@ -113,6 +113,7 @@ fun ProfileContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .padding(top = 30.dp)
     ) {
         TopAppBar(
             title = { AppBarTitle() },

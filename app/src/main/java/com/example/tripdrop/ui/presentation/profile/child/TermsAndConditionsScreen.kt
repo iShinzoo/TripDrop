@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TermsAndConditionsScreen() {
     Scaffold(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(top = 30.dp),
         topBar = {
             TopAppBar(
                 title = {
