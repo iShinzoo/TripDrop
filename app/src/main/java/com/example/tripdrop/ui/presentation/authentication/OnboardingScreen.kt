@@ -47,23 +47,24 @@ import androidx.navigation.NavHostController
 import com.example.tripdrop.MainActivity
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.viewModel.DropViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
 
 @Composable
-fun OnboardingScreen(navController: NavHostController , context: MainActivity) {
+fun OnboardingScreen(navController: NavHostController, context: MainActivity,vm:DropViewModel) {
 
     val systemUiController = rememberSystemUiController()
-    val statusBarColor = Color(0xFF222228)
+    val statusBarColor = Color.White
     systemUiController.setStatusBarColor(
         color = statusBarColor,
-        darkIcons = false
+        darkIcons = true
     )
 
-    val image1Visibility = remember{mutableStateOf(false)}
-    val image2Visibility = remember{mutableStateOf(false)}
-    val image3Visibility = remember{mutableStateOf(false)}
+    val image1Visibility = remember { mutableStateOf(false) }
+    val image2Visibility = remember { mutableStateOf(false) }
+    val image3Visibility = remember { mutableStateOf(false) }
     val image4Visibility = remember {
         mutableStateOf(false)
     }
@@ -87,7 +88,7 @@ fun OnboardingScreen(navController: NavHostController , context: MainActivity) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFfb7c1f)),
+            .background(Color.White),
         horizontalAlignment = alignment
     ) {
 
@@ -187,25 +188,27 @@ fun OnboardingScreen(navController: NavHostController , context: MainActivity) {
                     "accept and\n" +
                     "deliver your items.\n",
             "Simplify deliveries\n" +
-                    " with Dropit,\n" +
-                    "anytime, anywhere.")
+                    "with Dropit,\n" +
+                    "anytime, anywhere."
+        )
 
-        val buttonText  = arrayOf("Start","Next","Next","Get Started")
+        val buttonText = arrayOf("Start", "Next", "Next", "Get Started")
 
         Box {
 
 
-            this@Column.AnimatedVisibility(visible = clickCount==0 ,
+            this@Column.AnimatedVisibility(
+                visible = clickCount == 0,
                 modifier = Modifier
                     .fillMaxWidth(),
 //                enter =  fadeIn(),
-                exit  =  fadeOut()
+                exit = fadeOut()
             ) {
 
                 Image(
-                    painter = painterResource(id = R.drawable.logodropit) ,
-                    contentDescription = null ,
-                    contentScale = ContentScale.Fit ,
+                    painter = painterResource(id = R.drawable.logodropit),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .width(150.dp),
 
@@ -214,47 +217,51 @@ fun OnboardingScreen(navController: NavHostController , context: MainActivity) {
 
             Spacer(modifier = Modifier.padding(150.dp))
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(horizontal = 25.dp)
-                ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(horizontal = 25.dp)
+            ) {
 
-                    AnimatedVisibility(visible = clickCount>0,
-                        enter =  fadeIn(),
-                        exit  =  fadeOut()
-                    ) {
+                AnimatedVisibility(
+                    visible = clickCount > 0,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
                     Text(
-                        text = arr[clickCount-1] ,
-                        fontSize = 28.sp ,
+                        text = arr[clickCount - 1],
+                        fontSize = 28.sp,
                         lineHeight = 32.sp,
-                        fontWeight = FontWeight.Bold ,
+                        fontWeight = FontWeight.Bold,
                         color = Color.Black,
                     )
 
                 }
-                    AnimatedVisibility(visible = clickCount>0,
-                        enter =  fadeIn(),
-                        exit  =  fadeOut()
-                    ) {
-                        PageIndicator(pageCount = 3 , currentPage = clickCount-1)
-                    }
+                Spacer(modifier = Modifier.height(12.dp))
+                AnimatedVisibility(
+                    visible = clickCount > 0,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    PageIndicator(pageCount = 3, currentPage = clickCount - 1)
+                }
             }
         }
 
-        val width = animateDpAsState(targetValue = if(clickCount==0) 100.dp
-        else if (clickCount==1) 150.dp
-        else if (clickCount==2) 300.dp
-        else 400.dp
-            , label = "Animating the width of the button",
-            animationSpec = tween(2000))
+        val width = animateDpAsState(
+            targetValue = if (clickCount == 0) 100.dp
+            else if (clickCount == 1) 150.dp
+            else if (clickCount == 2) 300.dp
+            else 400.dp, label = "Animating the width of the button",
+            animationSpec = tween(2000)
+        )
 
         Button(
             modifier = Modifier
                 .height(60.dp)
-                .width(width.value) ,
-            colors = ButtonDefaults.buttonColors(Color(0xFF3068de)) ,
+                .width(width.value),
+            colors = ButtonDefaults.buttonColors(Color(0xFF3068de)),
             onClick = {
 
                 alignment = Alignment.Start
@@ -266,19 +273,32 @@ fun OnboardingScreen(navController: NavHostController , context: MainActivity) {
 
                 if (clickCount2 == 4) {
                     onBoardingIsFinished(context = context)
-                    navController.popBackStack()
-                    navController.navigate(Route.WelcomeScreen.name)
+
+                    // Check if the user is logged in
+                    if (vm.isUserLoggedIn) {
+                        navController.popBackStack()
+                        navController.navigate(Route.BottomNav.name)
+                    } else {
+                        navController.popBackStack()
+                        navController.navigate(Route.LoginScreen.name) {
+                            // Clear the back stack to prevent navigating back to OnboardingScreen
+                            popUpTo(Route.OnboardingScreen.name) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 }
-            } ,
+            },
         ) {
-            
-            Text(text = buttonText[clickCount],
-                fontSize = 20.sp)
+
+            Text(
+                text = buttonText[clickCount],
+                fontSize = 20.sp
+            )
 
         }
     }
 }
-
 
 
 private fun onBoardingIsFinished(context: MainActivity) {
@@ -290,15 +310,14 @@ private fun onBoardingIsFinished(context: MainActivity) {
 }
 
 
-
 @Composable
 fun PageIndicator(pageCount: Int, currentPage: Int) {
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        repeat(pageCount){
-            IndicatorSingleDot(isSelected = it == currentPage )
+        repeat(pageCount) {
+            IndicatorSingleDot(isSelected = it == currentPage)
         }
 
 
@@ -309,11 +328,12 @@ fun PageIndicator(pageCount: Int, currentPage: Int) {
 fun IndicatorSingleDot(isSelected: Boolean) {
 
     val width = animateDpAsState(targetValue = 14.dp, label = "")
-    Box(modifier = Modifier
-        .padding(4.dp)
-        .height(14.dp)
-        .width(width.value)
-        .clip(CircleShape)
-        .background(if (isSelected) Color(0xFF3068de) else Color(0xFF48494e))
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .height(14.dp)
+            .width(width.value)
+            .clip(CircleShape)
+            .background(if (isSelected) Color(0xFF3068de) else Color.LightGray)
     )
 }

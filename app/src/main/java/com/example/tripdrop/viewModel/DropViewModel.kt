@@ -42,6 +42,8 @@ class DropViewModel @Inject constructor(
     var isDialogShow by mutableStateOf(false)
         private set
 
+    var permissionsGranted by mutableStateOf(false)
+
     private val inProcess = mutableStateOf(false)
     private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)

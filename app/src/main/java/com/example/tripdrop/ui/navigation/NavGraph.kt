@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -14,9 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.example.tripdrop.MainActivity
-import com.example.tripdrop.viewModel.ChatViewModel
-import com.example.tripdrop.viewModel.DropViewModel
-import com.example.tripdrop.viewModel.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.FavoritesScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen
@@ -25,18 +21,21 @@ import com.example.tripdrop.ui.presentation.authentication.OnboardingScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
 import com.example.tripdrop.ui.presentation.authentication.SplashScreen
 import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
-import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
+import com.example.tripdrop.ui.presentation.common.RequestAppPermissionsScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
-import com.example.tripdrop.ui.presentation.profile.child.PolicyScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.example.tripdrop.ui.presentation.profile.child.HelpScreen
 import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
+import com.example.tripdrop.ui.presentation.profile.child.PolicyScreen
 import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.child.TermsAndConditionsScreen
 import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
+import com.example.tripdrop.viewModel.ChatViewModel
+import com.example.tripdrop.viewModel.DropViewModel
+import com.example.tripdrop.viewModel.NotificationViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -61,6 +60,9 @@ fun NavGraph(
     ) {
         composable(Route.HomeScreen.name) {
             HomeScreen(navController, vm)
+            if (!vm.permissionsGranted) {
+                RequestAppPermissionsScreen()
+            }
         }
         composable(Route.PostScreen.name) {
             PostScreen(vm, navController)
@@ -70,9 +72,6 @@ fun NavGraph(
             deepLinks = listOf(navDeepLink { uriPattern = "myapp://notification" })
         ) {
             NotificationScreen()
-        }
-        composable(Route.WelcomeScreen.name) {
-            WelcomeScreen(navController)
         }
         composable(Route.LoginScreen.name) {
             LoginScreen(navController, vm)
@@ -138,10 +137,10 @@ fun NavGraph(
             FavoritesScreen(navController, vm = vm)
         }
         composable(Route.SplashScreen.name) {
-            SplashScreen(navController, context)
+            SplashScreen(navController, context,vm)
         }
         composable(Route.OnboardingScreen.name) {
-            OnboardingScreen(navController, context)
+            OnboardingScreen(navController, context,vm)
         }
     }
 }

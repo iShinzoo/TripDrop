@@ -186,7 +186,7 @@ fun PolicyScreenParagraphText(text: String) {
         text = text,
         fontSize = 14.sp,
         modifier = Modifier.padding(vertical = 4.dp),
-        color = Color.Gray // Gray text for paragraphs
+        color = Color.Black // Gray text for paragraphs
     )
 }
 
@@ -194,7 +194,7 @@ fun PolicyScreenParagraphText(text: String) {
 fun PolicyScreenBulletPointText(text: String) {
     Row(modifier = Modifier.padding(vertical = 2.dp)) {
         Text(text = "• ", fontSize = 14.sp, color = Color.Black) // Black bullet point
-        Text(text = text, fontSize = 14.sp, color = Color.Gray) // Gray text for bullet point content
+        Text(text = text, fontSize = 14.sp, color = Color.Black) // Gray text for bullet point content
     }
 }
 

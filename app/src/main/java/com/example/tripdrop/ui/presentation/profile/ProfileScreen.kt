@@ -163,8 +163,8 @@ fun ProfileOptionButtons(navController: NavController) {
         "Your Orders" to Icons.Default.DeliveryDining,
         "Payments" to Icons.Default.Payment,
         "Help" to Icons.Default.QuestionMark,
-        "Policies" to Icons.Default.Policy,
-        "Feedback Form" to Icons.Default.Forum
+        "Privacy Policies" to Icons.Default.Policy,
+        "Terms & Conditions" to Icons.Default.Forum
     )
     buttons.forEach { (text, icon) ->
         Spacer(modifier = Modifier.height(SmallSpacing))
@@ -173,8 +173,8 @@ fun ProfileOptionButtons(navController: NavController) {
                 "Your Orders" -> navController.navigate(Route.YoursOrderScreen.name)
                 "Payments" -> navController.navigate(Route.PaymentScreen.name)
                 "Help" -> navController.navigate(Route.HelpScreen.name)
-                "Policies" -> navController.navigate(Route.PolicyScreen.name)
-                "Feedback Form" -> navController.navigate(Route.FeedbackScreen.name)
+                "Privacy Policies" -> navController.navigate(Route.PolicyScreen.name)
+                "Terms & Conditions" -> navController.navigate(Route.FeedbackScreen.name)
             }
         }
     }

@@ -15,6 +15,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import com.example.tripdrop.ui.navigation.NavGraph
 import com.example.tripdrop.ui.presentation.NoNetworkScreen
 import com.example.tripdrop.ui.presentation.common.LoaderScreen
@@ -36,25 +38,24 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
+        actionBar?.hide()
+        installSplashScreen()
         setContent {
             TripDropTheme {
                 val systemController = rememberSystemUiController()
                 val isConnected by networkViewModel.isConnected.collectAsState()
-                val isLoading by networkViewModel.isLoading.collectAsState()
 
                 SideEffect {
                     systemController.setStatusBarColor(
-                        color = Color.Black,
+                        color = Color.White,
+                        darkIcons = true
                     )
                 }
 
                 Surface(modifier = Modifier.fillMaxSize()) {
                     when {
-                        isLoading -> {
-                            // Show loader during transition
-                            LoaderScreen()
-                        }
                         isConnected -> {
                             // Show the main app content when connected
                             AnimatedVisibility(
@@ -62,7 +63,6 @@ class MainActivity : ComponentActivity() {
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
-                                RequestAppPermissionsScreen()
                                 NavGraph(vm = viewModel, chatViewModel, notificationViewModel,this@MainActivity)
                             }
                         }
@@ -73,7 +73,6 @@ class MainActivity : ComponentActivity() {
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
-                                RequestAppPermissionsScreen()
                                 NoNetworkScreen()
                             }
                         }

@@ -40,7 +40,6 @@ import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
 import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
-import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
@@ -99,9 +98,6 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
                 deepLinks = listOf(navDeepLink { uriPattern = "myapp://notification" })
             ) {
                 NotificationScreen()
-            }
-            composable(Route.WelcomeScreen.name) {
-                WelcomeScreen(navController)
             }
             composable(Route.LoginScreen.name) {
                 LoginScreen(navController, vm)

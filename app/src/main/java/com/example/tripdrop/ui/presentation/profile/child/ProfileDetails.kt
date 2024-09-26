@@ -121,22 +121,22 @@ fun ProfileContent(
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Color.Black
                     )
                 }
             },
             actions = {
                 IconButton(onClick = onSave) {
-                    Icon(Icons.Default.SaveAs, contentDescription = "Save", tint = Color.White)
+                    Icon(Icons.Default.SaveAs, contentDescription = "Save", tint = Color.Black)
                 }
                 IconButton(onClick = {
                     onLogout()
                     Toast.makeText(context, "Logout Successfully", Toast.LENGTH_SHORT).show()
                 }) {
-                    Icon(Icons.Default.Logout, contentDescription = "Logout", tint = Color.White)
+                    Icon(Icons.Default.Logout, contentDescription = "Logout", tint = Color.Black)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.black))
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.white))
         )
 
         Spacer(modifier = Modifier.height(18.dp))
