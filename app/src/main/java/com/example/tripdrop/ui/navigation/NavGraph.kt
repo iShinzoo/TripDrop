@@ -47,8 +47,6 @@ fun NavGraph(
     context: MainActivity
 ) {
     val navController = rememberNavController()
-    val isUserLoggedIn = remember { vm.isUserLoggedIn }
-
 
     AnimatedNavHost(
         navController = navController,
@@ -60,9 +58,7 @@ fun NavGraph(
     ) {
         composable(Route.HomeScreen.name) {
             HomeScreen(navController, vm)
-            if (!vm.permissionsGranted) {
-                RequestAppPermissionsScreen()
-            }
+            RequestAppPermissionsScreen()
         }
         composable(Route.PostScreen.name) {
             PostScreen(vm, navController)

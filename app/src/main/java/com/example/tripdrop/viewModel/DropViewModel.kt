@@ -42,8 +42,6 @@ class DropViewModel @Inject constructor(
     var isDialogShow by mutableStateOf(false)
         private set
 
-    var permissionsGranted by mutableStateOf(false)
-
     private val inProcess = mutableStateOf(false)
     private val eventMutableState = mutableStateOf<Event<String>?>(null)
     val signIn = mutableStateOf(false)
@@ -237,6 +235,13 @@ class DropViewModel @Inject constructor(
      * @param imageUri The URI of the user's profile image (optional).
      */
     fun createOrUpdateProfile(name: String, number: String, imageUri: String? = null) {
+        // Check if name, number, or imageUri are null or empty
+        if (name.isBlank() || number.isBlank() || imageUri.isNullOrBlank()) {
+            _profileUpdateStatus.value = ProfileUpdateStatus.FAILURE
+            handleException(Exception("Fields cannot be null or empty"), "Profile update failed")
+            return
+        }
+
         ioScope.launch {
             val userId = auth.currentUser?.uid ?: run {
                 handleException(Exception("User ID is null"), "Failed to get user ID")
@@ -245,7 +250,7 @@ class DropViewModel @Inject constructor(
             }
 
             try {
-                val imageUrl = imageUri?.let { uploadProfileImage(Uri.parse(it)) }
+                val imageUrl = uploadProfileImage(Uri.parse(imageUri)) // imageUri is guaranteed to be non-null now
                 val userProfile = UserData(userId, name, number, imageUrl)
 
                 db.collection("users").document(userId).set(userProfile).await()
@@ -257,6 +262,7 @@ class DropViewModel @Inject constructor(
             }
         }
     }
+
 
     /**
      * Uploads a profile image to Firebase Storage and returns the download URL.

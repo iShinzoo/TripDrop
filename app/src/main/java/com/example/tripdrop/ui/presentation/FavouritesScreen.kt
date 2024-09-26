@@ -70,8 +70,7 @@ fun FavoritesScreen(navController: NavController, vm: DropViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 88.dp) // Adjust this to fit the space occupied by the header
-                .verticalScroll(rememberScrollState()),
+                .padding(top = 88.dp), // Adjust this to fit the space occupied by the header
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
