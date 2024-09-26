@@ -34,7 +34,6 @@ import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
-
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
