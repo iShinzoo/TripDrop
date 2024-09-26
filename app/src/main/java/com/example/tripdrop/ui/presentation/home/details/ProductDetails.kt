@@ -1,9 +1,9 @@
 package com.example.tripdrop.ui.presentation.home.details
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,13 +22,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.DeliveryDining
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,8 +46,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +65,8 @@ import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
+import com.example.tripdrop.ui.presentation.common.LoaderScreen
+import com.example.tripdrop.ui.presentation.common.standardPadding
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -82,53 +91,35 @@ fun ProductDetailsScreen(
             .fillMaxSize()
             .background(colorResource(id = R.color.white))
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            ProductHeader(navController)
-
-            // Handle loading and error states
+        Column {
             productDetails?.let { product ->
                 isLoading = false
-                ProductDetailsContent(product, navController,nm,chatModel,vm)
+                ProductContent(navController = navController, vm, product = product)
             } ?: run {
                 if (isLoading) {
-                    LoadingView()
+                    LoaderScreen()
                 } else {
                     ErrorView { vm.fetchProductDetails(productId) }
                 }
             }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Handle loading and error states
+                productDetails?.let { product ->
+                    isLoading = false
+                    ProductDetailsContent(product, navController, nm, chatModel, vm)
+                } ?: run {
+                    if (isLoading) {
+                        LoaderScreen()
+                    } else {
+                        ErrorView { vm.fetchProductDetails(productId) }
+                    }
+                }
+            }
         }
-    }
-}
-
-@Composable
-fun ProductHeader(navController: NavController) {
-    Row(
-        modifier = Modifier.padding(top = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBackIosNew,
-            contentDescription = "Back",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(32.dp)
-                .clickable { navController.navigate(Route.HomeScreen.name) }
-        )
-        Text(
-            text = "Product Details",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp),
-            color = colorResource(id = R.color.black),
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
     }
 }
 
@@ -137,7 +128,7 @@ fun ProductDetailsContent(
     product: Product,
     navController: NavController,
     nm: NotificationViewModel,
-    chatModel : ChatViewModel,
+    chatModel: ChatViewModel,
     vm: DropViewModel
 ) {
 
@@ -179,16 +170,19 @@ fun ProductDetailsContent(
             buttonText = "Chat with User",
             onClick = {
 
-                if(currentUser == null){
+                if (currentUser == null) {
                     Log.e("AuthError", "User is not authenticated!")
-                } else{
+                } else {
                     val user1 = currentUser.uid // Current user
                     val user2 = productOwner.value?.userId // Product owner
 
                     if (user2 != null) {
                         chatModel.getOrCreateChat(user1, user2) { chatId ->
                             if (chatId != null) {
-                                Log.d("ProductDetailsScreen", "Navigating to chat with chatId: $chatId")
+                                Log.d(
+                                    "ProductDetailsScreen",
+                                    "Navigating to chat with chatId: $chatId"
+                                )
                                 navController.navigate(route = "${Route.SingleChatScreen.name}/{chatId}")
                             } else {
                                 Log.e("ProductDetailsScreen", "Failed to create or retrieve chat!")
@@ -214,6 +208,7 @@ fun ProductDetailsContent(
         )
     }
 }
+
 @Composable
 fun ProductImageCard(imageUrl: String) {
     Card(
@@ -303,16 +298,6 @@ fun ProductActionButton(icon: ImageVector, buttonText: String, onClick: () -> Un
 }
 
 @Composable
-fun LoadingView() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(color = Color.Black)
-    }
-}
-
-@Composable
 fun ErrorView(onRetry: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -330,5 +315,67 @@ fun ErrorView(onRetry: () -> Unit) {
                 Text(text = "Retry")
             }
         }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductContent(
+    navController: NavController,
+    vm: DropViewModel,
+    product: Product
+
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(Color.White)
+            .padding(start = standardPadding, end = standardPadding)
+    ) {
+        TopAppBar(
+            title = { AppBarTitleProfile() },
+            navigationIcon = {
+                IconButton(onClick = { navController.navigate(Route.HomeScreen.name) }) {
+                    Icon(
+                        Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Back",
+                        tint = Color.Black
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = {
+                    vm.addProductToFavorites(product) // Add product to favorites
+                    Toast.makeText(context, "Added to Favorites", Toast.LENGTH_SHORT).show()
+                }) {
+                    Icon(Icons.Default.Favorite, contentDescription = "Save", tint = Color.Black)
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.white))
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+    }
+}
+
+@Composable
+fun AppBarTitleProfile() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "Product Details",
+            color = Color.Black,
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        )
+        Spacer(modifier = Modifier.weight(1f))
     }
 }

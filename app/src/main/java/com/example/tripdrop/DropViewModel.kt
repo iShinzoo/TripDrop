@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,6 +58,10 @@ class DropViewModel @Inject constructor(
     val userDetails: StateFlow<UserData?> get() = _userDetails.asStateFlow()
 
     var isUserLoggedIn by mutableStateOf(false)
+        private set
+
+    private val _favoriteProducts = MutableLiveData<List<Product>>()
+    val favoriteProducts: LiveData<List<Product>> get() = _favoriteProducts
 
     private val ioScope = viewModelScope + Dispatchers.IO // Optimized scope for I/O tasks
 
@@ -67,6 +72,8 @@ class DropViewModel @Inject constructor(
     init {
         fetchUserDetails()
         checkUserLoggedIn()
+        _favoriteProducts.value = emptyList()
+        fetchProductsFromFirestore {  }
     }
 
     fun displayDialog() {
@@ -78,8 +85,11 @@ class DropViewModel @Inject constructor(
     }
 
     private fun checkUserLoggedIn() {
-        // Assume FirebaseAuth is being used
-        isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
+        // Simulate network delay for checking authentication (e.g., Firebase)
+        viewModelScope.launch {
+            delay(1000) // Optional delay to simulate checking authentication
+            isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
+        }
     }
 
     fun getCurrentUserId(callback: (String) -> Unit) {
@@ -469,5 +479,17 @@ class DropViewModel @Inject constructor(
                 Log.e("Firestore", "Error fetching product owner", e)
             }
         }
+    }
+
+    // Add product to favorites
+    fun addProductToFavorites(product: Product) {
+        val currentFavorites = _favoriteProducts.value ?: emptyList()
+        _favoriteProducts.value = currentFavorites + product
+    }
+
+    // Remove product from favorites
+    fun removeProductFromFavorites(product: Product) {
+        val currentFavorites = _favoriteProducts.value ?: emptyList()
+        _favoriteProducts.value = currentFavorites.filter { it.productId != product.productId }
     }
 }

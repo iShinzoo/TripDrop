@@ -51,11 +51,11 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
+import com.example.tripdrop.ui.presentation.authentication.loginScreen.component.Password
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.ui.navigation.Route
-import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
+import com.example.tripdrop.ui.presentation.authentication.loginScreen.component.TextField
 import com.example.tripdrop.ui.presentation.common.buttonHeight
 import com.example.tripdrop.ui.presentation.common.roundedCornerSize
 import com.example.tripdrop.ui.presentation.common.smallTextSize

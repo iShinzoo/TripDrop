@@ -17,6 +17,7 @@ import com.example.tripdrop.ChatViewModel
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
+import com.example.tripdrop.ui.presentation.FavoritesScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
@@ -41,15 +42,14 @@ fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationVi
     val navController = rememberNavController()
     val isUserLoggedIn = remember { vm.isUserLoggedIn }
 
-    // Use LaunchedEffect to navigate after checking the user's login state
     LaunchedEffect(isUserLoggedIn) {
         if (isUserLoggedIn) {
             navController.navigate(Route.BottomNav.name) {
-                popUpTo(0) // Clears the backstack
+                popUpTo(0)
             }
         } else {
             navController.navigate(Route.WelcomeScreen.name) {
-                popUpTo(0) // Clears the backstack
+                popUpTo(0)
             }
         }
     }
@@ -66,7 +66,7 @@ fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationVi
             HomeScreen(navController, vm)
         }
         composable(Route.PostScreen.name) {
-            PostScreen(vm,navController)
+            PostScreen(vm, navController)
         }
         composable(
             Route.NotificationScreen.name,
@@ -136,6 +136,9 @@ fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationVi
         }
         composable(Route.HelpScreen.name) {
             HelpScreen()
+        }
+        composable(Route.FavouriteScreen.name) {
+            FavoritesScreen(navController, vm = vm)
         }
     }
 }

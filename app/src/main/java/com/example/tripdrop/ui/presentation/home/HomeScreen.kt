@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
@@ -64,6 +65,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
@@ -99,7 +105,7 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
     }
 
     Scaffold(
-        topBar = { CustomTopAppBar() }
+        topBar = { CustomTopAppBar(navController) }
     ) {
 
         Column(
@@ -128,7 +134,7 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
                 shape = RoundedCornerShape(15.dp),
                 placeholder = {
                     Text(
-                        text = "Search News...", color = Color(0xFFA7A7A7), fontSize = 14.sp
+                        text = "Search Products...", color = Color(0xFFA7A7A7), fontSize = 14.sp
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -167,20 +173,47 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
                         it.userId != currentUserId // Exclude products uploaded by the logged-in user
             }
 
-            // Display product cards dynamically
-            filteredItems.forEach { product ->
-                ProductCard(product, onDetailsClick = {
-                    navController.navigate(Route.ProductDetailScreen.name + "/${product.productId}")
-                })
+            if (filteredItems.isEmpty()) {
+                // Show Lottie animation and "No product uploaded" message if no products are available
+                LottieAnimationEmpty()
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    text = "No product uploaded",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            } else {
+                // Display product cards dynamically
+                filteredItems.forEach { product ->
+                    ProductCard(product, onDetailsClick = {
+                        navController.navigate(Route.ProductDetailScreen.name + "/${product.productId}")
+                    })
+                }
             }
         }
     }
 }
 
+@Composable
+fun LottieAnimationEmpty() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
+    val progress by animateLottieCompositionAsState(
+        composition = composition, restartOnPlay = true, iterations = LottieConstants.IterateForever
+    )
+
+    LottieAnimation(modifier = Modifier.size(300.dp),
+        composition = composition,
+        progress = { progress })
+
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar() {
+fun CustomTopAppBar(navController: NavController) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
@@ -204,10 +237,11 @@ fun CustomTopAppBar() {
         },
         actions = {
             IconButton(onClick = {
-
+                navController.navigate(Route.FavouriteScreen.name)
             }) {
                 Icon(
-                    imageVector = Icons.Default.Menu,
+                    imageVector = Icons.Default.Favorite,
+                    tint = Color.Black,
                     contentDescription = null
                 )
             }

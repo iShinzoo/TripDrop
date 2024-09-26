@@ -35,11 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.ashutosh.fsd.ui.theme.Screen.Authentication.SignIn.Component.Password
+import com.example.tripdrop.ui.presentation.authentication.loginScreen.component.Password
 import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.ui.navigation.Route
 import com.example.tripdrop.ui.presentation.common.CheckUserSignedIn
-import com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component.TextField
+import com.example.tripdrop.ui.presentation.authentication.loginScreen.component.TextField
 import com.example.tripdrop.ui.presentation.common.buttonHeight
 import com.example.tripdrop.ui.presentation.common.smallTextSize
 import com.example.tripdrop.ui.presentation.common.standardPadding

@@ -21,7 +21,7 @@ import javax.inject.Inject
  * ViewModel for the chat functionality in the TripDrop app.
  * Handles the state and logic for displaying chat messages, sending replies, and managing the chat data.
  *
- * @property db the FirebaseFirestore instance used to interact with the Firestore database
+ * @property db the FirebaseFire store instance used to interact with the Fire store database
  */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
@@ -30,7 +30,6 @@ class ChatViewModel @Inject constructor(
 
     private val inProcess = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
-    val chatData = mutableStateOf<ChatData?>(null)
     private val inProcessChats = mutableStateOf(false)
     private val eventState = mutableStateOf<Event<String>?>(null)
     val chats = mutableStateOf<List<ChatData>>(listOf())

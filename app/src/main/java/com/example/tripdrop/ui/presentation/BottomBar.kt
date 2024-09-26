@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -53,9 +51,9 @@ import com.example.tripdrop.ui.presentation.post.PostScreen
 import com.example.tripdrop.ui.presentation.post.profile.child.FeedbackFormScreen
 import com.example.tripdrop.ui.presentation.post.profile.child.HelpScreen
 import com.example.tripdrop.ui.presentation.post.profile.child.PolicyScreen
+import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
 import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
-import com.example.tripdrop.ui.presentation.profile.ProfileScreen
 import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
@@ -164,6 +162,9 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
             }
             composable(Route.HelpScreen.name) {
                 HelpScreen()
+            }
+            composable(Route.FavouriteScreen.name) {
+                FavoritesScreen(navController, vm = vm)
             }
         }
     }

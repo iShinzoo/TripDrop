@@ -1,5 +1,4 @@
-package com.example.tripdrop.ui.presentation.authentication.LoginScreen.Component
-
+package com.example.tripdrop.ui.presentation.authentication.loginScreen.component
 
 
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextField(icon: ImageVector , plText: String , prefixText : String): String {
+fun TextField(icon: ImageVector, plText: String, prefixText: String): String {
     val keyboardController = LocalSoftwareKeyboardController.current
     var text by rememberSaveable { mutableStateOf("") }
 
@@ -40,35 +39,40 @@ fun TextField(icon: ImageVector , plText: String , prefixText : String): String 
         leadingIcon = {
             Icon(
                 icon, contentDescription = "icon",
-                tint = Color.DarkGray)
+                tint = Color.DarkGray
+            )
         },
         onValueChange = { text = it },
-        shape = RoundedCornerShape(10.dp) ,
+        shape = RoundedCornerShape(10.dp),
         prefix = {
             Text(
-                text = prefixText ,
-                color = Color.Black ,
+                text = prefixText,
+                color = Color.Black,
                 fontSize = 16.sp
             )
         },
 
 
-        placeholder = { Text(text = plText, color = Color.DarkGray,
-           fontSize = 14.sp) },
+        placeholder = {
+            Text(
+                text = plText, color = Color.DarkGray,
+                fontSize = 14.sp
+            )
+        },
 
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Text
-        ) ,
+        ),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Color.Black ,
+            focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black,
-            focusedContainerColor = Color.White ,
-            unfocusedContainerColor = Color.White ,
-            focusedBorderColor =Color.Black ,
-            unfocusedBorderColor = Color.DarkGray ,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.DarkGray,
             cursorColor = Color.Black
-        ) ,
+        ),
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -78,12 +82,9 @@ fun TextField(icon: ImageVector , plText: String , prefixText : String): String 
             onDone = {
                 keyboardController?.hide()
                 //
-
-
-
             }
         ),
 
-    )
+        )
     return text
 }
