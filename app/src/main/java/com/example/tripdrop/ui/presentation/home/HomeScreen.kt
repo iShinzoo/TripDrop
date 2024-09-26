@@ -70,7 +70,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.tripdrop.viewModel.DropViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.ui.navigation.Route
@@ -78,6 +77,7 @@ import com.example.tripdrop.ui.presentation.common.standardPadding
 import com.example.tripdrop.ui.theme.h2TextStyle
 import com.example.tripdrop.ui.theme.h3TextStyle
 import com.example.tripdrop.ui.theme.h4TextStyle
+import com.example.tripdrop.viewModel.DropViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -176,18 +176,23 @@ fun HomeScreen(navController: NavController, vm: DropViewModel) {
 
             if (filteredItems.isEmpty()) {
                 // Show Lottie animation and "No product uploaded" message if no products are available
-                LottieAnimationEmpty()
-                Spacer(modifier = Modifier.height(18.dp))
-                Text(
-                    text = "No product uploaded",
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .background(Color.White)
-                        .fillMaxSize()
-                )
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+                    LottieAnimationEmpty()
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Text(
+                        text = "No product uploaded",
+                        color = Color.Gray,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .background(Color.White)
+                    )
+                }
+
             } else {
                 // Display product cards dynamically
                 filteredItems.forEach { product ->

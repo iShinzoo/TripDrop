@@ -27,12 +27,12 @@ import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
 import com.example.tripdrop.ui.presentation.post.PostScreen
-import com.example.tripdrop.ui.presentation.post.profile.child.FeedbackFormScreen
-import com.example.tripdrop.ui.presentation.post.profile.child.HelpScreen
-import com.example.tripdrop.ui.presentation.post.profile.child.PolicyScreen
+import com.example.tripdrop.ui.presentation.profile.child.PolicyScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
+import com.example.tripdrop.ui.presentation.profile.child.HelpScreen
 import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
 import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
+import com.example.tripdrop.ui.presentation.profile.child.TermsAndConditionsScreen
 import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
@@ -132,7 +132,7 @@ fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationVi
             PolicyScreen()
         }
         composable(Route.FeedbackScreen.name) {
-            FeedbackFormScreen()
+            TermsAndConditionsScreen()
         }
         composable(Route.HelpScreen.name) {
             HelpScreen()
