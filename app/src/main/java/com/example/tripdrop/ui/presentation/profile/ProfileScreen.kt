@@ -61,48 +61,43 @@ import com.example.tripdrop.ui.presentation.common.SmallSpacing
 fun ProfileScreen(navController: NavController, vm: DropViewModel) {
     val userData by vm.userDetails.collectAsState()
 
-    if (userData == null) {
-        // Show loading indicator while waiting for user data
-        LoaderScreen()
-    } else {
-        val name = userData?.name ?: ""
-        val imageUrl = userData?.imageUrl
+    val name = userData?.name ?: ""
+    val imageUrl = userData?.imageUrl
 
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.white))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(DefaultPadding)
+                .align(Alignment.TopStart)
+        ) {
+            ProfileHeader()
+            Spacer(modifier = Modifier.height(LargePadding))
+        }
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colorResource(id = R.color.white))
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(DefaultPadding)
-                    .align(Alignment.TopStart)
-            ) {
-                ProfileHeader()
-                Spacer(modifier = Modifier.height(LargePadding))
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = 88.dp, // Adjust based on header height
-                        start = DefaultPadding,
-                        end = DefaultPadding
-                    )
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                UserDetailsCard(
-                    name = name,
-                    onMove = { navController.navigate(route = Route.ProfileDetailScreen.name) },
-                    imageUrl = imageUrl
+                .padding(
+                    top = 88.dp, // Adjust based on header height
+                    start = DefaultPadding,
+                    end = DefaultPadding
                 )
-                Spacer(modifier = Modifier.height(SmallSpacing))
-                ProfileOptionButtons(navController)
-            }
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            UserDetailsCard(
+                name = name,
+                onMove = { navController.navigate(route = Route.ProfileDetailScreen.name) },
+                imageUrl = imageUrl
+            )
+            Spacer(modifier = Modifier.height(SmallSpacing))
+            ProfileOptionButtons(navController)
         }
     }
 }
@@ -122,7 +117,7 @@ fun ProfileHeader() {
 }
 
 @Composable
-fun UserDetailsCard(name: String,onMove: () -> Unit, imageUrl: String?) {
+fun UserDetailsCard(name: String, onMove: () -> Unit, imageUrl: String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

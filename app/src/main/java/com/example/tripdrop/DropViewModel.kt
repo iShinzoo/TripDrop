@@ -17,7 +17,6 @@ import com.example.tripdrop.data.model.Product
 import com.example.tripdrop.data.model.UserData
 import com.example.tripdrop.ui.navigation.Route
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,6 +56,8 @@ class DropViewModel @Inject constructor(
     private val _userDetails = MutableStateFlow<UserData?>(null)
     val userDetails: StateFlow<UserData?> get() = _userDetails.asStateFlow()
 
+    var isUserLoggedIn by mutableStateOf(false)
+
     private val ioScope = viewModelScope + Dispatchers.IO // Optimized scope for I/O tasks
 
     enum class ProfileUpdateStatus {
@@ -65,6 +66,7 @@ class DropViewModel @Inject constructor(
 
     init {
         fetchUserDetails()
+        checkUserLoggedIn()
     }
 
     fun displayDialog() {
@@ -73,6 +75,11 @@ class DropViewModel @Inject constructor(
 
     fun dismissDialog() {
         isDialogShow = false
+    }
+
+    private fun checkUserLoggedIn() {
+        // Assume FirebaseAuth is being used
+        isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
     }
 
     fun getCurrentUserId(callback: (String) -> Unit) {

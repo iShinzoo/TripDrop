@@ -6,8 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -17,31 +18,45 @@ import com.example.tripdrop.DropViewModel
 import com.example.tripdrop.NotificationViewModel
 import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.NotificationScreen
-import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
-import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
-import com.example.tripdrop.ui.presentation.post.PostScreen
-import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
+import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
 import com.example.tripdrop.ui.presentation.home.details.ProductDetailsScreen
 import com.example.tripdrop.ui.presentation.home.details.chat.SingleChatScreen
+import com.example.tripdrop.ui.presentation.post.PostScreen
 import com.example.tripdrop.ui.presentation.post.profile.child.FeedbackFormScreen
 import com.example.tripdrop.ui.presentation.post.profile.child.HelpScreen
 import com.example.tripdrop.ui.presentation.post.profile.child.PolicyScreen
-import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
 import com.example.tripdrop.ui.presentation.profile.ProfileScreen
+import com.example.tripdrop.ui.presentation.profile.child.PaymentScreen
+import com.example.tripdrop.ui.presentation.profile.child.ProfileDetailsScreen
+import com.example.tripdrop.ui.presentation.profile.child.YourOrdersScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
     val navController = rememberNavController()
+    val isUserLoggedIn = remember { vm.isUserLoggedIn }
+
+    // Use LaunchedEffect to navigate after checking the user's login state
+    LaunchedEffect(isUserLoggedIn) {
+        if (isUserLoggedIn) {
+            navController.navigate(Route.BottomNav.name) {
+                popUpTo(0) // Clears the backstack
+            }
+        } else {
+            navController.navigate(Route.WelcomeScreen.name) {
+                popUpTo(0) // Clears the backstack
+            }
+        }
+    }
 
     AnimatedNavHost(
         navController = navController,
-        startDestination = Route.WelcomeScreen.name,
+        startDestination = if (isUserLoggedIn) Route.BottomNav.name else Route.WelcomeScreen.name,
         enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
         popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
