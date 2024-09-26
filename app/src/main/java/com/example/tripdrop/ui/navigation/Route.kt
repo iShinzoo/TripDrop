@@ -19,4 +19,6 @@ enum class Route {
     PolicyScreen,
     FeedbackScreen,
     FavouriteScreen,
+    SplashScreen,
+    OnboardingScreen
 }

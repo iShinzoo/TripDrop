@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                 exit = fadeOut()
                             ) {
                                 RequestAppPermissionsScreen()
-                                NavGraph(vm = viewModel, chatViewModel, notificationViewModel)
+                                NavGraph(vm = viewModel, chatViewModel, notificationViewModel,this@MainActivity)
                             }
                         }
                         else -> {

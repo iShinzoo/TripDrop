@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.example.tripdrop.MainActivity
 import com.example.tripdrop.viewModel.ChatViewModel
 import com.example.tripdrop.viewModel.DropViewModel
 import com.example.tripdrop.viewModel.NotificationViewModel
@@ -20,7 +21,9 @@ import com.example.tripdrop.ui.presentation.BottomBar
 import com.example.tripdrop.ui.presentation.FavoritesScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
+import com.example.tripdrop.ui.presentation.authentication.OnboardingScreen
 import com.example.tripdrop.ui.presentation.authentication.SignUpScreen
+import com.example.tripdrop.ui.presentation.authentication.SplashScreen
 import com.example.tripdrop.ui.presentation.authentication.UserDataCollectionScreen
 import com.example.tripdrop.ui.presentation.authentication.WelcomeScreen
 import com.example.tripdrop.ui.presentation.home.HomeScreen
@@ -38,25 +41,19 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationViewModel) {
+fun NavGraph(
+    vm: DropViewModel,
+    chatViewModel: ChatViewModel,
+    nm: NotificationViewModel,
+    context: MainActivity
+) {
     val navController = rememberNavController()
     val isUserLoggedIn = remember { vm.isUserLoggedIn }
 
-    LaunchedEffect(isUserLoggedIn) {
-        if (isUserLoggedIn) {
-            navController.navigate(Route.BottomNav.name) {
-                popUpTo(0)
-            }
-        } else {
-            navController.navigate(Route.WelcomeScreen.name) {
-                popUpTo(0)
-            }
-        }
-    }
 
     AnimatedNavHost(
         navController = navController,
-        startDestination = if (isUserLoggedIn) Route.BottomNav.name else Route.WelcomeScreen.name,
+        startDestination = Route.SplashScreen.name,
         enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
         popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
@@ -139,6 +136,12 @@ fun NavGraph(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationVi
         }
         composable(Route.FavouriteScreen.name) {
             FavoritesScreen(navController, vm = vm)
+        }
+        composable(Route.SplashScreen.name) {
+            SplashScreen(navController, context)
+        }
+        composable(Route.OnboardingScreen.name) {
+            OnboardingScreen(navController, context)
         }
     }
 }
