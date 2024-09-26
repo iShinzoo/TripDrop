@@ -337,6 +337,9 @@ fun ProductContent(
             .padding(start = standardPadding, end = standardPadding)
     ) {
         TopAppBar(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(top = 30.dp),
             title = { AppBarTitleProfile() },
             navigationIcon = {
                 IconButton(onClick = { navController.navigate(Route.HomeScreen.name) }) {

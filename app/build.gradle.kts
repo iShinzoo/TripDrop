@@ -157,5 +157,5 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
 
-
+    implementation ("dev.shreyaspatil.EasyUpiPayment:EasyUpiPayment:3.0.3")
 }

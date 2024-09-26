@@ -36,6 +36,9 @@ import com.example.tripdrop.ui.theme.h2TextStyle
 @Composable
 fun NoNetworkScreen() {
     Scaffold(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(top = 30.dp),
         topBar = { CustomTopAppBar() }
     ) { paddingValues ->
         Column(

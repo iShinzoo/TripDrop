@@ -52,7 +52,7 @@ fun FavoritesScreen(navController: NavController, vm: DropViewModel) {
         ) {
             // Notifications Header
             Text(
-                text = "Notifications",
+                text = "Favorites",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp, start = 8.dp),
