@@ -37,6 +37,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavHostController, context: MainActivity, vm: DropViewModel) {
+
     val systemUiController = rememberSystemUiController()
     val statusBarColor = Color.White
     systemUiController.setStatusBarColor(
@@ -57,25 +58,24 @@ fun SplashScreen(navController: NavHostController, context: MainActivity, vm: Dr
         // Delay to show splash screen
         delay(1000)
 
-        // Navigate based on login status and onboarding completion
-        if (vm.isUserLoggedIn) {
-            navController.popBackStack()
-            navController.navigate(Route.BottomNav.name) {
-                // Clear the back stack to prevent navigating back to SplashScreen
-                popUpTo(Route.SplashScreen.name) { inclusive = true }
-            }
-        } else {
-            navController.popBackStack()
-            navController.navigate(Route.LoginScreen.name) {
-                // Clear the back stack to prevent navigating back to SplashScreen
-                popUpTo(Route.SplashScreen.name) { inclusive = true }
-            }
-        }
-
+        // First check if onboarding is finished
         if (!onBoardingIsFinished(context)) {
+            // Navigate to onboarding screen
             navController.popBackStack()
             navController.navigate(Route.OnboardingScreen.name) {
                 popUpTo(Route.SplashScreen.name) { inclusive = true }
+            }
+        } else {
+            // Check user login and profile data asynchronously
+            val isUserLoggedIn = vm.isUserLoggedIn
+            if (isUserLoggedIn) {
+                vm.checkUserData(navController,context)
+            } else {
+                // Navigate to Login screen
+                navController.popBackStack()
+                navController.navigate(Route.LoginScreen.name) {
+                    popUpTo(Route.SplashScreen.name) { inclusive = true }
+                }
             }
         }
     }

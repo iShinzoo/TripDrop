@@ -28,6 +28,9 @@ import com.example.tripdrop.viewModel.NetworkViewModel
 import com.example.tripdrop.viewModel.NotificationViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -36,12 +39,28 @@ class MainActivity : ComponentActivity() {
     private val notificationViewModel: NotificationViewModel by viewModels()
     private val networkViewModel: NetworkViewModel by viewModels()
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         actionBar?.hide()
-        installSplashScreen()
+
+        // Install Splash Screen and add delay
+        val splashScreen = installSplashScreen()
+
+        // Keep the splash screen visible for 4 seconds
+        splashScreen.setKeepOnScreenCondition {
+            // Check if 4 seconds have passed
+            false // We'll handle the delay below
+        }
+
+        // Add a coroutine to delay the splash screen
+        kotlinx.coroutines.GlobalScope.launch {
+            delay(5000) // 4-second delay
+        }
+
         setContent {
             TripDropTheme {
                 val systemController = rememberSystemUiController()
@@ -63,6 +82,7 @@ class MainActivity : ComponentActivity() {
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
+                                RequestAppPermissionsScreen()
                                 NavGraph(vm = viewModel, chatViewModel, notificationViewModel,this@MainActivity)
                             }
                         }
@@ -80,5 +100,4 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
+    }}

@@ -1,8 +1,6 @@
 package com.example.tripdrop.ui.presentation.authentication
 
 import android.content.Context
-import android.content.res.Resources
-import android.util.DisplayMetrics
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -54,6 +52,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun OnboardingScreen(navController: NavHostController, context: MainActivity,vm:DropViewModel) {
+
 
     val systemUiController = rememberSystemUiController()
     val statusBarColor = Color.White
@@ -275,16 +274,14 @@ fun OnboardingScreen(navController: NavHostController, context: MainActivity,vm:
                     onBoardingIsFinished(context = context)
 
                     // Check if the user is logged in
-                    if (vm.isUserLoggedIn) {
-                        navController.popBackStack()
-                        navController.navigate(Route.BottomNav.name)
+                    val isUserLoggedIn = vm.isUserLoggedIn
+                    if (isUserLoggedIn) {
+                        vm.checkUserData(navController,context)
                     } else {
+                        // Navigate to Login screen
                         navController.popBackStack()
                         navController.navigate(Route.LoginScreen.name) {
-                            // Clear the back stack to prevent navigating back to OnboardingScreen
-                            popUpTo(Route.OnboardingScreen.name) {
-                                inclusive = true
-                            }
+                            popUpTo(Route.SplashScreen.name) { inclusive = true }
                         }
                     }
                 }
@@ -306,8 +303,8 @@ private fun onBoardingIsFinished(context: MainActivity) {
     val editor = sharedPreferences.edit()
     editor.putBoolean("isFinished", true)
     editor.apply()
-
 }
+
 
 
 @Composable

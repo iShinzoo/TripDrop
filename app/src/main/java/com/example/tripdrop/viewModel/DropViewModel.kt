@@ -103,39 +103,65 @@ class DropViewModel @Inject constructor(
      *
      * @param navController The navigation controller to use for navigating to the appropriate screen.
      */
-    private fun checkUserData(navController: NavController) {
-        ioScope.launch {
-            val userId = auth.currentUser?.uid
-            if (userId == null) {
-                Log.e("CheckUserData", "User ID is null.")
+    fun checkUserData(navController: NavController, context: Context) {
+        val sharedPreferences = context.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+        val isOnBoardingFinished = sharedPreferences.getBoolean("isFinished", false)
+
+        // If onboarding is not finished (app is reinstalled), force logout and go to login
+        if (!isOnBoardingFinished) {
+            // Sign out to ensure the user is logged out after reinstall
+            auth.signOut()
+
+            ioScope.launch {
                 withContext(Dispatchers.Main) {
+                    // Navigate to LoginScreen
                     navController.navigate(Route.LoginScreen.name) {
-                        popUpTo(Route.LoginScreen.name) { inclusive = true }
+                        popUpTo(Route.SplashScreen.name) { inclusive = true }
                     }
                 }
-                return@launch
             }
+            return
+        }
 
-            val userDoc = try {
-                db.collection("users").document(userId).get().await()
-            } catch (e: Exception) {
-                handleException(e, "Error checking user data")
-                return@launch
+        // Check if the user is authenticated
+        val currentUser = auth.currentUser
+
+        if (currentUser == null) {
+            // User is not signed in, navigate to LoginScreen
+            ioScope.launch {
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Route.LoginScreen.name) {
+                        popUpTo(Route.SplashScreen.name) { inclusive = true }
+                    }
+                }
             }
-
-            withContext(Dispatchers.Main) {
-                if (userDoc.exists()) {
-                    navController.navigate(Route.BottomNav.name) {
-                        popUpTo(Route.BottomNav.name) { inclusive = true }
+        } else {
+            // User is authenticated, check if user data exists in Firestore
+            ioScope.launch {
+                val userId = currentUser.uid
+                try {
+                    val userDoc = db.collection("users").document(userId).get().await()
+                    withContext(Dispatchers.Main) {
+                        if (userDoc.exists()) {
+                            // Navigate to BottomNav if the user profile exists
+                            navController.navigate(Route.BottomNav.name) {
+                                popUpTo(Route.SplashScreen.name) { inclusive = true }
+                            }
+                        } else {
+                            // Navigate to UserDataCollectionScreen if profile is incomplete
+                            navController.navigate(Route.UserDataCollectionScreen.name) {
+                                popUpTo(Route.SplashScreen.name) { inclusive = true }
+                            }
+                        }
                     }
-                } else {
-                    navController.navigate(Route.UserDataCollectionScreen.name) {
-                        popUpTo(Route.UserDataCollectionScreen.name) { inclusive = true }
-                    }
+                } catch (e: Exception) {
+                    handleException(e, "Error checking user data")
                 }
             }
         }
     }
+
+
 
     /**
      * Registers a new user with the provided email and password, and navigates to the user data collection screen upon successful sign-up.
@@ -197,8 +223,12 @@ class DropViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    checkUserData(navController)
-                    showToast(context, "Login Successful")
+                    ioScope.launch {
+                        checkUserData(navController, context)
+                        withContext(Dispatchers.Main) {
+                            showToast(context, "Login Successful")
+                        }
+                    }
                 } else {
                     showToast(context, "Login Failed: ${task.exception?.message}")
                 }

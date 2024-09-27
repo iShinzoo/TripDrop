@@ -58,7 +58,6 @@ fun NavGraph(
     ) {
         composable(Route.HomeScreen.name) {
             HomeScreen(navController, vm)
-            RequestAppPermissionsScreen()
         }
         composable(Route.PostScreen.name) {
             PostScreen(vm, navController)
