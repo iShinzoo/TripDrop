@@ -179,13 +179,10 @@ fun ProductDetailsContent(
                     if (user2 != null) {
                         chatModel.getOrCreateChat(user1, user2) { chatId ->
                             if (chatId != null) {
-                                Log.d(
-                                    "ProductDetailsScreen",
-                                    "Navigating to chat with chatId: $chatId"
-                                )
-                                navController.navigate(route = "${Route.SingleChatScreen.name}/{chatId}")
+                                Log.d("ProductDetailsScreen", "Navigating to chat with chatId: $chatId")
+                                navController.navigate(Route.DummyChatScreen.name)
                             } else {
-                                Log.e("ProductDetailsScreen", "Failed to create or retrieve chat!")
+                                Log.e("ProductDetailsScreen", "Chat ID is null, cannot navigate to chat screen.")
                             }
                         }
                     } else {

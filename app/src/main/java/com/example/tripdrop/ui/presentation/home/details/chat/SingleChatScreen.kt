@@ -52,9 +52,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tripdrop.viewModel.ChatViewModel
 import com.example.tripdrop.R
 import com.example.tripdrop.data.model.Message
@@ -63,7 +69,9 @@ import com.example.tripdrop.ui.presentation.common.CommonImage
 
 
 @Composable
-fun SingleChatScreen(navController: NavController, chatModel: ChatViewModel, chatId: String) {
+fun SingleChatScreen(
+    navController: NavController, chatModel: ChatViewModel, chatId: String
+) {
 
     var reply by rememberSaveable {
         mutableStateOf("")
@@ -124,8 +132,6 @@ fun SingleChatScreen(navController: NavController, chatModel: ChatViewModel, cha
     }
 }
 
-
-
 @Composable
 fun MessageBox(modifier: Modifier, chatMessage: List<Message>, currentUserId: String) {
     val listState = rememberLazyListState()
@@ -161,7 +167,6 @@ fun MessageBox(modifier: Modifier, chatMessage: List<Message>, currentUserId: St
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -296,3 +301,4 @@ fun Modifier.senderBarBorder() = composed {
         this
     }
 }
+

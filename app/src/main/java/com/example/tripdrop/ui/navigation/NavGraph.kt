@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.example.tripdrop.MainActivity
 import com.example.tripdrop.ui.presentation.BottomBar
+import com.example.tripdrop.ui.presentation.DummyChatScreen
 import com.example.tripdrop.ui.presentation.FavoritesScreen
 import com.example.tripdrop.ui.presentation.NotificationScreen
 import com.example.tripdrop.ui.presentation.authentication.LoginScreen
@@ -92,20 +93,18 @@ fun NavGraph(
                 )
             }
         }
-        composable(
-            route = "${Route.SingleChatScreen.name}/{chatId}",
-            arguments = listOf(navArgument("chatId") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val chatId = backStackEntry.arguments?.getString("chatId")
-            chatId?.let {
-                SingleChatScreen(
-                    navController = navController,
-                    chatModel = chatViewModel,
-                    chatId = chatId
-                )
-            }
+//        composable(
+//            route = "singleChatScreen/{chatId}",
+//            arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+//        ) {
+//            val chatId = it.arguments?.getString("chatId")
+//            chatId?.let {
+//                SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
+//            }
+//        }
+
+        composable(Route.DummyChatScreen.name) {
+            DummyChatScreen()
         }
         composable(Route.ProfileDetailScreen.name) {
             ProfileDetailsScreen(navController, vm = vm)

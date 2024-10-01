@@ -123,20 +123,19 @@ fun BottomBar(vm: DropViewModel, chatViewModel: ChatViewModel, nm: NotificationV
                     )
                 }
             }
-            composable(
-                route = "${Route.SingleChatScreen.name}/{chatId}",
-                arguments = listOf(navArgument("chatId") {
-                    type = NavType.StringType
-                })
-            ) { backStackEntry ->
-                val chatId = backStackEntry.arguments?.getString("chatId")
-                chatId?.let {
-                    SingleChatScreen(
-                        navController = navController,
-                        chatModel = chatViewModel,
-                        chatId = chatId
-                    )
-                }
+
+//            composable(
+//                route = "singleChatScreen/{chatId}",
+//                arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+//            ) {
+//                val chatId = it.arguments?.getString("chatId")
+//                chatId?.let {
+//                    SingleChatScreen(navController = navController, chatModel = chatViewModel, chatId = chatId)
+//                }
+//            }
+
+            composable(Route.DummyChatScreen.name) {
+                DummyChatScreen()
             }
             composable(Route.ProfileDetailScreen.name) {
                 ProfileDetailsScreen(navController, vm = vm)

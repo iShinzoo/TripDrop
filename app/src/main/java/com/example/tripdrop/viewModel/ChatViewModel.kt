@@ -79,7 +79,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun getOrCreateChat(user1Id: String, user2Id: String, onChatIdReceived: (String?) -> Unit) {
-        inProcessChats.value = true
+        Log.d("ChatViewModel", "Looking for chat between $user1Id and $user2Id")
 
         // Query for an existing chat
         chatsRef.where(
@@ -95,6 +95,7 @@ class ChatViewModel @Inject constructor(
             )
         ).get().addOnSuccessListener { querySnapshot ->
             querySnapshot.documents.firstOrNull()?.toObject<ChatData>()?.let { existingChat ->
+                Log.d("ChatViewModel", "Found existing chat: ${existingChat.chatId}")
                 onChatIdReceived(existingChat.chatId)  // Existing chat found
             } ?: run {
                 // Create a new chat if not found
@@ -105,7 +106,10 @@ class ChatViewModel @Inject constructor(
                     user2 = UserData(userId = user2Id)
                 )
                 chatsRef.document(newChatId).set(newChat)
-                    .addOnSuccessListener { onChatIdReceived(newChatId) }
+                    .addOnSuccessListener {
+                        Log.d("ChatViewModel", "Created new chat: $newChatId")
+                        onChatIdReceived(newChatId)
+                    }
                     .addOnFailureListener { exception ->
                         handleException(exception, "Failed to create new chat")
                         onChatIdReceived(null)
@@ -114,8 +118,6 @@ class ChatViewModel @Inject constructor(
         }.addOnFailureListener { exception ->
             handleException(exception, "Failed to retrieve chat")
             onChatIdReceived(null)
-        }.addOnCompleteListener {
-            inProcessChats.value = false
         }
     }
 }
