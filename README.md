@@ -1,5 +1,5 @@
-# Dropit.
-Dropit. is a mobile application designed to facilitate the delivery of goods between users. If a user needs a product from a specific location, they can post a request on the app with a proposed reward. Other users who can fulfill the delivery can accept the task, and upon successful completion, they receive the reward. This app aims to create a community-driven delivery service that benefits both requesters and deliverers.
+# Trip Drop
+Trip Drop is a mobile application designed to facilitate the delivery of goods between users. If a user needs a product from a specific location, they can post a request on the app with a proposed reward. Other users who can fulfill the delivery can accept the task, and upon successful completion, they receive the reward. This app aims to create a community-driven delivery service that benefits both requesters and deliverers.
 
 ## Features
 1. Enable users to post requests for goods from specific locations.
