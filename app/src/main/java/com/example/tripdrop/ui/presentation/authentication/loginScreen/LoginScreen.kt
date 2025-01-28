@@ -99,14 +99,14 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Top
         ) {
             LoginHeaderText()
-            LottieAnimationLoginPage()
-            email =
-                TextField(icon = Icons.Default.Email, plText = "Enter Your Email", prefixText = "")
-            password = Password(
-                icon = Icons.Default.Lock, plText = "sshhh... Keep it Secret!!!", prefixText = ""
-            )
+
+            email = TextField(icon = Icons.Default.Email, plText = "Enter Your Email", prefixText = "")
+            password = Password(icon = Icons.Default.Lock, plText = "sshhh... Keep it Secret!!!", prefixText = "")
+
             Spacer(modifier = Modifier.height(8.dp))
             ForgotPasswordText(vm)
+            Spacer(modifier = Modifier.height(16.dp))
+            LottieAnimationLoginPage()
             Spacer(modifier = Modifier.height(16.dp))
             SignInButton(email, password, vm, navController)
             Spacer(modifier = Modifier.height(16.dp))

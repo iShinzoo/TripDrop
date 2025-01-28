@@ -84,6 +84,22 @@ class DropViewModel @Inject constructor(
         isDialogShow = false
     }
 
+    /**
+     * Sends a password reset email to the specified email address.
+     *
+     * @param email The email address to send the password reset email to.
+     * @param context The application context.
+     */
+    fun resetPassword(email: String, context: Context) {
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                showToast(context, "A password reset email has been sent")
+            } else {
+                showToast(context, "Something went wrong - ${task.exception?.message}")
+            }
+        }
+    }
+
     private fun checkUserLoggedIn() {
         // Simulate network delay for checking authentication (e.g., Firebase)
         viewModelScope.launch {
@@ -161,8 +177,6 @@ class DropViewModel @Inject constructor(
         }
     }
 
-
-
     /**
      * Registers a new user with the provided email and password, and navigates to the user data collection screen upon successful sign-up.
      *
@@ -188,21 +202,7 @@ class DropViewModel @Inject constructor(
             }
     }
 
-    /**
-     * Sends a password reset email to the specified email address.
-     *
-     * @param email The email address to send the password reset email to.
-     * @param context The application context.
-     */
-    fun resetPassword(email: String, context: Context) {
-        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                showToast(context, "A password reset email has been sent")
-            } else {
-                showToast(context, "Something went wrong - ${task.exception?.message}")
-            }
-        }
-    }
+
 
     /**
      * Logs in a user with the provided email and password, and navigates to the appropriate screen based on the user's data.
